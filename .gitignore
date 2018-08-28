@@ -24,3 +24,10 @@ hs_err_pid*
 
 .metadata/
 RemoteSystemsTempFiles/
+
+# Fluig
+com.totvs.tds.ecm.dataservers
+.settings
+.classpath
+.project
+

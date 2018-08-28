@@ -1,0 +1,14 @@
+application.type=widget
+application.code=bartofil_extrato_comissao
+application.title=Extrato Comissao
+application.description=Extrato de Comissões
+application.category=SYSTEM
+application.renderer=freemarker
+developer.code=DevFluig
+developer.name=Developer Fluig
+developer.url=http://www.fluig.com
+application.uiwidget=true
+application.mobileapp=true
+view.file=view.ftl
+edit.file=edit.ftl
+
