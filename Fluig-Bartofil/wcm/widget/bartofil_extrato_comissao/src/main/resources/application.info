@@ -13,5 +13,7 @@ view.file=view.ftl
 edit.file=edit.ftl
 application.resource.css.1=/resources/css/bartofil_extrato_comissao.css
 application.resource.js.2=/resources/js/bartofil_extrato_comissao.js
+application.resource.js.3=/resources/js/moment/moment-with-locales.min.js
+application.resource.js.4=/resources/js/mask/jquery.mask.min.js
 application.resource.component.5=mustache
 

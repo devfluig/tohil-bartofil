@@ -9,16 +9,20 @@
 		<form class="navbar-form navbar-left" role="search">
 			<label>Periodo:</label>
 	    	<div class="form-group">
-	    		<select class="form-control" id="pediodo">
-	    			<option>09/2018</option>
+	    		<select class="form-control" id="periodo" data-change-periodo>
+				    <script type="text/template" class="tpl-continuous-scroll-periodo">
+				        {{#items}}
+			    			<option data-month="{{mes}}" data-year="{{ano}}">{{periodo}}</option>
+				        {{/items}}
+				    </script>
 	    		</select>
 	    	</div>
 	    	<div class="radio">
 		    	<label>
-		    		<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>Detalhado
+		    		<input type="radio" name="visualizacao" id="visualizacaodetalhado" value="detalhado" data-click-detalhado checked>Detalhado
 		    	</label>
 		    	<label>
-		    		<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>Resumido
+		    		<input type="radio" name="visualizacao" id="visualizacaoresumido" value="resumido" data-click-resumido>Resumido
 		    	</label>
 			</div>
 		</form>
@@ -125,7 +129,7 @@
 	            </div>
 	        </div>
 	    </div>
-	    <div class="panel panel-info">
+	    <div class="panel panel-info detalhado">
 	        <div class="panel-heading">
 	            <h4 class="panel-title fs-txt-center">
 	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">EXTRATO DE COMISSAO DE REPRESENTANTE - DETALHADO</a>
@@ -134,11 +138,11 @@
 	        <div id="collapseThree" class="panel-collapse collapse in">
 	            <div class="panel-body">
 	            	<div class="table-responsive">
-		            	<table class="table table-striped table-hover table-condensed">
+		            	<table id="table-lancamentos" class="table table-striped table-hover table-condensed">
 		            		<thead>
 		            			<tr>
-		            				<th>DATA LACTO</th>
-		            				<th>EVI</th>
+		            				<th>DATA LANCTO</th>
+		            				<th>EVT</th>
 		            				<th>CARGA</th>
 		            				<th>NOTA FISCAL</th>
 		            				<th>PERIODO</th>
@@ -259,26 +263,6 @@
 		            				<td class="fs-txt-right">11,80</td>
 		            				<td class="fs-txt-center">C</td>
 		            			</tr>
-		            			<tr class="warning">
-		            				<td class="fs-txt-right" colspan="7"><strong>TOTAIS</strong></td>
-		            				<td class="fs-txt-center"><strong>VALOR</strong></td>
-		            				<td class="fs-txt-center"><strong>QTD</strong></td>
-		            			</tr>
-		            			<tr class="success">
-		            				<td class="fs-txt-right" colspan="7"><strong>D&Eacute;BITOS</strong></td>
-		            				<td class="fs-txt-right">84,44</td>
-		            				<td class="fs-txt-center">6</td>
-		            			</tr>
-		            			<tr class="success">
-		            				<td class="fs-txt-right" colspan="7"><strong>CR&Eacute;DITOS</strong></td>
-		            				<td class="fs-txt-right">6.168,32</td>
-		            				<td class="fs-txt-center">464</td>
-		            			</tr>
-		            			<tr class="warning">
-		            				<td class="fs-txt-right" colspan="7"><strong>TOTAL GERAL</strong></td>
-		            				<td class="fs-txt-right">6.083,88</td>
-		            				<td class="fs-txt-center">470</td>
-		            			</tr>
 		            		</tbody>
 		            	</table>
 		            </div>
@@ -294,7 +278,7 @@
 	        <div id="collapseOne" class="panel-collapse collapse in">
 	            <div class="panel-body">
 	            	<div class="table-responsive">
-		            	<table class="table table-striped table-hover table-condensed">
+		            	<table id="table-meses" class="table table-striped table-hover table-condensed">
 		            		<thead>
 		            			<tr>
 		            				<th class="fs-txt-center">DATA ENTRADA PEDIDO</th>
@@ -325,7 +309,7 @@
 	        <div id="collapseOne" class="panel-collapse collapse in">
 	            <div class="panel-body">
 	            	<div class="table-responsive">
-		            	<table class="table table-striped table-hover table-condensed">
+		            	<table id="table-eventos" class="table table-striped table-hover table-condensed">
 		            		<thead>
 		            			<tr>
 		            				<th class="fs-txt-center">CODIGO</th>
@@ -369,3 +353,4 @@
 	
 </div>
 
+<script type="text/javascript" src="/webdesk/vcXMLRPC.js"></script>
