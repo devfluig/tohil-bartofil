@@ -1,7 +1,11 @@
 var extratocampanha = SuperWidget.extend({
+	
+	loading: FLUIGC.loading(window),
 
 	init : function() {
 		$(".pageTitle").parent().remove();
+
+		this.loading.show();
 		
 		this.setupperiodo();
 
@@ -31,10 +35,14 @@ var extratocampanha = SuperWidget.extend({
 		var html = Mustache.render(tpl, data);
 		$('#periodo').append(html);
 		
+		this.getcomissoes();
+		
 	},
 	
 	getcomissoes: function(el, ev) {
-		
+
+		this.loading.show();
+
 		var mes = $("#periodo :selected").data("month");
 		var ano = $("#periodo :selected").data("year");
 		
@@ -47,18 +55,26 @@ var extratocampanha = SuperWidget.extend({
 		var rows = DatasetFactory.getDataset("ds_comissoes", null, [c1, c2, c3], null);
 		
 		if (!rows) {
+			this.loading.hide();
+			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
 			return;
 		}
 		var values = rows["values"];
 		if (!values) {
+			this.loading.hide();
+			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
 			return;
 		}
 		
 		if (values.length == 0) {
+			this.loading.hide();
+			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
 			return;
 		} 
 		
 		if (values[0].descevento == "erro") {
+			this.loading.hide();
+			WCMC.messageError(values[0].situacao);	    			
 			return;
 		}
 		
@@ -71,7 +87,16 @@ var extratocampanha = SuperWidget.extend({
 		var eventos = {};
 		var meses = {};
 		
-		moment.locale("pt-br");
+		var locale = WCMAPI.locale;
+		locale = locale.replace("_", "-"); 
+		
+		moment.locale(locale);
+		
+		var startOfMonth = moment(ano + "-" + mes + "-01").startOf('month').format('DD/MM/YYYY');
+		var endOfMonth   = moment(ano + "-" + mes + "-01").endOf('month').format('DD/MM/YYYY');
+		
+		$(".dias-periodo").html(startOfMonth + " A " + endOfMonth);
+		$(".title-periodo").html(mes + "/" + ano);
 		
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
@@ -111,10 +136,10 @@ var extratocampanha = SuperWidget.extend({
 			qtde += totais["D"].qtde;
 		}
 		
-		html += '<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>TOTAIS</strong></td><td class="fs-txt-center"><strong>VALOR</strong></td><td class="fs-txt-center"><strong>QTD</strong></td></tr>' +
-			'<tr class="success"><td class="fs-txt-right" colspan="7"><strong>D&Eacute;BITOS</strong></td><td class="fs-txt-right">' + (totais["D"] ? this.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["D"] ? totais["D"].qtde : "0") + '</td></tr>' +
-			'<tr class="danger"><td class="fs-txt-right" colspan="7"><strong>CR&Eacute;DITOS</strong></td><td class="fs-txt-right">' + (totais["C"] ? this.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["C"] ? totais["C"].qtde : "0") + '</td></tr>' + 
-			'<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>TOTAL GERAL</strong></td><td class="fs-txt-right">' + this.mask(total.toFixed(2)) + '</td><td class="fs-txt-center">' + qtde + '</td></tr>';
+		html += '<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("totais")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("valor")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("qtd")}</strong></td></tr>' +
+			'<tr class="danger"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("debitos")}</strong></td><td class="fs-txt-right">' + (totais["D"] ? this.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["D"] ? totais["D"].qtde : "0") + '</td></tr>' +
+			'<tr class="success"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("creditos")}</strong></td><td class="fs-txt-right">' + (totais["C"] ? this.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["C"] ? totais["C"].qtde : "0") + '</td></tr>' + 
+			'<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("total.geral")}</strong></td><td class="fs-txt-right">' + this.mask(total.toFixed(2)) + '</td><td class="fs-txt-center">' + qtde + '</td></tr>';
 		 
 		$('#table-lancamentos > tbody').html(html);
 		
@@ -136,7 +161,10 @@ var extratocampanha = SuperWidget.extend({
 		
 		$('#table-meses > tbody').html(html);
 		
-		console.log(html)
+		console.log(html);
+		
+		this.loading.hide();
+
 		
 	},
 

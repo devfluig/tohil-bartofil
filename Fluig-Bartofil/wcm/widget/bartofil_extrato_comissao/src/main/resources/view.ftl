@@ -2,12 +2,12 @@
 	data-params="extratocampanha.instance()">
 
 	<div class="page-header">
-		<h1>EXTRATO COMISS&Atilde;O</h1>
+		<h1>${i18n.getTranslation('extrato.comissao')}</h1>
 	</div>
 
 	<div class="row">
 		<form class="navbar-form navbar-left" role="search">
-			<label>Periodo:</label>
+			<label>${i18n.getTranslation('periodo')}:</label>
 	    	<div class="form-group">
 	    		<select class="form-control" id="periodo" data-change-periodo>
 				    <script type="text/template" class="tpl-continuous-scroll-periodo">
@@ -19,15 +19,15 @@
 	    	</div>
 	    	<div class="radio">
 		    	<label>
-		    		<input type="radio" name="visualizacao" id="visualizacaodetalhado" value="detalhado" data-click-detalhado checked>Detalhado
+		    		<input type="radio" name="visualizacao" id="visualizacaodetalhado" value="detalhado" data-click-detalhado checked>${i18n.getTranslation('detalhado')}
 		    	</label>
 		    	<label>
-		    		<input type="radio" name="visualizacao" id="visualizacaoresumido" value="resumido" data-click-resumido>Resumido
+		    		<input type="radio" name="visualizacao" id="visualizacaoresumido" value="resumido" data-click-resumido>${i18n.getTranslation('resumido')}
 		    	</label>
 			</div>
 		</form>
 		<form class="navbar-form navbar-right" role="search">
-			<button type="submit" class="btn btn-default"><span class="fluigicon fluigicon-print fluigicon-sm"></span>&nbsp;Imprimir</button>
+			<button type="submit" class="btn btn-default"><span class="fluigicon fluigicon-print fluigicon-sm"></span>&nbsp;${i18n.getTranslation('imprimir')}</button>
 		</form>
 	</div>	
 	
@@ -42,23 +42,23 @@
 	            <div class="panel-body">
 					<form class="form-horizontal" role="form">
 					    <div class="form-group">
-					        <label for="inputEmail3" class="col-sm-2 control-label">ENDERE&Ccedil;O:</label>
+					        <label for="endereco" class="col-sm-2 control-label">${i18n.getTranslation('endereco')}:</label>
 					        <div class="col-sm-3">
-					            <input type="email" class="form-control" id="inputEmail3" placeholder="Email" readonly value="RODROVIA MG 329 KM 8 - TREVO DE ORATORIOS">
+					            <input type="text" class="form-control" id="endereco" readonly value="RODROVIA MG 329 KM 8 - TREVO DE ORATORIOS">
 					        </div>
-					        <label for="inputEmail3" class="col-sm-2 control-label">BAIRRO:</label>
+					        <label for="bairro" class="col-sm-2 control-label">${i18n.getTranslation('bairro')}:</label>
 					        <div class="col-sm-3">
-					            <input type="email" class="form-control" id="inputEmail3" placeholder="Email" readonly value="ANA FLORENCIA">
+					            <input type="text" class="form-control" id="bairro" placeholder="Email" readonly value="ANA FLORENCIA">
 					        </div>
 					    </div>
 					    <div class="form-group">
-					        <label for="inputPassword3" class="col-sm-2 control-label">CEP:</label>
+					        <label for="cepempresa" class="col-sm-2 control-label">${i18n.getTranslation('cep')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="inputPassword3" placeholder="Password" readonly value="35340-970 - PONTE NOVA - MG">
+					            <input type="text" class="form-control" id="cepempresa" readonly value="35340-970 - PONTE NOVA - MG">
 					        </div>
-					        <label for="inputPassword3" class="col-sm-2 control-label">INSC.EST.:</label>
+					        <label for="inscricaoestadual" class="col-sm-2 control-label">${i18n.getTranslation('inscricaoestadual')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="inputPassword3" placeholder="Password" readonly value="21.027881.0023">
+					            <input type="text" class="form-control" id="inscricaoestadual" readonly value="21.027881.0023">
 					        </div>
 					    </div>
 					</form>
@@ -68,61 +68,60 @@
 	    <div class="panel panel-info">
 	        <div class="panel-heading">
 	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">EXTRATO DE REPRESENTANTE -F PERIODO DE: 01/09/2017 A 30/09/2017
-	                </a>
+	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">${i18n.getTranslation('extrato.representante.periodo')}:&nbsp;<span class="dias-periodo"></span></a>
 	            </h4>
 	        </div>
 	        <div id="collapseTwo" class="panel-collapse collapse in">
 	            <div class="panel-body">
 					<form class="form-horizontal" role="form">
 					    <div class="form-group">
-					        <label for="inputEmail3" class="col-sm-2 control-label">NOME:</label>
+					        <label for="nome" class="col-sm-2 control-label">${i18n.getTranslation('nome')}:</label>
 					        <div class="col-sm-3">
-					            <input type="email" class="form-control" id="inputEmail3" placeholder="Email" readonly value="THIAGO MAIKAE MONTEIRO PLACIDIO - 12252">
+					            <input type="email" class="form-control" id="nome" readonly value="THIAGO MAIKAE MONTEIRO PLACIDIO - 12252">
 					        </div>
-					        <label for="inputEmail3" class="col-sm-2 control-label">SEQPESSOA:</label>
+					        <label for="sequenciapessoa" class="col-sm-2 control-label">${i18n.getTranslation('seq.pessoa')}:</label>
 					        <div class="col-sm-3">
-					            <input type="email" class="form-control" id="inputEmail3" placeholder="Email" readonly value="168805">
-					        </div>
-					    </div>
-					    <div class="form-group">
-					        <label for="inputPassword3" class="col-sm-2 control-label">CONTATO:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="inputPassword3" placeholder="Password" readonly value="THIAGO">
-					        </div>
-					        <label for="inputPassword3" class="col-sm-2 control-label">CPF/CNPJ:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="inputPassword3" placeholder="Password" readonly value="029.805.466.28">
+					            <input type="email" class="form-control" id="sequenciapessoa" readonly value="168805">
 					        </div>
 					    </div>
 					    <div class="form-group">
-					        <label for="inputPassword3" class="col-sm-2 control-label">ENDEREÇO:</label>
+					        <label for="contato" class="col-sm-2 control-label">${i18n.getTranslation('contato')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="inputPassword3" placeholder="Password" readonly value="RUA CARLOS MARQUES, 281, AP01">
+					            <input type="text" class="form-control" id="contato" readonly value="THIAGO">
 					        </div>
-					        <label for="inputPassword3" class="col-sm-2 control-label">BAIRRO:</label>
+					        <label for="cpfcnpj" class="col-sm-2 control-label">${i18n.getTranslation('cpf.cnpj')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="inputPassword3" placeholder="Password" readonly value="GUARAPERANGA">
-					        </div>
-					    </div>
-					    <div class="form-group">
-					        <label for="inputPassword3" class="col-sm-2 control-label">CIDADE/UF:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="inputPassword3" placeholder="Password" readonly value="PONTE NOVA / MG">
-					        </div>
-					        <label for="inputPassword3" class="col-sm-2 control-label">CEP:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="inputPassword3" placeholder="Password" readonly value="35430206">
+					            <input type="text" class="form-control" id="cpfcnpj" readonly value="029.805.466.28">
 					        </div>
 					    </div>
 					    <div class="form-group">
-					        <label for="inputPassword3" class="col-sm-2 control-label">CORE:</label>
+					        <label for="enderecocontato" class="col-sm-2 control-label">${i18n.getTranslation('endereco')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="inputPassword3" placeholder="Password" readonly value="NOTIFICACAO">
+					            <input type="text" class="form-control" id="enderecocontato" readonly value="RUA CARLOS MARQUES, 281, AP01">
 					        </div>
-					        <label for="inputPassword3" class="col-sm-2 control-label">INSS:</label>
+					        <label for="bairrocontato" class="col-sm-2 control-label">${i18n.getTranslation('bairro')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="inputPassword3" placeholder="Password" readonly value="13415359343">
+					            <input type="text" class="form-control" id="bairrocontato" readonly value="GUARAPERANGA">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="cidadeuf" class="col-sm-2 control-label">${i18n.getTranslation('cidade.uf')}:</label>
+					        <div class="col-sm-3">
+					            <input type="text" class="form-control" id="cidadeuf" readonly value="PONTE NOVA / MG">
+					        </div>
+					        <label for="cepcontato" class="col-sm-2 control-label">${i18n.getTranslation('cep')}:</label>
+					        <div class="col-sm-3">
+					            <input type="text" class="form-control" id="cepcontato" readonly value="35430206">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="core" class="col-sm-2 control-label">${i18n.getTranslation('core')}:</label>
+					        <div class="col-sm-3">
+					            <input type="text" class="form-control" id="core" readonly value="NOTIFICACAO">
+					        </div>
+					        <label for="inss" class="col-sm-2 control-label">${i18n.getTranslation('inss')}:</label>
+					        <div class="col-sm-3">
+					            <input type="text" class="form-control" id="inss" readonly value="13415359343">
 					        </div>
 					    </div>
 					</form>
@@ -132,7 +131,7 @@
 	    <div class="panel panel-info detalhado">
 	        <div class="panel-heading">
 	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">EXTRATO DE COMISSAO DE REPRESENTANTE - DETALHADO</a>
+	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">${i18n.getTranslation('extrato.comissao.representante.detalhado')}</a>
 	            </h4>
 	        </div>
 	        <div id="collapseThree" class="panel-collapse collapse in">
@@ -141,128 +140,18 @@
 		            	<table id="table-lancamentos" class="table table-striped table-hover table-condensed">
 		            		<thead>
 		            			<tr>
-		            				<th>DATA LANCTO</th>
-		            				<th>EVT</th>
-		            				<th>CARGA</th>
-		            				<th>NOTA FISCAL</th>
-		            				<th>PERIODO</th>
-		            				<th class="fs-txt-center">PARC.</th>
-		            				<th>HISTORICO</th>
-		            				<th>VALOR</th>
-		            				<th class="fs-txt-center">D/C</th>
+		            				<th>${i18n.getTranslation('data.lancto')}</th>
+		            				<th>${i18n.getTranslation('evt')}</th>
+		            				<th>${i18n.getTranslation('carga')}</th>
+		            				<th>${i18n.getTranslation('nota.fiscal')}</th>
+		            				<th class="text-uppercase">${i18n.getTranslation('periodo')}</th>
+		            				<th class="fs-txt-center">${i18n.getTranslation('parc')}</th>
+		            				<th>${i18n.getTranslation('historico')}</th>
+		            				<th>${i18n.getTranslation('valor')}</th>
+		            				<th class="fs-txt-center">${i18n.getTranslation('d.c')}</th>
 		            			</tr>
 		            		</thead>
 		            		<tbody>
-		            			<tr>
-		            				<td>02/09/2017</td>
-		            				<td>1</td>
-		            				<td>267066</td>
-		            				<td>30003380</td>
-		            				<td>8302616</td>
-		            				<td class="fs-txt-center">1</td>
-		            				<td>AGNALDO AGOSTINHO ALVES TORRES ME - 25325</td>
-		            				<td class="fs-txt-right">16,38</td>
-		            				<td class="fs-txt-center">C</td>
-		            			</tr>
-		            			<tr>
-		            				<td>02/09/2017</td>
-		            				<td>1</td>
-		            				<td>267066</td>
-		            				<td>30003380</td>
-		            				<td>8302616</td>
-		            				<td class="fs-txt-center">2</td>
-		            				<td>AGNALDO AGOSTINHO ALVES TORRES ME - 25325</td>
-		            				<td class="fs-txt-right">16,38</td>
-		            				<td class="fs-txt-center">C</td>
-		            			</tr>
-		            			<tr>
-		            				<td>02/09/2017</td>
-		            				<td>1</td>
-		            				<td>267066</td>
-		            				<td>30003380</td>
-		            				<td>8302616</td>
-		            				<td class="fs-txt-center">3</td>
-		            				<td>AGNALDO AGOSTINHO ALVES TORRES ME - 25325</td>
-		            				<td class="fs-txt-right">16,38</td>
-		            				<td class="fs-txt-center">C</td>
-		            			</tr>
-		            			<tr>
-		            				<td>02/09/2017</td>
-		            				<td>1</td>
-		            				<td>267066</td>
-		            				<td>30003380</td>
-		            				<td>8302616</td>
-		            				<td class="fs-txt-center">4</td>
-		            				<td>AGNALDO AGOSTINHO ALVES TORRES ME - 25325</td>
-		            				<td class="fs-txt-right">16,38</td>
-		            				<td class="fs-txt-center">C</td>
-		            			</tr>
-		            			<tr>
-		            				<td>02/09/2017</td>
-		            				<td>1</td>
-		            				<td>267066</td>
-		            				<td>30003380</td>
-		            				<td>8302616</td>
-		            				<td class="fs-txt-center">5</td>
-		            				<td>AGNALDO AGOSTINHO ALVES TORRES ME - 25325</td>
-		            				<td class="fs-txt-right">16,38</td>
-		            				<td class="fs-txt-center">C</td>
-		            			</tr>
-		            			<tr>
-		            				<td>02/09/2017</td>
-		            				<td>1</td>
-		            				<td>267066</td>
-		            				<td>30003381</td>
-		            				<td>8302954</td>
-		            				<td class="fs-txt-center">1</td>
-		            				<td>ALESSANDRA OLIVEIRA FRAGOSO - 24132</td>
-		            				<td class="fs-txt-right">8,77</td>
-		            				<td class="fs-txt-center">C</td>
-		            			</tr>
-		            			<tr>
-		            				<td>02/09/2017</td>
-		            				<td>1</td>
-		            				<td>267066</td>
-		            				<td>30003381</td>
-		            				<td>8302954</td>
-		            				<td class="fs-txt-center">2</td>
-		            				<td>ALESSANDRA OLIVEIRA FRAGOSO - 24132</td>
-		            				<td class="fs-txt-right">8,77</td>
-		            				<td class="fs-txt-center">C</td>
-		            			</tr>
-		            			<tr>
-		            				<td>02/09/2017</td>
-		            				<td>1</td>
-		            				<td>267066</td>
-		            				<td>30003381</td>
-		            				<td>8302954</td>
-		            				<td class="fs-txt-center">3</td>
-		            				<td>ALESSANDRA OLIVEIRA FRAGOSO - 24132</td>
-		            				<td class="fs-txt-right">8,77</td>
-		            				<td class="fs-txt-center">C</td>
-		            			</tr>
-		            			<tr>
-		            				<td>04/09/2017</td>
-		            				<td>1</td>
-		            				<td>267045</td>
-		            				<td>30003381</td>
-		            				<td>8295717</td>
-		            				<td class="fs-txt-center">1</td>
-		            				<td>COMERCIAL CASTR.R.G.ALIMENTICIOS LTDA ME - 24474</td>
-		            				<td class="fs-txt-right">11,80</td>
-		            				<td class="fs-txt-center">C</td>
-		            			</tr>
-		            			<tr>
-		            				<td>04/09/2017</td>
-		            				<td>1</td>
-		            				<td>267045</td>
-		            				<td>30003381</td>
-		            				<td>8295717</td>
-		            				<td class="fs-txt-center">2</td>
-		            				<td>COMERCIAL CASTR.R.G.ALIMENTICIOS LTDA ME - 24474</td>
-		            				<td class="fs-txt-right">11,80</td>
-		            				<td class="fs-txt-center">C</td>
-		            			</tr>
 		            		</tbody>
 		            	</table>
 		            </div>
@@ -272,7 +161,7 @@
 	    <div class="panel panel-info">
 	        <div class="panel-heading">
 	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">EXTRATO DE COMISSAO DE REPRESENTANTE - MÊS FATURAMENTO PEDIDO 09/2017</a>
+	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">${i18n.getTranslation('extrato.comissao.representante.mes')}&nbsp;<span class="title-periodo"></span></a>
 	            </h4>
 	        </div>
 	        <div id="collapseOne" class="panel-collapse collapse in">
@@ -281,19 +170,11 @@
 		            	<table id="table-meses" class="table table-striped table-hover table-condensed">
 		            		<thead>
 		            			<tr>
-		            				<th class="fs-txt-center">DATA ENTRADA PEDIDO</th>
-		            				<th class="fs-txt-center">VALOR</th>
+		            				<th class="fs-txt-center">${i18n.getTranslation('data.entrada.pedido')}</th>
+		            				<th class="fs-txt-center">${i18n.getTranslation('valor')}</th>
 		            			</tr>
 		            		</thead>
 		            		<tbody>
-		            			<tr>
-		            				<td>Agosto/2017</td>
-		            				<td class="fs-txt-right">13.882,90</td>
-		            			</tr>
-		            			<tr>
-		            				<td>Setembro/2017</td>
-		            				<td class="fs-txt-right">196.929,48</td>
-		            			</tr>
 		            		</tbody>
 		            	</table>
 		            </div>
@@ -303,7 +184,7 @@
 	    <div class="panel panel-info">
 	        <div class="panel-heading">
 	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">EXTRATO DE COMISSAO DE REPRESENTANTE - RESUMO POR EVENTO</a>
+	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">${i18n.getTranslation('extrato.comissao.representante.resumo')}</a>
 	            </h4>
 	        </div>
 	        <div id="collapseOne" class="panel-collapse collapse in">
@@ -312,37 +193,13 @@
 		            	<table id="table-eventos" class="table table-striped table-hover table-condensed">
 		            		<thead>
 		            			<tr>
-		            				<th class="fs-txt-center">CODIGO</th>
-		            				<th class="fs-txt-center">DESCRI&Ccedil;&Atilde;O</th>
-		            				<th class="fs-txt-center">VALOR D&Eacute;BITO</th>
-		            				<th class="fs-txt-center">VALOR CR&Eacute;DITO</th>
+		            				<th class="fs-txt-center">${i18n.getTranslation('codigo')}</th>
+		            				<th class="fs-txt-center">${i18n.getTranslation('descricao')}</th>
+		            				<th class="fs-txt-center">${i18n.getTranslation('valor.debito')}</th>
+		            				<th class="fs-txt-center">${i18n.getTranslation('valor.credito')}</th>
 		            			</tr>
 		            		</thead>
 		            		<tbody>
-		            			<tr>
-		            				<td>1</td>
-		            				<td>CR Comssao/Frete</td>
-		            				<td class="fs-txt-right">0,00</td>
-		            				<td class="fs-txt-right">6.168,32</td>
-		            			</tr>
-		            			<tr>
-		            				<td>10</td>
-		            				<td>DB-Estorno Comissa/Frete</td>
-		            				<td class="fs-txt-right">69,44</td>
-		            				<td class="fs-txt-right">0,00</td>
-		            			</tr>
-		            			<tr>
-		            				<td>109</td>
-		            				<td>DB-Locacao de Equip de Transmissao Dados</td>
-		            				<td class="fs-txt-right">15,00</td>
-		            				<td class="fs-txt-right">0,00</td>
-		            			</tr>
-		            			<tr class="warning">
-		            				<td></td>
-		            				<td class="fs-txt-right">TOTAL:</td>
-		            				<td class="fs-txt-right">84,44</td>
-		            				<td class="fs-txt-right">6.168,32</td>
-		            			</tr>
 		            		</tbody>
 		            	</table>
 		            </div>
