@@ -1,45 +1,31 @@
-<div id="extrato_campanha_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide toprint"
-	data-params="extratocampanha.instance()">
+<div id="campanha_vendas_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide"
+	data-params="campanhavendas.instance()">
 
 	<div class="page-header">
-		<h1>${i18n.getTranslation('extrato.comissao')}</h1>
+		<h1>${i18n.getTranslation('diculgacao.campanha')}</h1>
 	</div>
 
 	<div class="row">
 		<form class="navbar-form navbar-left" role="search">
-			<label>${i18n.getTranslation('periodo')}:</label>
+			<label>${i18n.getTranslation('ordernar.por')}:</label>
 	    	<div class="form-group">
-	    		<select class="form-control" id="periodo" data-change-periodo>
-				    <script type="text/template" class="tpl-continuous-scroll-periodo">
-				        {{#items}}
-			    			<option data-month="{{mes}}" data-year="{{ano}}">{{periodo}}</option>
-				        {{/items}}
-				    </script>
+	    		<select class="form-control" id="ordenar" data-change-ordenar>
+	    			<option value="1">${i18n.getTranslation('data.prorrogado')}</option>
 	    		</select>
 	    	</div>
-	    	<div class="radio">
-		    	<label>
-		    		<input type="radio" name="visualizacao" id="visualizacaodetalhado" value="detalhado" data-click-detalhado checked>${i18n.getTranslation('detalhado')}
-		    	</label>
-		    	<label>
-		    		<input type="radio" name="visualizacao" id="visualizacaoresumido" value="resumido" data-click-resumido>${i18n.getTranslation('resumido')}
-		    	</label>
-			</div>
-		</form>
-		<form class="navbar-form navbar-left nav-representative fs-display-none" style="padding-left: 85px">
-			<label>${i18n.getTranslation('representante')}:</label>
+			<label>${i18n.getTranslation('por.pagina')}:</label>
 	    	<div class="form-group">
-	    		<select class="form-control" id="listrepresentatives" data-change-representante>
-				    <script type="text/template" class="tpl-representante">
-				        {{#items}}
-			    			<option value="{{id}}">{{name}}</option>
-				        {{/items}}
-				    </script>
+	    		<select class="form-control" id="ordenar" data-change-ordenar>
+	    			<option value="10">10</option>
+	    			<option value="20">20</option>
+	    			<option value="50">50</option>
+	    			<option value="100">100</option>
 	    		</select>
 	    	</div>
-		</form>
-		<form class="navbar-form navbar-right" role="search">
-			<button type="button" class="btn btn-default" data-click-print><span class="fluigicon fluigicon-print fluigicon-sm"></span>&nbsp;${i18n.getTranslation('imprimir')}</button>
+			<label>${i18n.getTranslation('busca')}:</label>
+	        <div class="col-sm-3">
+	            <input type="text" class="form-control" id="busca" placeholder="${i18n.getTranslation('digite.texto')}">
+	        </div>
 		</form>
 	</div>	
 	
@@ -89,51 +75,51 @@
 					    <div class="form-group">
 					        <label for="nome" class="col-sm-2 control-label">${i18n.getTranslation('nome')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control input-contato" id="nome" readonly value="">
+					            <input type="email" class="form-control" id="nome" readonly value="THIAGO MAIKAE MONTEIRO PLACIDIO - 12252">
 					        </div>
 					        <label for="sequenciapessoa" class="col-sm-2 control-label">${i18n.getTranslation('seq.pessoa')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control input-contato" id="sequenciapessoa" readonly value="">
+					            <input type="email" class="form-control" id="sequenciapessoa" readonly value="168805">
 					        </div>
 					    </div>
 					    <div class="form-group">
 					        <label for="contato" class="col-sm-2 control-label">${i18n.getTranslation('contato')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control input-contato" id="contato" readonly value="">
+					            <input type="text" class="form-control" id="contato" readonly value="THIAGO">
 					        </div>
 					        <label for="cpfcnpj" class="col-sm-2 control-label">${i18n.getTranslation('cpf.cnpj')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control input-contato" id="cpfcnpj" readonly value="">
+					            <input type="text" class="form-control" id="cpfcnpj" readonly value="029.805.466.28">
 					        </div>
 					    </div>
 					    <div class="form-group">
 					        <label for="enderecocontato" class="col-sm-2 control-label">${i18n.getTranslation('endereco')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control input-contato" id="enderecocontato" readonly value="">
+					            <input type="text" class="form-control" id="enderecocontato" readonly value="RUA CARLOS MARQUES, 281, AP01">
 					        </div>
 					        <label for="bairrocontato" class="col-sm-2 control-label">${i18n.getTranslation('bairro')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control input-contato" id="bairrocontato" readonly value="">
+					            <input type="text" class="form-control" id="bairrocontato" readonly value="GUARAPERANGA">
 					        </div>
 					    </div>
 					    <div class="form-group">
 					        <label for="cidadeuf" class="col-sm-2 control-label">${i18n.getTranslation('cidade.uf')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control input-contato" id="cidadeuf" readonly value="">
+					            <input type="text" class="form-control" id="cidadeuf" readonly value="PONTE NOVA / MG">
 					        </div>
 					        <label for="cepcontato" class="col-sm-2 control-label">${i18n.getTranslation('cep')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control input-contato" id="cepcontato" readonly value="">
+					            <input type="text" class="form-control" id="cepcontato" readonly value="35430206">
 					        </div>
 					    </div>
 					    <div class="form-group">
 					        <label for="core" class="col-sm-2 control-label">${i18n.getTranslation('core')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control input-contato" id="core" readonly value="">
+					            <input type="text" class="form-control" id="core" readonly value="NOTIFICACAO">
 					        </div>
 					        <label for="inss" class="col-sm-2 control-label">${i18n.getTranslation('inss')}:</label>
 					        <div class="col-sm-3">
-					            <input type="text" class="form-control input-contato" id="inss" readonly value="">
+					            <input type="text" class="form-control" id="inss" readonly value="13415359343">
 					        </div>
 					    </div>
 					</form>
