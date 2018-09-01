@@ -20,7 +20,7 @@ function createDataset(fields, constraints, sortFields) {
     try {
     	var conn = ds.getConnection();
     	var stmt = conn.createStatement();
-    	var rs = stmt.executeQuery("select ut.USER_CODE, u.FULL_NAME from FDN_GROUPUSERROLE gr, FDN_USERTENANT ut, FDN_USER u where gr.group_code = '" + grupo + "' and ut.TENANT_ID = gr.TENANT_ID and ut.LOGIN = gr.LOGIN and u.USER_ID = ut.USER_ID order by u.FULL_NAME");
+    	var rs = stmt.executeQuery("select ut.LOGIN, u.FULL_NAME from FDN_GROUPUSERROLE gr, FDN_USERTENANT ut, FDN_USER u where gr.group_code = '" + grupo + "' and ut.TENANT_ID = gr.TENANT_ID and ut.LOGIN = gr.LOGIN and u.USER_ID = ut.USER_ID order by u.FULL_NAME");
     	var columnCount = rs.getMetaData().getColumnCount();
         while(rs.next()) {
         	var Arr = new Array();
