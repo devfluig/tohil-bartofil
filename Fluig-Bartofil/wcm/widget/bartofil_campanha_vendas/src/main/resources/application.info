@@ -1,0 +1,19 @@
+application.type=widget
+application.code=bartofil_campanha_vendas
+application.title=Campanha de Vendas
+application.description=Campanha de Vendas
+application.category=SYSTEM
+application.renderer=freemarker
+developer.code=DevFluig
+developer.name=Developer Fluig
+developer.url=http://www.fluig.com
+application.uiwidget=true
+application.mobileapp=true
+view.file=view.ftl
+edit.file=edit.ftl
+application.resource.css.1=/resources/css/bartofil_campanha_vendas.css
+application.resource.js.2=/resources/js/bartofil_campanha_vendas.js
+application.resource.js.3=/resources/js/moment/moment-with-locales.min.js
+application.resource.js.4=/resources/js/mask/jquery.mask.min.js
+application.resource.component.5=mustache
+
