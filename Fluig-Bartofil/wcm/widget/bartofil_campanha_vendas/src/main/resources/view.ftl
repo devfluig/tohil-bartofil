@@ -23,189 +23,151 @@
 	    		</select>
 	    	</div>
 			<label>${i18n.getTranslation('busca')}:</label>
-	        <div class="col-sm-3">
+	        <div class="form-group">
 	            <input type="text" class="form-control" id="busca" placeholder="${i18n.getTranslation('digite.texto')}">
 	        </div>
 		</form>
 	</div>	
 	
-	<div class="panel-group" id="accordion">
-	    <div class="panel panel-info">
-	        <div class="panel-heading">
-	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">BCR COMERCIO E INDUSTRIA SA CNPJ 23.797.376/0001-74</a>
-	            </h4>
-	        </div>
-	        <div id="collapseOne" class="panel-collapse collapse in">
-	            <div class="panel-body">
-					<form class="form-horizontal" role="form">
-					    <div class="form-group">
-					        <label for="endereco" class="col-sm-2 control-label">${i18n.getTranslation('endereco')}:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="endereco" readonly value="RODROVIA MG 329 KM 8 - TREVO DE ORATORIOS">
-					        </div>
-					        <label for="bairro" class="col-sm-2 control-label">${i18n.getTranslation('bairro')}:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="bairro" placeholder="Email" readonly value="ANA FLORENCIA">
-					        </div>
-					    </div>
-					    <div class="form-group">
-					        <label for="cepempresa" class="col-sm-2 control-label">${i18n.getTranslation('cep')}:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="cepempresa" readonly value="35340-970 - PONTE NOVA - MG">
-					        </div>
-					        <label for="inscricaoestadual" class="col-sm-2 control-label">${i18n.getTranslation('inscricaoestadual')}:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="inscricaoestadual" readonly value="21.027881.0023">
-					        </div>
-					    </div>
-					</form>
-				</div>
-	        </div>
-	    </div>
-	    <div class="panel panel-info">
-	        <div class="panel-heading">
-	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">${i18n.getTranslation('extrato.representante.periodo')}:&nbsp;<span class="dias-periodo"></span></a>
-	            </h4>
-	        </div>
-	        <div id="collapseTwo" class="panel-collapse collapse in">
-	            <div class="panel-body">
-					<form class="form-horizontal" role="form">
-					    <div class="form-group">
-					        <label for="nome" class="col-sm-2 control-label">${i18n.getTranslation('nome')}:</label>
-					        <div class="col-sm-3">
-					            <input type="email" class="form-control" id="nome" readonly value="THIAGO MAIKAE MONTEIRO PLACIDIO - 12252">
-					        </div>
-					        <label for="sequenciapessoa" class="col-sm-2 control-label">${i18n.getTranslation('seq.pessoa')}:</label>
-					        <div class="col-sm-3">
-					            <input type="email" class="form-control" id="sequenciapessoa" readonly value="168805">
-					        </div>
-					    </div>
-					    <div class="form-group">
-					        <label for="contato" class="col-sm-2 control-label">${i18n.getTranslation('contato')}:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="contato" readonly value="THIAGO">
-					        </div>
-					        <label for="cpfcnpj" class="col-sm-2 control-label">${i18n.getTranslation('cpf.cnpj')}:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="cpfcnpj" readonly value="029.805.466.28">
-					        </div>
-					    </div>
-					    <div class="form-group">
-					        <label for="enderecocontato" class="col-sm-2 control-label">${i18n.getTranslation('endereco')}:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="enderecocontato" readonly value="RUA CARLOS MARQUES, 281, AP01">
-					        </div>
-					        <label for="bairrocontato" class="col-sm-2 control-label">${i18n.getTranslation('bairro')}:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="bairrocontato" readonly value="GUARAPERANGA">
-					        </div>
-					    </div>
-					    <div class="form-group">
-					        <label for="cidadeuf" class="col-sm-2 control-label">${i18n.getTranslation('cidade.uf')}:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="cidadeuf" readonly value="PONTE NOVA / MG">
-					        </div>
-					        <label for="cepcontato" class="col-sm-2 control-label">${i18n.getTranslation('cep')}:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="cepcontato" readonly value="35430206">
-					        </div>
-					    </div>
-					    <div class="form-group">
-					        <label for="core" class="col-sm-2 control-label">${i18n.getTranslation('core')}:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="core" readonly value="NOTIFICACAO">
-					        </div>
-					        <label for="inss" class="col-sm-2 control-label">${i18n.getTranslation('inss')}:</label>
-					        <div class="col-sm-3">
-					            <input type="text" class="form-control" id="inss" readonly value="13415359343">
-					        </div>
-					    </div>
-					</form>
-	            </div>
-	        </div>
-	    </div>
-	    <div class="panel panel-info detalhado">
-	        <div class="panel-heading">
-	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">${i18n.getTranslation('extrato.comissao.representante.detalhado')}</a>
-	            </h4>
-	        </div>
-	        <div id="collapseThree" class="panel-collapse collapse in">
-	            <div class="panel-body">
-	            	<div class="table-responsive">
-		            	<table id="table-lancamentos" class="table table-striped table-hover table-condensed">
-		            		<thead>
-		            			<tr>
-		            				<th>${i18n.getTranslation('data.lancto')}</th>
-		            				<th>${i18n.getTranslation('evt')}</th>
-		            				<th>${i18n.getTranslation('carga')}</th>
-		            				<th>${i18n.getTranslation('nota.fiscal')}</th>
-		            				<th class="text-uppercase">${i18n.getTranslation('periodo')}</th>
-		            				<th class="fs-txt-center">${i18n.getTranslation('parc')}</th>
-		            				<th>${i18n.getTranslation('historico')}</th>
-		            				<th>${i18n.getTranslation('valor')}</th>
-		            				<th class="fs-txt-center">${i18n.getTranslation('d.c')}</th>
-		            			</tr>
-		            		</thead>
-		            		<tbody>
-		            		</tbody>
-		            	</table>
-		            </div>
-				</div>
-	        </div>
-	    </div>
-	    <div class="panel panel-info">
-	        <div class="panel-heading">
-	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">${i18n.getTranslation('extrato.comissao.representante.mes')}&nbsp;<span class="title-periodo"></span></a>
-	            </h4>
-	        </div>
-	        <div id="collapseOne" class="panel-collapse collapse in">
-	            <div class="panel-body">
-	            	<div class="table-responsive">
-		            	<table id="table-meses" class="table table-striped table-hover table-condensed">
-		            		<thead>
-		            			<tr>
-		            				<th class="fs-txt-center">${i18n.getTranslation('data.entrada.pedido')}</th>
-		            				<th class="fs-txt-center">${i18n.getTranslation('valor')}</th>
-		            			</tr>
-		            		</thead>
-		            		<tbody>
-		            		</tbody>
-		            	</table>
-		            </div>
-				</div>
-	        </div>
-	    </div>
-	    <div class="panel panel-info">
-	        <div class="panel-heading">
-	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">${i18n.getTranslation('extrato.comissao.representante.resumo')}</a>
-	            </h4>
-	        </div>
-	        <div id="collapseOne" class="panel-collapse collapse in">
-	            <div class="panel-body">
-	            	<div class="table-responsive">
-		            	<table id="table-eventos" class="table table-striped table-hover table-condensed">
-		            		<thead>
-		            			<tr>
-		            				<th class="fs-txt-center">${i18n.getTranslation('codigo')}</th>
-		            				<th class="fs-txt-center">${i18n.getTranslation('descricao')}</th>
-		            				<th class="fs-txt-center">${i18n.getTranslation('valor.debito')}</th>
-		            				<th class="fs-txt-center">${i18n.getTranslation('valor.credito')}</th>
-		            			</tr>
-		            		</thead>
-		            		<tbody>
-		            		</tbody>
-		            	</table>
-		            </div>
-				</div>
-	        </div>
-	    </div>
-    </div>	
-	
+   	<div class="table-responsive">
+    	<table id="table-campanhas" class="table table-striped table-hover table-condensed">
+    		<thead>
+    			<tr>
+    				<th class="text-uppercase fs-txt-center">${i18n.getTranslation('cod')}</th>
+    				<th class="text-uppercase">${i18n.getTranslation('campanha')}</th>
+    				<th class="text-uppercase fs-txt-center">${i18n.getTranslation('posicao')}</th>
+    				<th class="text-uppercase fs-txt-center">${i18n.getTranslation('gp')}</th>
+    				<th class="text-uppercase fs-txt-center">${i18n.getTranslation('inicio')}</th>
+    				<th class="text-uppercase fs-txt-center">${i18n.getTranslation('final')}</th>
+    				<th class="text-uppercase fs-txt-center">${i18n.getTranslation('prorrogado')}</th>
+    				<th class="text-uppercase fs-txt-center">${i18n.getTranslation('apuracao')}</th>
+    				<th class="text-uppercase fs-txt-center">${i18n.getTranslation('acao')}</th>
+    			</tr>
+    		</thead>
+    		<tbody>
+    			<tr>
+    				<td class="fs-txt-center">1556</td>
+    				<td>AMERICAN PETS - VALOR VENDA</td>
+    				<td class="fs-txt-center">357/998</td>
+    				<td class="fs-txt-center">1</td>
+    				<td class="fs-txt-center">01/04/2017</td>
+    				<td class="fs-txt-center">30/06/2017</td>
+    				<td class="fs-txt-center">31/07/2017</td>
+    				<td class="fs-txt-center">31/07/2017</td>
+    				<td>
+    					<button type="button" class="btn btn-primary" onclick="$('#table-premissao').removeClass('fs-display-none')"><span class="fluigicon fluigicon-role-lists fluigicon-sm"></span>&nbsp;C</button>
+    					<button type="button" class="btn btn-danger" disabled>R$ 0,00&nbsp;<span class="fluigicon fluigicon-thumbs-down fluigicon-sm"></span></button>
+    				</td>
+    			</tr>
+    			<tr>
+    				<td class="fs-txt-center">1557</td>
+    				<td>AMERICAN - VALOR VENDA</td>
+    				<td class="fs-txt-center">2/998</td>
+    				<td class="fs-txt-center">1</td>
+    				<td class="fs-txt-center">01/04/2017</td>
+    				<td class="fs-txt-center">30/06/2017</td>
+    				<td class="fs-txt-center">31/07/2017</td>
+    				<td class="fs-txt-center">31/07/2017</td>
+    				<td>
+    					<button type="button" class="btn btn-primary" onclick="$('#table-premissao').removeClass('fs-display-none')"><span class="fluigicon fluigicon-role-lists fluigicon-sm"></span>&nbsp;C</button>
+    					<button type="button" class="btn btn-success">R$ 100,00&nbsp;<span class="fluigicon fluigicon-thumbs-up fluigicon-sm"></button>
+    				</td>
+    			</tr>
+    		</tbody>
+    	</table>
+    </div>
+   	<div class="table-responsive">
+    	<table id="table-premissao" class="table table-striped with-border table-hover table-condensed fs-display-none">
+    		<thead>
+    			<tr class="primary">
+    				<th class="fs-txt-center">${i18n.getTranslation('situacao')}</th>
+    				<th class="fs-txt-center">${i18n.getTranslation('gp')}</th>
+    				<th class="fs-txt-center">${i18n.getTranslation('ord')}</th>
+    				<th class="fs-txt-center">${i18n.getTranslation('rca')}</th>
+    				<th>${i18n.getTranslation('nome.rca')}</th>
+    				<th class="fs-txt-center">${i18n.getTranslation('apurado')}</th>
+    				<th class="fs-txt-center">${i18n.getTranslation('premiacao')}</th>
+    				<th>${i18n.getTranslation('equipe')}</th>
+    			</tr>
+    		</thead>
+    		<tbody>
+    			<tr class="success">
+    				<td class="fs-txt-center">Premiado</td>
+    				<td class="fs-txt-center">1</td>
+    				<td class="fs-txt-center">1</td>
+    				<td class="fs-txt-center">20683</td>
+    				<td>Marcelo</td>
+    				<td class="fs-txt-center">10.221,80</td>
+    				<td class="fs-txt-center"><span class="fluigicon fluigicon-certificate fluigicon-sm"></span>&nbsp;1.100,00</td>
+    				<td>Bahia 2</td>
+    			</tr>
+    			<tr class="success">
+    				<td class="fs-txt-center">Premiado</td>
+    				<td class="fs-txt-center">1</td>
+    				<td class="fs-txt-center">2</td>
+    				<td class="fs-txt-center">31940</td>
+    				<td>Anderson</td>
+    				<td class="fs-txt-center">7.790,77</td>
+    				<td class="fs-txt-center"><span class="fluigicon fluigicon-certificate fluigicon-sm"></span>&nbsp;1.000,00</td>
+    				<td>Norte 2</td>
+    			</tr>
+    			<tr class="success">
+    				<td class="fs-txt-center">Premiado</td>
+    				<td class="fs-txt-center">1</td>
+    				<td class="fs-txt-center">3</td>
+    				<td class="fs-txt-center">22860</td>
+    				<td>Anderson</td>
+    				<td class="fs-txt-center">7.550,16</td>
+    				<td class="fs-txt-center"><span class="fluigicon fluigicon-certificate fluigicon-sm"></span>&nbsp;900,00</td>
+    				<td>Rio de Janeiro</td>
+    			</tr>
+    			<tr class="success">
+    				<td class="fs-txt-center">Premiado</td>
+    				<td class="fs-txt-center">1</td>
+    				<td class="fs-txt-center">4</td>
+    				<td class="fs-txt-center">22046</td>
+    				<td>Donato</td>
+    				<td class="fs-txt-center">7.337,02</td>
+    				<td class="fs-txt-center"><span class="fluigicon fluigicon-certificate fluigicon-sm"></span>&nbsp;800,00</td>
+    				<td>Rio de Janeiro</td>
+    			</tr>
+    			<tr class="success">
+    				<td class="fs-txt-center">Premiado</td>
+    				<td class="fs-txt-center">1</td>
+    				<td class="fs-txt-center">5</td>
+    				<td class="fs-txt-center">12725</td>
+    				<td>Joao Alves</td>
+    				<td class="fs-txt-center">7.312,06</td>
+    				<td class="fs-txt-center"><span class="fluigicon fluigicon-certificate fluigicon-sm"></span>&nbsp;700,00</td>
+    				<td>Minas Gerais 4</td>
+    			</tr>
+    			<tr>
+    				<td></td>
+    				<td class="fs-txt-center">1</td>
+    				<td class="fs-txt-center">6</td>
+    				<td class="fs-txt-center">12725</td>
+    				<td>Joao Alves</td>
+    				<td class="fs-txt-center">7.312,06</td>
+    				<td></td>
+    				<td>Minas Gerais 4</td>
+    			</tr>
+    			<tr>
+    				<td></td>
+    				<td class="fs-txt-center">1</td>
+    				<td class="fs-txt-center">7</td>
+    				<td class="fs-txt-center">12725</td>
+    				<td>Joao Alves</td>
+    				<td class="fs-txt-center">7.312,06</td>
+    				<td></td>
+    				<td>Minas Gerais 4</td>
+    			</tr>
+    			<tr>
+    				<td class="fs-txt-center" colspan="8"><button type="button" class="btn btn-default" onclick="$('#table-premissao').addClass('fs-display-none')">Fechar</button></td>
+    			</tr>
+    		</tbody>
+    	</table>
+    </div>
 </div>
 
 <script type="text/javascript" src="/webdesk/vcXMLRPC.js"></script>
+

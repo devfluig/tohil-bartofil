@@ -1,4 +1,6 @@
 /* Coloque aqui seu codigo CSS */
-.panel-centered {
-	text-align: center;
+.with-border {
+	border: 2px solid #f0f0f0;
+    padding: 10px;
+    box-shadow: 2px 2px #d1e0e0;
 }
