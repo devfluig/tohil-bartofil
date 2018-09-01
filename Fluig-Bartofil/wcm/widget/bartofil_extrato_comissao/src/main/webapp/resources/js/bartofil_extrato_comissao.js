@@ -1,12 +1,11 @@
 var extratocampanha = SuperWidget.extend({
 	
-	loading: FLUIGC.loading(window),
-	groupmanager: "RCA-Coordenador",
-	grouprca: "RCA-Representante",
+	groupmanager: "COORDENADORES",
+	grouprca: "RCA",
 
 	init : function() {
 		$(".pageTitle").parent().remove();
-		this.loading.show();
+		FLUIGC.loading(window).show();
 		
 		if (this.ismanager()) {
 			this.showrepresentative();
@@ -34,7 +33,7 @@ var extratocampanha = SuperWidget.extend({
 	},
 	
 	listcomissoes: function(el, ev) {
-		this.loading.show();
+		FLUIGC.loading(window).show();
 		this.getrepresentante($('#listrepresentatives').val());
 	},
 	
@@ -116,7 +115,7 @@ var extratocampanha = SuperWidget.extend({
 	
 	getcomissoes: function(el, ev) {
 
-		this.loading.show();
+		FLUIGC.loading(window).show();
 
 		var mes = $("#periodo :selected").data("month");
 		var ano = $("#periodo :selected").data("year");
@@ -130,25 +129,25 @@ var extratocampanha = SuperWidget.extend({
 		var rows = DatasetFactory.getDataset("ds_comissoes", null, [c1, c2, c3], null);
 		
 		if (!rows) {
-			this.loading.hide();
+			FLUIGC.loading(window).hide();
 			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
 			return;
 		}
 		var values = rows["values"];
 		if (!values) {
-			this.loading.hide();
+			FLUIGC.loading(window).hide();
 			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
 			return;
 		}
 		
 		if (values.length == 0) {
-			this.loading.hide();
+			FLUIGC.loading(window).hide();
 			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
 			return;
 		} 
 		
 		if (values[0].descevento == "erro") {
-			this.loading.hide();
+			FLUIGC.loading(window).hide();
 			WCMC.messageError(values[0].situacao);	    			
 			return;
 		}
@@ -175,9 +174,9 @@ var extratocampanha = SuperWidget.extend({
 		
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
-			var dl = moment(row["datalancamento"]).format("DD/MM/YYYY");
-			var dp = moment(row["datapagamento"]).format("MMMM/YYYY");
-			html += "<tr class='" + (row["debcredito"] == "D" ? 'danger' : 'success') + "'><td>" + dl + "</td><td>" + row["codevento"] + "</td><td>" + row["nrocarga"] + "</td><td>" + row["nrodocumento"] + "</td><td>" + row["anomes"] + "</td><td class='fs-txt-center'>" + row["nroparcela"] + "</td><td>" + row["historico"] + "</td><td class='fs-txt-right'>" + row["valor"] + "</td><td class='fs-txt-center'>" + row["debcredito"] + "</td></tr>";
+			var dl = moment(row["datalancamento"]);
+			var dp = moment(row["datapagamento"]);
+			html += "<tr class='" + (row["debcredito"] == "D" ? 'danger' : 'success') + "'><td>" + (dl.isValid() ? dl.format("DD/MM/YYYY") : "") + "</td><td>" + row["codevento"] + "</td><td>" + row["nrocarga"] + "</td><td>" + row["nrodocumento"] + "</td><td>" + row["anomes"] + "</td><td class='fs-txt-center'>" + row["nroparcela"] + "</td><td>" + row["historico"] + "</td><td class='fs-txt-right'>" + row["valor"] + "</td><td class='fs-txt-center'>" + row["debcredito"] + "</td></tr>";
 		
 			var v = parseFloat(row["valor"].replace(/,/g, '').replace(",", "."));
 			if (!totais[row["debcredito"]]) {
@@ -193,10 +192,12 @@ var extratocampanha = SuperWidget.extend({
 				eventos[row["codevento"]].debitos += (row["debcredito"] == "D" ? v : 0);
 				eventos[row["codevento"]].creditos += (row["debcredito"] == "C" ? v : 0);
 			}
-			if (!meses[dp]) {
-				meses[dp] = { "valor": v };
-			} else {
-				meses[dp].valor += v;
+			if (dp.isValid()) {
+				if (!meses[dp.format("MMMM/YYYY")]) {
+					meses[dp.format("MMMM/YYYY")] = { "valor": v };
+				} else {
+					meses[dp.format("MMMM/YYYY")].valor += v;
+				}
 			}
 		}
 		
@@ -236,7 +237,7 @@ var extratocampanha = SuperWidget.extend({
 		
 		$('#table-meses > tbody').html(html);
 		
-		this.loading.hide();
+		FLUIGC.loading(window).hide();
 		
 	},
 
@@ -260,7 +261,7 @@ var extratocampanha = SuperWidget.extend({
 	
 	getrepresentante: function(user) {
 
-		this.loading.show();
+		FLUIGC.loading(window).show();
 		
 		$(".input-contato").val("");
 		
@@ -268,25 +269,25 @@ var extratocampanha = SuperWidget.extend({
 		var rows = DatasetFactory.getDataset("ds_representante", null, [c1], null);
 		
 		if (!rows) {
-			this.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrato")}');	    			
+			FLUIGC.loading(window).hide();
+			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrado")}');	    			
 			return;
 		}
 		var values = rows["values"];
 		if (!values) {
-			this.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrato")}');	    			
+			FLUIGC.loading(window).hide();
+			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrado")}');	    			
 			return;
 		}
 		
 		if (values.length == 0) {
-			this.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrato")}');	    			
+			FLUIGC.loading(window).hide();
+			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrado")}');	    			
 			return;
 		} 
 		
 		if (values[0].enderuf == "erro") {
-			this.loading.hide();
+			FLUIGC.loading(window).hide();
 			WCMC.messageError(values[0].apelido);	    			
 			return;
 		}
