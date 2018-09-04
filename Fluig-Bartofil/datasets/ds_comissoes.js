@@ -18,13 +18,13 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("codevento");
 	dataset.addColumn("nropedidovenda");
 	
-	var representante = "20009";
+	var pessoa = "12252";
 	var mes = "08";
 	var ano = "2018";
 	if (constraints != null) {
 		for (var c in constraints){
-			if (constraints[c].getFieldName() == "representante"){
-				representante = constraints[c].getInitialValue(); 
+			if (constraints[c].getFieldName() == "pessoa"){
+				pessoa = constraints[c].getInitialValue(); 
 			} else if (constraints[c].getFieldName() == "mes"){
 				mes = constraints[c].getInitialValue(); 
 			} else if (constraints[c].getFieldName() == "ano"){
@@ -41,7 +41,7 @@ function createDataset(fields, constraints, sortFields) {
         var data = {
             companyId : getValue("WKCompany") + '',
             serviceCode : 'RCA',
-            endpoint : "/v1/comissao?sessionid=123abc&codrepresentante=" + representante + "&mes=" + mes + "&ano=" + ano + "&order=codlancamento&offset=0&limit=10",
+            endpoint : "/v1/comissao?sessionid=123abc&codpessoarepresentante=" + pessoa + "&anomes=" + ano + "" + mes + "&order=codlancamento&offset=0&limit=999",
             method : 'get',     
             timeoutService: '1000',
 	        options : {

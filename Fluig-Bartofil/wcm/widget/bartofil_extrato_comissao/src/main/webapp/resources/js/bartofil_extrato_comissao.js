@@ -2,22 +2,25 @@ var extratocampanha = SuperWidget.extend({
 	
 	groupmanager: "COORDENADORES",
 	grouprca: "RCA",
+	current: null,
+	loading: FLUIGC.loading(window),
 
 	init : function() {
 		$(".pageTitle").parent().remove();
-		FLUIGC.loading(window).show();
+		extratocampanha.loading.show();
 		
 		if (this.ismanager()) {
 			this.showrepresentative();
 		} else {
 			
-			var list = [{ "id": WCMAPI.userCode, "name": WCMAPI.userCode + " - " + WCMAPI.user }];
+			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
 			var tpl = $('.tpl-representante').html();
 			var data = { "items": list};
 			var html = Mustache.render(tpl, data);
 			$('#listrepresentatives').append(html);
 			
 			this.setupperiodo();
+			this.getrepresentante(WCMAPI.userLogin);
 		}
 	},
 
@@ -33,7 +36,7 @@ var extratocampanha = SuperWidget.extend({
 	},
 	
 	listcomissoes: function(el, ev) {
-		FLUIGC.loading(window).show();
+		extratocampanha.loading.show();
 		this.getrepresentante($('#listrepresentatives').val());
 	},
 	
@@ -52,12 +55,12 @@ var extratocampanha = SuperWidget.extend({
 
 		var dataset = DatasetFactory.getDataset("ds_lista_usuarios_grupo", null, [c1], null);
 		if (dataset && dataset.values && dataset.values.length > 0) {
-			var list = [{ "id": WCMAPI.userCode, "name": WCMAPI.userCode + " - " + WCMAPI.user }];
+			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
 			var values = dataset["values"];
 			for (var i=0; i<values.length; i++) {
 				var row = values[i];
 				if (WCMAPI.userCode != row["colleagueId"]) {
-					var o = { "id": row["colleagueId"], "name": row["colleagueId"] + " - " + row["colleagueName"] }
+					var o = { "id": row["login"], "name": row["login"] + " - " + row["colleagueName"] }
 					list.push(o);
 				}
 			}
@@ -76,10 +79,10 @@ var extratocampanha = SuperWidget.extend({
 			$(".nav-representative").removeClass("fs-display-none");
 			
 			this.setupperiodo();
-			this.getrepresentante(WCMAPI.userCode);
+			this.getrepresentante(WCMAPI.userLogin);
 		} else {
 			this.setupperiodo();
-			this.getrepresentante(WCMAPI.userCode);
+			this.getrepresentante(WCMAPI.userLogin);
 		}
 		
 	},
@@ -115,42 +118,36 @@ var extratocampanha = SuperWidget.extend({
 	
 	getcomissoes: function(el, ev) {
 
-		FLUIGC.loading(window).show();
+		extratocampanha.loading.show();
 
+		$('#table-lancamentos > tbody').html("");
+		$('#table-eventos > tbody').html("");
+		$('#table-meses > tbody').html("");
+		
 		var mes = $("#periodo :selected").data("month");
 		var ano = $("#periodo :selected").data("year");
 		
-		var c1 = DatasetFactory.createConstraint("representante", $('#listrepresentatives').val(), $('#listrepresentatives').val(), ConstraintType.MUST, false);
+		var c1 = DatasetFactory.createConstraint("pessoa", extratocampanha.current, extratocampanha.current, ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("ano", ano, ano, ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("mes", mes, mes, ConstraintType.MUST, false);
 
-		console.log($('#listrepresentatives').val(), ano, mes)
+		console.log(extratocampanha.current, ano, mes)
 		
-		var rows = DatasetFactory.getDataset("ds_comissoes", null, [c1, c2, c3], null);
+		DatasetFactory.getDataset("ds_comissoes", null, [c1, c2, c3], null, {"success": extratocampanha.onreadygetcomissoes} );
 		
-		if (!rows) {
-			FLUIGC.loading(window).hide();
+		
+	},
+
+	onreadygetcomissoes: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			extratocampanha.loading.hide();
 			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
 			return;
 		}
+		
+		var mes = $("#periodo :selected").data("month");
+		var ano = $("#periodo :selected").data("year");
 		var values = rows["values"];
-		if (!values) {
-			FLUIGC.loading(window).hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
-			return;
-		}
-		
-		if (values.length == 0) {
-			FLUIGC.loading(window).hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
-			return;
-		} 
-		
-		if (values[0].descevento == "erro") {
-			FLUIGC.loading(window).hide();
-			WCMC.messageError(values[0].situacao);	    			
-			return;
-		}
 		
 		$('#table-lancamentos > tbody').html("");
 		$('#table-eventos > tbody').html("");
@@ -175,7 +172,6 @@ var extratocampanha = SuperWidget.extend({
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
 			var dl = moment(row["datalancamento"]);
-			var dp = moment(row["datapagamento"]);
 			html += "<tr class='" + (row["debcredito"] == "D" ? 'danger' : 'success') + "'><td>" + (dl.isValid() ? dl.format("DD/MM/YYYY") : "") + "</td><td>" + row["codevento"] + "</td><td>" + row["nrocarga"] + "</td><td>" + row["nrodocumento"] + "</td><td>" + row["anomes"] + "</td><td class='fs-txt-center'>" + row["nroparcela"] + "</td><td>" + row["historico"] + "</td><td class='fs-txt-right'>" + row["valor"] + "</td><td class='fs-txt-center'>" + row["debcredito"] + "</td></tr>";
 		
 			var v = parseFloat(row["valor"].replace(/,/g, '').replace(",", "."));
@@ -187,17 +183,10 @@ var extratocampanha = SuperWidget.extend({
 			}
 			
 			if (!eventos[row["codevento"]]) {
-				eventos[row["codevento"]] = { "descricao": row["descevento"], "debitos": (row["debcredito"] == "D" ? v : 0), "creditos": (row["debcredito"] == "D" ? v : 0)};
+				eventos[row["codevento"]] = { "descricao": row["descevento"], "debitos": (row["debcredito"] == "D" ? v : 0), "creditos": (row["debcredito"] == "C" ? v : 0)};
 			} else {
 				eventos[row["codevento"]].debitos += (row["debcredito"] == "D" ? v : 0);
 				eventos[row["codevento"]].creditos += (row["debcredito"] == "C" ? v : 0);
-			}
-			if (dp.isValid()) {
-				if (!meses[dp.format("MMMM/YYYY")]) {
-					meses[dp.format("MMMM/YYYY")] = { "valor": v };
-				} else {
-					meses[dp.format("MMMM/YYYY")].valor += v;
-				}
 			}
 		}
 		
@@ -212,35 +201,79 @@ var extratocampanha = SuperWidget.extend({
 			qtde += totais["D"].qtde;
 		}
 		
-		html += '<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("totais")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("valor")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("qtd")}</strong></td></tr>' +
-			'<tr class="danger"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("debitos")}</strong></td><td class="fs-txt-right">' + (totais["D"] ? this.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["D"] ? totais["D"].qtde : "0") + '</td></tr>' +
-			'<tr class="success"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("creditos")}</strong></td><td class="fs-txt-right">' + (totais["C"] ? this.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["C"] ? totais["C"].qtde : "0") + '</td></tr>' + 
-			'<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("total.geral")}</strong></td><td class="fs-txt-right">' + this.mask(total.toFixed(2)) + '</td><td class="fs-txt-center">' + qtde + '</td></tr>';
-		 
 		$('#table-lancamentos > tbody').html(html);
 		
+		html = '<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("totais")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("valor")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("qtd")}</strong></td></tr>' +
+			'<tr class="danger"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("debitos")}</strong></td><td class="fs-txt-right">' + (totais["D"] ? extratocampanha.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["D"] ? totais["D"].qtde : "0") + '</td></tr>' +
+			'<tr class="success"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("creditos")}</strong></td><td class="fs-txt-right">' + (totais["C"] ? extratocampanha.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["C"] ? totais["C"].qtde : "0") + '</td></tr>' + 
+			'<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("total.geral")}</strong></td><td class="fs-txt-right">' + extratocampanha.mask(total.toFixed(2)) + '</td><td class="fs-txt-center">' + qtde + '</td></tr>';
+		 
+		$('#table-lancamentos > tfoot').html(html);
+
 		html = "";
 		for (var key in eventos) {
 			var ev = eventos[key];
-			html += '<tr><td>' + key + '</td><td>' + ev["descricao"] + '</td><td class="fs-txt-right">' + this.mask(ev["debitos"].toFixed(2)) + '</td><td class="fs-txt-right">' + this.mask(ev["creditos"].toFixed(2)) + '</td></tr>'; 
+			html += '<tr><td>' + key + '</td><td>' + ev["descricao"] + '</td><td class="fs-txt-right">' + extratocampanha.mask(ev["debitos"].toFixed(2)) + '</td><td class="fs-txt-right">' + extratocampanha.mask(ev["creditos"].toFixed(2)) + '</td></tr>'; 
 		}
 		
-		html += '<tr class="warning"><td></td><td class="fs-txt-right">TOTAL:</td><td class="fs-txt-right">' + (totais["D"] ? this.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-right">' + (totais["C"] ? this.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</td></tr>';
+		html += '<tr class="warning"><td></td><td class="fs-txt-right">TOTAL:</td><td class="fs-txt-right">' + (totais["D"] ? extratocampanha.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-right">' + (totais["C"] ? extratocampanha.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</td></tr>';
 		
 		$('#table-eventos > tbody').html(html);
 		
-		html = "";
-		for (var key in meses) {
-			var ev = meses[key];
-			html += '<tr><td>' + key + '</td><td class="fs-txt-right">' + this.mask(ev["valor"].toFixed(2)) + '</td></tr>'; 
-		}
+		extratocampanha.getnotafiscal();
 		
-		$('#table-meses > tbody').html(html);
-		
-		FLUIGC.loading(window).hide();
 		
 	},
+	
+	getnotafiscal: function(el, ev) {
 
+		$('#table-meses > tbody').html("");
+		
+		var mes = $("#periodo :selected").data("month");
+		var ano = $("#periodo :selected").data("year");
+		
+		var c1 = DatasetFactory.createConstraint("pessoa", extratocampanha.current, extratocampanha.current, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("ano", ano, ano, ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("mes", mes, mes, ConstraintType.MUST, false);
+
+		console.log(extratocampanha.current, ano, mes)
+		
+		DatasetFactory.getDataset("ds_nota_fiscal", null, [c1, c2, c3], null, {"success": extratocampanha.onreadygetnotafiscal} );
+		
+		
+	},
+	
+	onreadygetnotafiscal: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			extratocampanha.loading.hide();
+			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
+			return;
+		}
+		var html = "";
+		var values = rows["values"];
+		if (values[0].valor == "erro") {
+			extratocampanha.loading.hide();
+			html = "<tr><td colspan=2 class='fs-txt-center'>" + values[0].datapedido + "</td></tr>";
+			$('#table-meses > tbody').html(html);
+			return;
+		}
+		
+		for (var i=0; i<values.length; i++) {
+			var row = values[i];
+			var dt = row["datapedido"].split("-");
+			var pedido = new Date();
+			if (dt.length == 2) {
+				pedido = new Date(+(dt[0]), +(dt[1]) - 1, 1);
+			}
+			var m = moment(pedido);
+			var v = parseFloat(row["valor"].replace(/,/g, '').replace(",", "."));
+			html += '<tr><td>' + m.format("MMMM/YYYY") + '</td><td class="fs-txt-right">' + extratocampanha.mask(v.toFixed(2)) + '</td></tr>';
+		}		
+		$('#table-meses > tbody').html(html);
+		extratocampanha.loading.hide();
+		
+	},
+	
 	mask: function (valor) {
 	    valor = valor.toString().replace(/\D/g,"");
 	    valor = valor.toString().replace(/(\d)(\d{8})$/,"$1.$2");
@@ -261,38 +294,46 @@ var extratocampanha = SuperWidget.extend({
 	
 	getrepresentante: function(user) {
 
-		FLUIGC.loading(window).show();
+		extratocampanha.loading.show();
+		
+		extratocampanha.current = null;
 		
 		$(".input-contato").val("");
 		
-		var c1 = DatasetFactory.createConstraint("representante", user, user, ConstraintType.MUST, false);
-		var rows = DatasetFactory.getDataset("ds_representante", null, [c1], null);
+		var c1 = DatasetFactory.createConstraint("representante", user, user, ConstraintType.MUST);
+		DatasetFactory.getDataset("ds_representante", null, [c1], null, {"success": extratocampanha.onreadygetrepresentante });
 		
+	},
+	
+	onreadygetrepresentante: function(rows) {
+		console.log("onreadygetrepresentante");
 		if (!rows) {
-			FLUIGC.loading(window).hide();
+			extratocampanha.loading.hide();
 			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrado")}');	    			
 			return;
 		}
 		var values = rows["values"];
 		if (!values) {
-			FLUIGC.loading(window).hide();
+			extratocampanha.loading.hide();
 			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrado")}');	    			
 			return;
 		}
 		
 		if (values.length == 0) {
-			FLUIGC.loading(window).hide();
+			extratocampanha.loading.hide();
 			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrado")}');	    			
 			return;
 		} 
 		
 		if (values[0].enderuf == "erro") {
-			FLUIGC.loading(window).hide();
+			extratocampanha.loading.hide();
 			WCMC.messageError(values[0].apelido);	    			
 			return;
 		}
 		
+		
 		var row = values[0];
+		extratocampanha.current = row["codpessoarepresentante"];
 		$("#nome").val(row["nomerazao"]);
 		$("#sequenciapessoa").val(row["codpessoarepresentante"]);
 		$("#contato").val(row["apelido"]);
@@ -323,9 +364,13 @@ var extratocampanha = SuperWidget.extend({
 			$("#cpfcnpj").mask("99.999.999/9999-99");
 		}
 		
-		this.getcomissoes();
-	},
+		extratocampanha.getcomissoes();
+	}
 
 	
 
 });
+
+var onreadygetrepresentante = function(rows) {
+	
+}
