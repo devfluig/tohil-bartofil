@@ -1,7 +1,7 @@
 function createDataset(fields, constraints, sortFields) {
 	
 	var dataset = DatasetBuilder.newDataset();
-	dataset.addColumn("colleagueId");
+	dataset.addColumn("login");
 	dataset.addColumn("colleagueName");
 	
 	var grupo = "RCA-Representante";

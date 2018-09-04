@@ -140,7 +140,7 @@
 	            </div>
 	        </div>
 	    </div>
-	    <div class="panel panel-info detalhado">
+	    <div class="panel panel-info">
 	        <div class="panel-heading">
 	            <h4 class="panel-title fs-txt-center">
 	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">${i18n.getTranslation('extrato.comissao.representante.detalhado')}</a>
@@ -150,7 +150,7 @@
 	            <div class="panel-body">
 	            	<div class="table-responsive">
 		            	<table id="table-lancamentos" class="table table-striped table-hover table-condensed">
-		            		<thead>
+		            		<thead class="detalhado">
 		            			<tr>
 		            				<th>${i18n.getTranslation('data.lancto')}</th>
 		            				<th>${i18n.getTranslation('evt')}</th>
@@ -163,8 +163,10 @@
 		            				<th class="fs-txt-center">${i18n.getTranslation('d.c')}</th>
 		            			</tr>
 		            		</thead>
-		            		<tbody>
+		            		<tbody class="detalhado">
 		            		</tbody>
+		            		<tfoot>
+		            		</tfoot>
 		            	</table>
 		            </div>
 				</div>

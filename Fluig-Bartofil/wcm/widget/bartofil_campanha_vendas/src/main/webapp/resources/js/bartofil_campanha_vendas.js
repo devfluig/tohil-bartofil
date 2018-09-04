@@ -1,14 +1,9 @@
-var extratocampanha = SuperWidget.extend({
+var campanhavendas = SuperWidget.extend({
 	
 	loading: FLUIGC.loading(window),
 
 	init : function() {
 		$(".pageTitle").parent().remove();
-
-		this.loading.show();
-		
-		this.setupperiodo();
-
 	},
 
 	bindings : {
