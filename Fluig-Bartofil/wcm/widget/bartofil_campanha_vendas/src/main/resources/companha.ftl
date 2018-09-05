@@ -5,62 +5,31 @@
 		<h1>${i18n.getTranslation('diculgacao.campanha')}</h1>
 	</div>
 
-	<form class="form-inline" role="form">
-		<label>${i18n.getTranslation('ordernar.por')}:</label>
-    	<div class="form-group">
-    		<select class="form-control" id="ordenar" data-change-ordenar>
-    			<option value="1">${i18n.getTranslation('data.prorrogado')}</option>
-    		</select>
-    	</div>
-		<label>${i18n.getTranslation('por.pagina')}:</label>
-    	<div class="form-group">
-    		<select class="form-control" id="ordenar" data-change-ordenar>
-    			<option value="10">10</option>
-    			<option value="20">20</option>
-    			<option value="50">50</option>
-    			<option value="100">100</option>
-    		</select>
-    	</div>
-		<label>${i18n.getTranslation('busca')}:</label>
-        <div class="form-group">
-            <input type="text" class="form-control" id="busca" placeholder="${i18n.getTranslation('digite.texto')}">
-        </div>
-	</form>
+	<div class="row">
+		<form class="navbar-form navbar-left" role="search">
+			<label>${i18n.getTranslation('ordernar.por')}:</label>
+	    	<div class="form-group">
+	    		<select class="form-control" id="ordenar" data-change-ordenar>
+	    			<option value="1">${i18n.getTranslation('data.prorrogado')}</option>
+	    		</select>
+	    	</div>
+			<label>${i18n.getTranslation('por.pagina')}:</label>
+	    	<div class="form-group">
+	    		<select class="form-control" id="ordenar" data-change-ordenar>
+	    			<option value="10">10</option>
+	    			<option value="20">20</option>
+	    			<option value="50">50</option>
+	    			<option value="100">100</option>
+	    		</select>
+	    	</div>
+			<label>${i18n.getTranslation('busca')}:</label>
+	        <div class="form-group">
+	            <input type="text" class="form-control" id="busca" placeholder="${i18n.getTranslation('digite.texto')}">
+	        </div>
+		</form>
+	</div>	
 	
-	<div class="row clearfix">
-	    <div class="col-sm-6 col-md-4">
-	        <div class="thumbnail">
-	            <img data-src="/images/campanha1.png" alt="...">
-	            <div class="caption">
-	                <h3>OUROFINO-VALOR DE VENDA</h3>
-	                <p>...</p>
-	                <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-	            </div>
-	        </div>
-	    </div>
-	    <div class="col-sm-6 col-md-4">
-	        <div class="thumbnail">
-	            <img data-src="/images/campanha1.png" alt="...">
-	            <div class="caption">
-	                <h3>OUROFINO-VALOR DE VENDA</h3>
-	                <p>...</p>
-	                <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-	            </div>
-	        </div>
-	    </div>
-	    <div class="col-sm-6 col-md-4">
-	        <div class="thumbnail">
-	            <img data-src="/images/campanha1.png" alt="...">
-	            <div class="caption">
-	                <h3>OUROFINO-VALOR DE VENDA</h3>
-	                <p>...</p>
-	                <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-	            </div>
-	        </div>
-	    </div>
-	</div>
-	
-   	<div class="table-responsive fs-display-none">
+   	<div class="table-responsive">
     	<table id="table-campanhas" class="table table-striped table-hover table-condensed">
     		<thead>
     			<tr>

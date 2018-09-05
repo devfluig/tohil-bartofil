@@ -20,14 +20,14 @@ function createDataset(fields, constraints, sortFields) {
 	}
 	
 	try {
-		var json = '{"dados":[{"datapedido":"2018-09","valor":"1000"}]}';
+//		var json = '{"dados":[{"datapedido":"2018-09","valor":"1000"}]}';
 //		log.info("ds_comissoes")
-		/*
+		
         var clientService = fluigAPI.getAuthorizeClientService();
         var data = {
             companyId : getValue("WKCompany") + '',
             serviceCode : 'RCA',
-            endpoint : "/v1/notafiscal?sessionid=123abc&codpessoarepresentante=" + pessoa + "&mesanofaturamento=" + ano + "" + mes + "&resume=S&order=datapedido&offset=0&limit=999",
+            endpoint : "/v1/notafiscal?sessionid=123abc&fields=datapedido,valor&codpessoarepresentante=" + pessoa + "&mesanofaturamento=" + ano + "" + mes + "&resume=S&order=datapedido&offset=0&limit=999",
             method : 'get',     
             timeoutService: '1000',
 	        options : {
@@ -37,9 +37,9 @@ function createDataset(fields, constraints, sortFields) {
         var vo = clientService.invoke(JSON.stringify(data));
         if (vo.getResult()== null || vo.getResult().isEmpty()) {
         	dataset.addRow(new Array("erro", "Sem pedidos para o periodo solicitado " + mes + "/" + ano)); 
-        } else {*/
-            var result = JSON.parse(json);
-//            var result = JSON.parse(vo.getResult());
+        } else {
+//            var result = JSON.parse(json);
+            var result = JSON.parse(vo.getResult());
             var list = result["dados"];
             for (var i=0; i<list.length; i++) {
             	var dados = list[i];
@@ -47,7 +47,7 @@ function createDataset(fields, constraints, sortFields) {
 			    		 dados["datapedido"]));
             }
             
-//        }
+         }
     } catch(err) {
     	log.info(err.message)
     	dataset.addRow(new Array("erro", "Sem pedidos para o periodo solicitado " + mes + "/" + ano)); 
