@@ -1,5 +1,5 @@
 <div id="campanha_vendas_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide widget-campanha"
-	data-params="campanhavendas.instance({instanceId: ${instanceId}, foldercampanha: '${foldercampanha!''}'})">
+	data-params="campanhavendas.instance()">
 
 	<div class="page-header">
 		<h1>${i18n.getTranslation('divulgacao.campanha')}</h1>
@@ -33,18 +33,103 @@
 		<div class="row clearfix itens-campanha">
 	        {{#items}}
 				<div class="col-sm-4 col-md-3">
-				    <div class="thumbnail" data-click-campanha data-id="{{id}}">
-				        <img id="img{{id}}" src="{{image}}" style="height: 300px;">
+				    <div class="thumbnail" data-click-campanha data-id="{id}">
+				        <img src="{image}" style="height: 300px;">
 				        <div class="caption">
-				            <h4>{{id}} - {{descricao}}</h4>
-				            <p>{{{posicao}}}<button type="button" class="btn {{classbutton}} fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
-				            <p style="padding-top: 10px;"><span class="label label-default">Iniciado em {{dainiciado}}</span><span class="label {{classlabel}}">{{labelfim}}</span></p>
+				            <h3>{codigo} - {descricao}</h3>
+				            <p>{posicao}<button type="button" class="btn {classbutton} fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
+				            <p style="padding-top: 10px;"><span class="label label-default">Iniciado em {dainiciado}</span><span class="label {classlabel}">{labelfim}</span></p>
 				        </div>
 				    </div>
 				</div>
 	        {{/items}}
 	    </div>
     </script>
+	
+	
+		<div class="col-sm-4 col-md-3">
+	        <div class="thumbnail" data-click-campanha>
+	            <img src="/bartofil_campanha_vendas/resources/images/campanha1.png" style="height: 300px;">
+	            <div class="caption">
+	                <h3>OUROFINO-VALOR DE VENDA</h3>
+	                <p>Posição <strong>6<span class="fluigicon fluigicon-certificate"></span></strong> de <strong>544</strong><button type="button" class="btn btn-success fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
+	                <p style="padding-top: 10px;"><span class="label label-default">Iniciado em 01/04/2018</span><span class="label label-danger">Encerrada em 31/08/2018</span></p>
+	            </div>
+	        </div>
+	    </div>
+		<div class="col-sm-4 col-md-3">
+	        <div class="thumbnail" data-click-campanha>
+	            <img src="/bartofil_campanha_vendas/resources/images/no-img.png" style="height: 300px;">
+	            <div class="caption">
+	                <h3>OUROFINO-VALOR DE VENDA</h3>
+	                <p>Posição <strong>101</span></strong> de <strong>644</strong><button type="button" class="btn btn-default fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
+	                <p style="padding-top: 10px;"><span class="label label-default">Iniciado em 01/04/2018</span><span class="label label-warning">Prorrogado até 31/12/2018</span></p>
+	            </div>
+	        </div>
+	    </div>
+		<div class="col-sm-4 col-md-3">
+	        <div class="thumbnail" data-click-campanha>
+	            <img src="/bartofil_campanha_vendas/resources/images/campanha3.png" style="height: 300px;">
+	            <div class="caption">
+	                <h3>OUROFINO-VALOR DE VENDA</h3>
+	                <p>Sem pontuação<button type="button" class="btn btn-default fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
+	                <p style="padding-top: 10px;"><span class="label label-default">Iniciado em 01/04/2018</span><span class="label label-info">Encerra em 31/12/2018</span></p>
+	            </div>
+	        </div>
+	    </div>
+		<div class="col-sm-4 col-md-3">
+	        <div class="thumbnail" data-click-campanha>
+	            <img src="/bartofil_campanha_vendas/resources/images/campanha2.png" style="height: 300px;">
+	            <div class="caption">
+	                <h3>OUROFINO-VALOR DE VENDA</h3>
+	                <p>Posição <strong>6<span class="fluigicon fluigicon-certificate"></span></strong> de <strong>544</strong><button type="button" class="btn btn-success fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
+	                <p style="padding-top: 10px;"><span class="label label-default">Iniciado em 01/04/2018</span><span class="label label-warning">Prorrogado até 31/12/2018</span></p>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<div class="row clearfix itens-campanha">
+		<div class="col-sm-4 col-md-3">
+	        <div class="thumbnail" data-click-campanha>
+	            <img src="/bartofil_campanha_vendas/resources/images/campanha4.png" style="height: 300px;">
+	            <div class="caption">
+	                <h3>OUROFINO-VALOR DE VENDA</h3>
+	                <p>Posição <strong>6<span class="fluigicon fluigicon-certificate"></span></strong> de <strong>544</strong><button type="button" class="btn btn-success fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
+	                <p style="padding-top: 10px;"><span class="label label-default">Iniciado em 01/04/2018</span><span class="label label-info">Encerra em 31/12/2018</span></p>
+	            </div>
+	        </div>
+	    </div>
+		<div class="col-sm-4 col-md-3">
+	        <div class="thumbnail" data-click-campanha>
+	            <img src="/bartofil_campanha_vendas/resources/images/campanha5.png" style="height: 300px;">
+	            <div class="caption">
+	                <h3>OUROFINO-VALOR DE VENDA</h3>
+	                <p>Posição <strong>6<span class="fluigicon fluigicon-certificate"></span></strong> de <strong>544</strong><button type="button" class="btn btn-success fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
+	                <p style="padding-top: 10px;"><span class="label label-default">Iniciado em 01/04/2018</span><span class="label label-info">Encerra em 31/12/2018</span></p>
+	            </div>
+	        </div>
+	    </div>
+		<div class="col-sm-4 col-md-3">
+	        <div class="thumbnail" data-click-campanha>
+	            <img src="/bartofil_campanha_vendas/resources/images/no-img.png" style="height: 300px;">
+	            <div class="caption">
+	                <h3>OUROFINO-VALOR DE VENDA</h3>
+	                <p>Posição <strong>6<span class="fluigicon fluigicon-certificate"></span></strong> de <strong>544</strong><button type="button" class="btn btn-success fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
+	                <p style="padding-top: 10px;"><span class="label label-default">Iniciado em 01/04/2018</span><span class="label label-danger">Encerrada em 31/07/2018</span></p>
+	            </div>
+	        </div>
+	    </div>
+		<div class="col-sm-4 col-md-3">
+	        <div class="thumbnail" data-click-campanha>
+	            <img src="/bartofil_campanha_vendas/resources/images/campanha6.png" style="height: 300px;">
+	            <div class="caption">
+	                <h3>OUROFINO-VALOR DE VENDA</h3>
+	                <p>Posição <strong>6<span class="fluigicon fluigicon-certificate"></span></strong> de <strong>544</strong><button type="button" class="btn btn-success fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
+	                <p style="padding-top: 10px;"><span class="label label-default">Iniciado em 01/04/2018</span><span class="label label-info">Encerra em 31/12/2018</span></p>
+	            </div>
+	        </div>
+	    </div>
+	</div>
 	
    	<div class="table-responsive fs-display-none premiados">
 		<div class="panel panel-default">
