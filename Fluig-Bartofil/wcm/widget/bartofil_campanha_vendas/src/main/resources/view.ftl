@@ -55,7 +55,7 @@
 						<ul class="list-group">
 						    <li class="list-group-item active">Minha posição</li>
 						</ul>	    		
-				    	<table id="table-premissao" class="table table-striped with-border table-hover table-condensed">
+				    	<table id="table-myranking" class="table table-striped with-border table-hover table-condensed">
 				    		<thead>
 				    			<tr class="primary">
 				    				<th class="fs-txt-center">${i18n.getTranslation('situacao')}</th>
@@ -84,7 +84,7 @@
 						<ul class="list-group">
 						    <li class="list-group-item list-group-item-info">Ranking Geral</li>
 						</ul>	    		
-				    	<table id="table-premissao" class="table table-striped with-border table-hover table-condensed">
+				    	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed">
 				    		<thead>
 				    			<tr class="primary">
 				    				<th class="fs-txt-center">${i18n.getTranslation('situacao')}</th>
@@ -231,10 +231,10 @@
 				    		</tbody>
 				    	</table>
 		    		</div>
-		    		<div class="col-md-5 col-sm-3">
-			            <span class="fluigicon fluigicon-chevron-left fluigicon-md"></span>
-			            <img src="/bartofil_campanha_vendas/resources/images/campanha1.png" style="width: 80%">
-			            <span class="fluigicon fluigicon-chevron-right fluigicon-md"></span>
+		    		<div class="col-md-5 col-sm-3 list-imagens-detail">
+			            <span class="fluigicon fluigicon-chevron-left fluigicon-md prev-image" data-image-prev></span>
+			            <img src="/bartofil_campanha_vendas/resources/images/campanha1.png image-detail" style="width: 80%">
+			            <span class="fluigicon fluigicon-chevron-right fluigicon-md next-image" data-image-next></span>
 		    		</div>
 		    	</div>
 		    </div>

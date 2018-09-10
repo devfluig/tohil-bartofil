@@ -2,12 +2,13 @@ var campanhavendas = SuperWidget.extend({
 	
 	loading: FLUIGC.loading(window),
 	offset: 0,
-	limit: 12,
+	limit: 8,
 	list: [],
 	instanceId: null,
 	foldercampanha: null,
 	context: "/bartofil_campanha_vendas",
-
+	current: null,
+	
 	init : function() {
 		$(".pageTitle").parent().remove();
 		campanhavendas.getcampanha();
@@ -22,9 +23,15 @@ var campanhavendas = SuperWidget.extend({
 			"click-campanha": ['click_clickcampanha'],
 			'save-preferences': ['click_savePreferences'],
 			"click-fechar": ['click_clickfechar'],
-			"click-resumido": ['click_showresumido'],
-			"change-periodo": ['change_getcomissoes'],
 		}
+	},
+	
+	getcampanhabyid: function(id) {
+		for (var i=0; i<campanhavendas.list.length; i++) {
+			var c = campanhavendas.list[i];
+			if (c["id"] == id) { return c; }
+		}
+		return null;
 	},
 	
 	savePreferences: function(el, ev) {
@@ -48,6 +55,40 @@ var campanhavendas = SuperWidget.extend({
 		console.log("campanha");
 		$(".premiados").removeClass("fs-display-none");
 		$(".itens-campanha").addClass("fs-display-none")
+		console.log($(el).data("id"));
+		
+		$('#table-myranking > tbody').html("");
+		$('#table-ranking > tbody').html("");
+		$(".prev-image").hide();
+		$(".next-image").hide();
+		$(".image-detail").attr("src", campanhavendas.context + "/resources/images/loading.gif");
+		
+		campanhavendas.current = campanhavendas.getcampanhabyid($(el).data("id"));
+		
+		var c1 = DatasetFactory.createConstraint("campanha", $(el).data("id"), $(el).data("id"), ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("limit", "20", "20", ConstraintType.MUST, false);
+
+		DatasetFactory.getDataset("ds_campanha_vendas_detalhe", null, [c1, c2, c3], null, {"success": campanhavendas.onreadygetcampanhadetalhe} );
+		
+	},
+	
+	onreadygetcampanhadetalhe: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			campanhavendas.loading.hide();
+			WCMC.messageError('Campanhas de vendas não possui detalhes!');	    			
+			return;
+		}
+		
+		var values = rows["values"];
+		for (var i = 0; i<values.length; i++) {
+			var row = values[i];
+			console.log(row)
+		}
+		
+		
+		campanhavendas.current;
+		
 	},
 	
 	clickfechar: function(el, ev) {
@@ -76,6 +117,7 @@ var campanhavendas = SuperWidget.extend({
 			return;
 		}
 		var values = rows["values"];
+		console.log(values.length)
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
 			var dtainicio = moment(row["dtainicio"]);
@@ -138,6 +180,8 @@ var campanhavendas = SuperWidget.extend({
 			docs = rows["values"];
 		}
 		
+		console.log(campanhavendas.list.length)
+		
 		for (var i=0; i<campanhavendas.list.length; i++) {
 			var c = campanhavendas.list[i];
 			var images = {};
@@ -190,7 +234,7 @@ var campanhavendas = SuperWidget.extend({
 					var html = Mustache.render(tpl, data);
 					$('.widget-campanha').append(html);
 					
-					control = 1;
+					control = 0;
 					lines++;
 					items = [];
 				}
@@ -203,27 +247,36 @@ var campanhavendas = SuperWidget.extend({
 			var html = Mustache.render(tpl, data);
 			$('.widget-campanha').append(html);
 		}
-		campanhavendas.getimages(items);
+		campanhavendas.geturlfromfluig(0);
 	},
 	
-	getimages: function() {
-		for (var x=0; x<campanhavendas.list.length; x++) {
-			var c = campanhavendas.list[x];
+	geturlfromfluig: function(index){
+		if (index < campanhavendas.list.length) {
+			var c = campanhavendas.list[index];
+			console.log(index, c);
 			if (c["toloading"]) {
 				$.ajax(WCMAPI.serverURL + "/api/public/2.0/documents/getDownloadURL/" + c["toloading"]).done(function(data) {
 				    console.log( "success", data );
 				    $("#img" + c["id"]).attr("src", data.content);
-				    c["toloading"] == null;
-				    c["image"] == data.content;
-				    campanhavendas.list[x] = c;
+				    console.log($("#img" + c["id"]))
+				    c["toloading"] = null;
+				    c["image"] = data.content;
+				    campanhavendas.list[index] = c;
 				}).fail(function() {
 					console.log( "error" );
-				}).always(function() {
-					console.log( "complete" );
+				    $("#img" + c["id"]).attr("src", campanhavendas.context + "/resources/images/no-img.png");
+				}).complete(function() {
+					index++;
+					campanhavendas.geturlfromfluig(index);
 				});
+			} else {
+				index++;
+				campanhavendas.geturlfromfluig(index);
 			}
 		}
+		
 	}
+	
 	
 
 });

@@ -78,7 +78,8 @@ function createDataset(fields, constraints, sortFields) {
 							    		 dados["dtainicio"],
 							    		 dados["codgrupo"],
 							    		 dados["status"]));
-        	    if (limit >= list.length) { 
+        	    log.info("offset:" + offset + ":" + i + ":" + limit);
+        	    if (i >= limit) { 
         	    	break; 
         	    }
             	
