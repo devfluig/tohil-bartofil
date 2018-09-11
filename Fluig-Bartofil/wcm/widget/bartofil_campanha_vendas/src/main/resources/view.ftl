@@ -5,11 +5,15 @@
 		<h1>${i18n.getTranslation('divulgacao.campanha')}</h1>
 	</div>
 
-	<form class="form-inline itens-campanha" role="form">
+	<form class="form-inline header-itens-campanha" role="form">
 		<label>${i18n.getTranslation('ordernar.por')}:</label>
     	<div class="form-group">
     		<select class="form-control" id="ordenar" data-change-ordenar>
-    			<option value="1">${i18n.getTranslation('data.prorrogado')}</option>
+    			<option value="id" data-type="integer">C&Oacute;DIGO</option>
+    			<option value="dtainicio" data-type="date">DATA INICIO</option>
+    			<option value="dtaprorrogado" data-type="date">${i18n.getTranslation('data.prorrogado')}</option>
+    			<option value="dtaencerrado" data-type="date">DATA ENCERRAMENTO</option>
+    			<option value="descricao" data-type="string">DESCRI&Ccedil;&Atilde;O</option>
     		</select>
     	</div>
 		<label>${i18n.getTranslation('por.pagina')}:</label>
@@ -19,7 +23,7 @@
     			<option value="16">16</option>
     			<option value="24">24</option>
     			<option value="32">32</option>
-    			<option value="">Todas</option>
+    			<option value="999">Todas</option>
     		</select>
     	</div>
 		<label>${i18n.getTranslation('busca')}:</label>
@@ -38,7 +42,7 @@
 				        <div class="caption">
 				            <h4>{{id}} - {{descricao}}</h4>
 				            <p>{{{posicao}}}<button type="button" class="btn {{classbutton}} fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
-				            <p style="padding-top: 10px;"><span class="label label-default">Iniciado em {{dainiciado}}</span><span class="label {{classlabel}}">{{labelfim}}</span></p>
+				            <p style="padding-top: 5px;"><span class="label label-default">Iniciada {{dainiciado}}</span><span class="label {{classlabel}}">{{labelfim}}</span></p>
 				        </div>
 				    </div>
 				</div>
@@ -47,8 +51,8 @@
     </script>
 	
    	<div class="table-responsive fs-display-none premiados">
-		<div class="panel panel-default">
-		    <div class="panel-heading">DETALHES DA CAMPANHA<button type="button" class="btn btn-default fs-float-right" data-click-fechar>Fechar</button></div>
+		<div class="panel panel-info">
+		    <div class="panel-heading" style="height: 53px;">DETALHES DA CAMPANHA<button type="button" class="btn btn-default fs-float-right" data-click-fechar>Voltar</button></div>
 		    <div class="panel-body">
 		    	<div class="row">
 		    		<div class="col-md-7 col-sm-9">
@@ -82,7 +86,7 @@
 				    		</tbody>
 				    	</table>
 						<ul class="list-group">
-						    <li class="list-group-item list-group-item-info">Ranking Geral</li>
+						    <li class="list-group-item list-group-item-warning">Ranking Geral</li>
 						</ul>	    		
 				    	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed">
 				    		<thead>
@@ -232,9 +236,9 @@
 				    	</table>
 		    		</div>
 		    		<div class="col-md-5 col-sm-3 list-imagens-detail">
-			            <span class="fluigicon fluigicon-chevron-left fluigicon-md prev-image" data-image-prev></span>
-			            <img src="/bartofil_campanha_vendas/resources/images/campanha1.png image-detail" style="width: 80%">
-			            <span class="fluigicon fluigicon-chevron-right fluigicon-md next-image" data-image-next></span>
+			            <a href="#" data-image-prev><span class="fluigicon fluigicon-chevron-left fluigicon-md prev-image"></span></a>
+			            <img src="/bartofil_campanha_vendas/resources/images/campanha1.png" class="image-detail" style="width: 90%">
+			            <a href="#" data-image-next><span class="fluigicon fluigicon-chevron-right fluigicon-md next-image"></span></a>
 		    		</div>
 		    	</div>
 		    </div>
