@@ -1,168 +1,293 @@
 var campanhavendas = SuperWidget.extend({
 	
 	loading: FLUIGC.loading(window),
-
+	offset: 0,
+	limit: 8,
+	list: [],
+	instanceId: null,
+	foldercampanha: null,
+	context: "/bartofil_campanha_vendas",
+	current: null,
+	
 	init : function() {
 		$(".pageTitle").parent().remove();
+		campanhavendas.getcampanha();
+		campanhavendas.foldercampanha = this.foldercampanha;
+		
+		$(window).onScrollEnd(function() {
+			if ($(".premiados").hasClass("fs-display-none")) {
+				campanhavendas.loading.show();
+				campanhavendas.offset = campanhavendas.limit;
+				campanhavendas.limit = campanhavendas.limit + 8;
+				campanhavendas.showcampanhas(false);	
+			}
+		});
+		
+		$("#busca").keyup(function() {
+			campanhavendas.showcampanhas(true);
+		});
 	},
 
 	bindings : {
 		local : {},
 		global : {
 			"click-detalhado": ['click_showdetalhado'],
-			"click-resumido": ['click_showresumido'],
-			"change-periodo": ['change_getcomissoes'],
+			"click-campanha": ['click_clickcampanha'],
+			'save-preferences': ['click_savePreferences'],
+			"click-fechar": ['click_clickfechar'],
+			"image-prev": ['click_clickprevimage'],
+			"image-next": ['click_clicknextimage'],
+			'change-paginacao': ['change_changepaginacao'],
+			'change-ordenar': ['change_changeordenacao'],
 		}
 	},
 	
-	setupperiodo: function() {
+	changepaginacao: function(el, ev) {
+		campanhavendas.loading.show();
+		campanhavendas.offset = 0;
+		campanhavendas.limit = parseInt($(el).val());
+		campanhavendas.showcampanhas(true);		
+	},
 	
-		var m = moment().locale("pt-br");
-		var list = []; 
-		for (var i=0; i<20; i++) {
-			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MM") + "/" + m.format("YYYY") };
-			list.push(o);
-			m.subtract(1, 'months');
-		}
+	changeordenacao: function(el, ev) {
+		campanhavendas.loading.show();
+		campanhavendas.offset = 0;
+		campanhavendas.limit = parseInt($(el).val());
+		campanhavendas.showcampanhas(true);		
+	},
+	
+	clickprevimage: function(el ,ev) {
+		var keys = Object.keys(campanhavendas.current["listaimagens"]);
+		var image = $(".image-detail").data("current");
 
-		var tpl = $('.tpl-continuous-scroll-periodo').html();
-		var data = { "items": list};
-		var html = Mustache.render(tpl, data);
-		$('#periodo').append(html);
+		var prev = keys.indexOf(image) - 1;
+		if (prev < 0) { prev = keys.length  - 1; }
+		var o = campanhavendas.current["listaimagens"][keys[prev]];
+		if (o == null) {
+			campanhavendas.geturlfromfluig(null, keys[prev], campanhavendas.onreadyloadimage);
+		} else {
+			$(".image-detail").data("current", keys[prev]);
+			$(".image-detail").attr("src", o);
+		}
+	},
+	
+	onreadyloadimage: function(data) {
+		campanhavendas.current["listaimagens"][data["doc"]] = data["content"]; 
+		$(".image-detail").data("current", data["doc"]);
+		$(".image-detail").attr("src", data["content"]);
+	},
+	
+	clicknextimage: function(el ,ev) {
+		console.log("clicknextimage")
+		var keys = Object.keys(campanhavendas.current["listaimagens"]);
+		var image = $(".image-detail").data("current");
+
+		var next = keys.indexOf(image) + 1;
+		if (next >= keys.length) { next = 0; }
+		var o = campanhavendas.current["listaimagens"][keys[next]];
+		if (o == null) {
+			campanhavendas.geturlfromfluig(null, keys[next], campanhavendas.onreadyloadimage);
+		} else {
+			$(".image-detail").data("current", keys[next]);
+			$(".image-detail").attr("src", o);
+		}
+	},
+	
+	getcampanhabyid: function(id) {
+		for (var i=0; i<campanhavendas.list.length; i++) {
+			var c = campanhavendas.list[i];
+			if (c["id"] == id) { return c; }
+		}
+		return null;
+	},
+	
+	savePreferences: function(el, ev) {
+		var args = {
+			"foldercampanha": $('input[id="foldercampanha"]', this.DOM).val()
+		};
+		console.log(args);
 		
-		this.getcomissoes();
+		WCMSpaceAPI.PageService.UPDATEPREFERENCES({
+		    async: true,
+		    success: function (data) {
+		    	console.log("UPDATEPREFERENCES", data);
+		    },
+		    fail: function (xhr, message, errorData) {
+		    	console.log("UPDATEPREFERENCES fail", xhr, message, errorData);
+		    }
+		}, this.instanceId, args );
+	},	
+	
+	clickcampanha: function(el, ev) {
+		console.log("campanha");
+		$(".premiados").removeClass("fs-display-none");
+		$(".itens-campanha").addClass("fs-display-none")
+		$(".header-itens-campanha").addClass("fs-display-none");
+		console.log($(el).data("id"));
+		
+		$('#table-myranking > tbody').html("");
+		$('#table-ranking > tbody').html("");
+		$(".prev-image").hide();
+		$(".next-image").hide();
+		
+		campanhavendas.loading.show();
+		
+		campanhavendas.current = campanhavendas.getcampanhabyid($(el).data("id"));
+		if (campanhavendas.current["image"]) {
+			$(".image-detail").attr("src", campanhavendas.current["image"]);
+			if (Object.keys(campanhavendas.current["listaimagens"]).length > 1) {
+				$(".prev-image").show();
+				$(".next-image").show();
+				
+				var list = campanhavendas.current["listaimagens"];
+				console.log(list);
+				console.log(campanhavendas.current["image"]);
+				for (var o in list) {
+					console.log(o, list[o])
+					console.log(list[o] == campanhavendas.current["image"])
+					if (list[o] && list[o] == campanhavendas.current["image"]) {
+						console.log("set data")
+						$(".image-detail").data("current", o);
+					}
+				}
+				
+			}
+		} else {
+			$(".image-detail").attr("src", campanhavendas.context + "/resources/images/loading.gif");	
+		}
+		
+		
+		var c1 = DatasetFactory.createConstraint("campanha", $(el).data("id"), $(el).data("id"), ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("limit", "50", "50", ConstraintType.MUST, false);
+
+		DatasetFactory.getDataset("ds_campanha_vendas_detalhe", null, [c1, c2, c3], null, {"success": campanhavendas.onreadygetcampanhadetalhe} );
 		
 	},
 	
-	getcomissoes: function(el, ev) {
-
-		this.loading.show();
-
-		var mes = $("#periodo :selected").data("month");
-		var ano = $("#periodo :selected").data("year");
+	onreadygetcampanhadetalhe: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			campanhavendas.loading.hide();
+			WCMC.messageError('Campanhas de vendas não possui detalhes!');	    			
+			return;
+		}
 		
-		var c1 = DatasetFactory.createConstraint("representante", WCMAPI.userCode, WCMAPI.userCode, ConstraintType.MUST, false);
-		var c2 = DatasetFactory.createConstraint("ano", ano, ano, ConstraintType.MUST, false);
-		var c3 = DatasetFactory.createConstraint("mes", mes, mes, ConstraintType.MUST, false);
+		var values = rows["values"];
+		if (values[0].tipapuracao == "erro") {
+			campanhavendas.loading.hide();
+			WCMC.messageError('Campanhas de vendas não possui detalhes!');	    			
+			return;
+		}
+		
+		var htmlrank = "";
+		var htmlmyrank = "";
+		for (var i = 0; i<values.length; i++) {
+			var row = values[i];
+			
+			var v = "";
+			try {
+				v = parseFloat(row["vlrpremio"]);
+				if (v > 0) {
+					v = campanhavendas.mask(v.toFixed(2));
+					v = "R$ " + v;
+				} else {
+					v = "";
+				}
+			} catch (e) {
+				v = row["vlrpremio"];
+			}
+			
+			var p = "";
+			try {
+				p = parseFloat(row["pontos"]);
+				if (p > 0) {
+					p = campanhavendas.mask(p.toFixed(2));
+				} else {
+					p = "";
+				}
+			} catch (e) {
+				p = row["pontos"];
+			}
+			
+			htmlrank += "<tr " + (row["situacao"].toLowerCase() == "premiado" ? "class='success'" : "") + "><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td>" + row["nomeparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td></tr>";
+			
+			if (row["codparticipante"] == WCMAPI.userLogin) {
+				htmlmyrank += "<tr " + (row["situacao"].toLowerCase() == "premiado" ? "class='success'" : "") + "><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td>" + row["nomeparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td></tr>";
+			} 
+			
+			console.log(row);
+		}
+		
+		$('#table-ranking > tbody').html(htmlrank);
+		
+		if (htmlmyrank != "") {
+			campanhavendas.loading.hide();
+			$('#table-myranking > tbody').html(htmlmyrank);
+		} else {
+			campanhavendas.getmyranking();
+		}
+		
+		
+	},
+	
+	getmyranking: function() {
+		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("limit", "1", "1", ConstraintType.MUST, false);
+		var c4 = DatasetFactory.createConstraint("representante", WCMAPI.userLogin, WCMAPI.userLogin, ConstraintType.MUST, false);
 
-		console.log(WCMAPI.userCode, ano, mes)
+		DatasetFactory.getDataset("ds_campanha_vendas_detalhe", null, [c1, c2, c3, c4], null, {"success": campanhavendas.onreadygetmyranking} );
 		
-		var rows = DatasetFactory.getDataset("ds_comissoes", null, [c1, c2, c3], null);
-		
-		if (!rows) {
-			this.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
+	},
+	
+	onreadygetmyranking: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			campanhavendas.loading.hide();
+			htmlmyrank = "<tr><td class='fs-txt-center' colspan='8'>Sem pontuação nessa campanha</td></tr>";
+			$('#table-myranking > tbody').html(htmlmyrank);
 			return;
 		}
 		var values = rows["values"];
-		if (!values) {
-			this.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
+		if (values[0].tipapuracao == "erro") {
+			campanhavendas.loading.hide();
+			htmlmyrank = "<tr><td class='fs-txt-center' colspan='8'>Sem pontuação nessa campanha</td></tr>";
+			$('#table-myranking > tbody').html(htmlmyrank);
 			return;
 		}
 		
-		if (values.length == 0) {
-			this.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
-			return;
-		} 
-		
-		if (values[0].descevento == "erro") {
-			this.loading.hide();
-			WCMC.messageError(values[0].situacao);	    			
-			return;
-		}
-		
-		$('#table-lancamentos > tbody').html("");
-		$('#table-eventos > tbody').html("");
-		$('#table-meses > tbody').html("");
-		
-		var html = "";
-		var totais = {};
-		var eventos = {};
-		var meses = {};
-		
-		var locale = WCMAPI.locale;
-		locale = locale.replace("_", "-"); 
-		
-		moment.locale(locale);
-		
-		var startOfMonth = moment(ano + "-" + mes + "-01").startOf('month').format('DD/MM/YYYY');
-		var endOfMonth   = moment(ano + "-" + mes + "-01").endOf('month').format('DD/MM/YYYY');
-		
-		$(".dias-periodo").html(startOfMonth + " A " + endOfMonth);
-		$(".title-periodo").html(mes + "/" + ano);
-		
-		for (var i=0; i<values.length; i++) {
-			var row = values[i];
-			var dl = moment(row["datalancamento"]).format("DD/MM/YYYY");
-			var dp = moment(row["datapagamento"]).format("MMMM/YYYY");
-			html += "<tr class='" + (row["debcredito"] == "D" ? 'danger' : 'success') + "'><td>" + dl + "</td><td>" + row["codevento"] + "</td><td>" + row["nrocarga"] + "</td><td>" + row["nrodocumento"] + "</td><td>" + row["anomes"] + "</td><td class='fs-txt-center'>" + row["nroparcela"] + "</td><td>" + row["historico"] + "</td><td class='fs-txt-right'>" + row["valor"] + "</td><td class='fs-txt-center'>" + row["debcredito"] + "</td></tr>";
-		
-			var v = parseFloat(row["valor"].replace(/,/g, '').replace(",", "."));
-			if (!totais[row["debcredito"]]) {
-				totais[row["debcredito"]] = { "qtde": 1, "valor": v };
+		var row = values[0];
+		var v = "";
+		try {
+			v = parseFloat(row["vlrpremio"]);
+			if (v > 0) {
+				v = campanhavendas.mask(v.toFixed(2));
+				v = "R$ " + v;
 			} else {
-				totais[row["debcredito"]].qtde += 1;
-				totais[row["debcredito"]].valor += v;
+				v = "";
 			}
-			
-			if (!eventos[row["codevento"]]) {
-				eventos[row["codevento"]] = { "descricao": row["descevento"], "debitos": (row["debcredito"] == "D" ? v : 0), "creditos": (row["debcredito"] == "D" ? v : 0)};
+		} catch (e) {
+			v = row["vlrpremio"];
+		}
+		
+		var p = "";
+		try {
+			p = parseFloat(row["pontos"]);
+			if (p > 0) {
+				p = campanhavendas.mask(p.toFixed(2));
 			} else {
-				eventos[row["codevento"]].debitos += (row["debcredito"] == "D" ? v : 0);
-				eventos[row["codevento"]].creditos += (row["debcredito"] == "C" ? v : 0);
+				p = "";
 			}
-			if (!meses[dp]) {
-				meses[dp] = { "valor": v };
-			} else {
-				meses[dp].valor += v;
-			}
+		} catch (e) {
+			p = row["pontos"];
 		}
 		
-		var total = 0;
-		var qtde = 0;
-		if (totais["C"]) { 
-			total = totais["C"].valor;
-			qtde = totais["C"].qtde;
-		}
-		if (totais["D"]) { 
-			total = total - totais["D"].valor;
-			qtde += totais["D"].qtde;
-		}
+		var htmlmyrank = "<tr " + (row["situacao"].toLowerCase() == "premiado" ? "class='success'" : "") + "><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td>" + row["nomeparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td></tr>";
+		$('#table-myranking > tbody').html(htmlmyrank);
 		
-		html += '<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("totais")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("valor")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("qtd")}</strong></td></tr>' +
-			'<tr class="danger"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("debitos")}</strong></td><td class="fs-txt-right">' + (totais["D"] ? this.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["D"] ? totais["D"].qtde : "0") + '</td></tr>' +
-			'<tr class="success"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("creditos")}</strong></td><td class="fs-txt-right">' + (totais["C"] ? this.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["C"] ? totais["C"].qtde : "0") + '</td></tr>' + 
-			'<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("total.geral")}</strong></td><td class="fs-txt-right">' + this.mask(total.toFixed(2)) + '</td><td class="fs-txt-center">' + qtde + '</td></tr>';
-		 
-		$('#table-lancamentos > tbody').html(html);
-		
-		html = "";
-		for (var key in eventos) {
-			var ev = eventos[key];
-			html += '<tr><td>' + key + '</td><td>' + ev["descricao"] + '</td><td class="fs-txt-right">' + this.mask(ev["debitos"].toFixed(2)) + '</td><td class="fs-txt-right">' + this.mask(ev["creditos"].toFixed(2)) + '</td></tr>'; 
-		}
-		
-		html += '<tr class="warning"><td></td><td class="fs-txt-right">TOTAL:</td><td class="fs-txt-right">' + (totais["D"] ? this.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-right">' + (totais["C"] ? this.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</td></tr>';
-		
-		$('#table-eventos > tbody').html(html);
-		
-		html = "";
-		for (var key in meses) {
-			var ev = meses[key];
-			html += '<tr><td>' + key + '</td><td class="fs-txt-right">' + this.mask(ev["valor"].toFixed(2)) + '</td></tr>'; 
-		}
-		
-		$('#table-meses > tbody').html(html);
-		
-		console.log(html);
-		
-		this.loading.hide();
-
+		campanhavendas.loading.hide();
 		
 	},
-
+	
 	mask: function (valor) {
 	    valor = valor.toString().replace(/\D/g,"");
 	    valor = valor.toString().replace(/(\d)(\d{8})$/,"$1.$2");
@@ -171,15 +296,233 @@ var campanhavendas = SuperWidget.extend({
 	    return valor                    
 	},
 	
-	showdetalhado: function(el, ev) {
-		$(".detalhado").show();
-		$(".resumido").hide();
+	
+	clickfechar: function(el, ev) {
+		console.log("campanha");
+		$(".premiados").addClass("fs-display-none");
+		$(".itens-campanha").removeClass("fs-display-none");
+		$(".header-itens-campanha").removeClass("fs-display-none");
 	},
 	
-	showresumido: function(el, ev) {
-		$(".detalhado").hide();
-		$(".resumido").show();
+	getcampanha: function() {
+		var limit = $("#paginacao").val();
+		
+		var c1 = DatasetFactory.createConstraint("representante", WCMAPI.userLogin, WCMAPI.userLogin, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("limit", "999", "999", ConstraintType.MUST, false);
+
+		console.log(WCMAPI.userLogin, campanhavendas.offset, limit)
+		
+		DatasetFactory.getDataset("ds_campanha_vendas", null, [c1, c2, c3], null, {"success": campanhavendas.onreadygetcampanha} );
+		
 	},
+	
+	onreadygetcampanha: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			campanhavendas.loading.hide();
+			WCMC.messageError('Representante não possui campanhas de vendas!');	    			
+			return;
+		}
+		var values = rows["values"];
+		console.log(values.length)
+		for (var i=0; i<values.length; i++) {
+			var row = values[i];
+			var dtainicio = moment(row["dtainicio"]);
+			var dtaprorrogado = moment(row["dtaprorrogada"]);
+			var dtaencerrado = moment(row["dtaencerramento"]);
+			var ordem = row["ordempremio"].split("/");
+			console.log("ordem", ordem, row["ordempremio"]);
+			if (ordem.length == 2) {
+				ordem = "Posi&ccedil;&atilde;o <strong>" + ordem[0] + "" + (row["sitpremiado"] == "Premiado" ? '<span class="fluigicon fluigicon-certificate"></span>' : '') + "</strong> de <strong>" + ordem[1] + "</strong>";
+			} else {
+				ordem = row["ordempremio"];
+			}
+			var classbutton = "";
+			if (row["sitpremiado"] == "Premiado") {
+				classbutton = "btn-success";
+			}
+			var classlabel = "label-info";
+			var labelfim = "Encerra em " + dtaencerrado.format("DD/MM/YYYY");
+			if (row["status"] == "E") {
+				classlabel = "label-danger";
+				labelfim = "Encerrada em " + dtaencerrado.format("DD/MM/YYYY");
+			} else if (row["status"] == "P") {
+				classlabel = "label-warning";
+				labelfim = "Prorrogada até " + dtaprorrogado.format("DD/MM/YYYY");
+			}
+			
+			var o = {
+				"id": row["codcampanha"],
+				"descricao": row["desccampanha"],
+				"dainiciado": dtainicio.format("DD/MM/YYYY"),
+				"dtaprorrogado": moment(row["dtaprorrogada"]),
+				"dtaencerrado": moment(row["dtaencerramento"]),
+				"dtainicio": moment(row["dtainicio"]),
+				"posicao": ordem,
+				"image": null,
+				"classbutton": classbutton,
+				"classlabel": classlabel,
+				"labelfim": labelfim, 
+				"listaimagens": {}				
+			}
+			campanhavendas.list.push(o);
+		}
+		
+		campanhavendas.getdocuments();
+		
+//		campanhavendas.showcampanhas();
+		
+	},
+	
+	getdocuments: function() {
+		
+		var c1 = DatasetFactory.createConstraint("pasta", campanhavendas.foldercampanha, campanhavendas.foldercampanha, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("empresa", WCMAPI.tenantCode, WCMAPI.tenantCode, ConstraintType.MUST, false);
+
+		DatasetFactory.getDataset("ds_lista_campanha_imagem", null, [c1, c2], null, {"success": campanhavendas.onreadygetdocuments} );
+		
+	},
+	
+	onreadygetdocuments: function (rows) {
+
+		var docs = [];
+		if (rows && rows["values"] && rows["values"].length > 0) {
+			docs = rows["values"];
+		}
+		
+		for (var i=0; i<campanhavendas.list.length; i++) {
+			var c = campanhavendas.list[i];
+			var images = {};
+			for (var x=0; x<docs.length; x++) {
+				var row = docs[x];
+				if (row["campanha"] == c["id"]) {
+					images[row["numero"]] = null;
+					if (row["descricao"] == c["id"]) {
+						c["toloading"] = row["numero"]; 
+						c["image"] = campanhavendas.context + "/resources/images/loading.gif";
+					}
+				}
+			}
+			
+			c["listaimagens"] = images; 
+			
+			if (c["image"] == null && $.isEmptyObject(images) == false) { 
+				c["toloading"] = Object.keys(images)[0]; 
+				c["image"] = campanhavendas.context + "/resources/images/loading.gif";
+			} else if (c["toloading"] == null) {  
+				c["image"] = campanhavendas.context + "/resources/images/no-img.png"; 
+			}
+			
+			campanhavendas.list[i] = c;
+		}
+		
+		campanhavendas.showcampanhas(true);
+		
+	},
+	
+	showcampanhas: function(clean) {
+		var control = 0;
+		var lines = 0;
+		var items = [];
+		
+		if ($(".premiados").hasClass("fs-display-none") == false) {
+			return;
+		}
+		
+		console.log("showcampanhas", campanhavendas.offset, campanhavendas.limit);
+		
+		if (clean) {
+			$(".itens-campanha").remove();
+			campanhavendas.offset = 0;
+			campanhavendas.limit = parseInt($("#paginacao").val());
+		}
+		
+		var filter = campanhavendas.list;
+		var search = $("#busca").val(); 
+		if (search && search != "") {
+			filter = campanhavendas.list.filter(function(item) {
+				return item["descricao"].toLowerCase().indexOf(search) != -1 || item["id"].toLowerCase() == search;
+			})
+		}
+		
+		
+		filter.sort(function compare(a, b) {
+			
+			var c1 = a[$("#ordenar").val()];
+			var c2 = b[$("#ordenar").val()];
+			var type = $("#ordenar :selected").data("type");
+			if (type == "date") {
+				 if (c1.isAfter(c2)) return 1;
+				 if (c1.isBefore(c2)) return -1;
+			     return 0;				
+			} else if (type == "integer") {
+				return +(c1) - +(c2);
+			} else {
+				if (c1 > c2) return 1;
+				if (c1 < c2) return -1;
+				return 0;
+			}
+		});
+
+		for (var i=campanhavendas.offset; i<campanhavendas.limit; i++) {
+			var o = filter[i];
+			if (o) {
+				control++;
+				items.push(o);
+				if (control == 4) {
+					var tpl = $('.tpl-continuous-scroll-campanhas').html();
+					var data = { "items": items};
+					var html = Mustache.render(tpl, data);
+					$('.widget-campanha').append(html);
+					
+					control = 0;
+					lines++;
+					items = [];
+				}
+				
+			}
+		}		
+		if (items.length > 0) {
+			var tpl = $('.tpl-continuous-scroll-campanhas').html();
+			var data = { "items": items};
+			var html = Mustache.render(tpl, data);
+			$('.widget-campanha').append(html);
+		}
+		campanhavendas.geturlfromfluig(0, null, null);
+		campanhavendas.loading.hide();
+	},
+	
+	geturlfromfluig: function(index, doc, onready){
+		if (index != null) {
+			if (index < campanhavendas.list.length) {
+				var c = campanhavendas.list[index];
+				if (c["toloading"]) {
+					$.ajax(WCMAPI.serverURL + "/api/public/2.0/documents/getDownloadURL/" + c["toloading"]).done(function(data) {
+					    $("#img" + c["id"]).attr("src", data.content);
+					    c["listaimagens"][c["toloading"]] = data.content; 
+					    c["toloading"] = null;
+					    c["image"] = data.content;
+					    campanhavendas.list[index] = c;
+					}).fail(function() {
+					    $("#img" + c["id"]).attr("src", campanhavendas.context + "/resources/images/no-img.png");
+					}).complete(function() {
+						index++;
+						campanhavendas.geturlfromfluig(index);
+					});
+				} else {
+					index++;
+					campanhavendas.geturlfromfluig(index);
+				}
+			}
+		} else if (doc != null) {
+			$.ajax(WCMAPI.serverURL + "/api/public/2.0/documents/getDownloadURL/" + doc).done(function(data) {
+				onready({ "doc": doc, "content": data.content}); 
+			}).fail(function() {
+				onready({ "doc": doc, "content": campanhavendas.context + "/resources/images/no-img.png"});
+			});
+		} 
+	}
+	
 	
 
 });
