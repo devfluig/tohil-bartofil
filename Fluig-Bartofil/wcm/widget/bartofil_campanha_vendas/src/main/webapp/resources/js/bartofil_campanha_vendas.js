@@ -8,11 +8,20 @@ var campanhavendas = SuperWidget.extend({
 	foldercampanha: null,
 	context: "/bartofil_campanha_vendas",
 	current: null,
+	grouprca: null,
+	representate: null,
 	
 	init : function() {
 		$(".pageTitle").parent().remove();
-		campanhavendas.getcampanha();
+		
 		campanhavendas.foldercampanha = this.foldercampanha;
+		campanhavendas.grouprca = this.grouprca;
+		if (this.isrca() == false) {
+			this.showrepresentative();
+		} else {
+			campanhavendas.representate = WCMAPI.userLogin;
+			campanhavendas.getcampanha();
+		}
 		
 		$(window).onScrollEnd(function() {
 			if ($(".premiados").hasClass("fs-display-none")) {
@@ -38,8 +47,64 @@ var campanhavendas = SuperWidget.extend({
 			"image-prev": ['click_clickprevimage'],
 			"image-next": ['click_clicknextimage'],
 			'change-paginacao': ['change_changepaginacao'],
+			"change-representante": ['change_listcampanha'],
 			'change-ordenar': ['change_changeordenacao'],
 		}
+	},
+	
+	listcampanha: function(el, ev) {
+		campanhavendas.loading.show();
+		campanhavendas.representante = $('#listrepresentatives').val();
+		campanhavendas.list = [];
+		campanhavendas.offset = 0;
+		campanhavendas.current = null;
+		campanhavendas.limit = parseInt($("#paginacao").val());
+		campanhavendas.getcampanha();
+	},
+
+	isrca: function() {
+		var c1 = DatasetFactory.createConstraint("colleagueGroupPK.colleagueId", WCMAPI.userCode, WCMAPI.userCode, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("colleagueGroupPK.groupId", this.grouprca, this.grouprca, ConstraintType.MUST, false);
+
+		var dataset = DatasetFactory.getDataset("colleagueGroup", null, [c1, c2], null);
+		if (dataset && dataset.values && dataset.values.length > 0) { return true; }
+		
+		return false;
+	},
+	
+	showrepresentative: function() {
+		var c1 = DatasetFactory.createConstraint("grupo", this.grouprca, this.grouprca, ConstraintType.MUST, false);
+
+		var dataset = DatasetFactory.getDataset("ds_lista_usuarios_grupo", null, [c1], null);
+		if (dataset && dataset.values && dataset.values.length > 0) {
+			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
+			var values = dataset["values"];
+			for (var i=0; i<values.length; i++) {
+				var row = values[i];
+				if (WCMAPI.userCode != row["login"]) {
+					var o = { "id": row["login"], "name": row["login"] + " - " + row["colleagueName"] }
+					list.push(o);
+				}
+			}
+
+			var tpl = $('.tpl-representante').html();
+			var data = { "items": list};
+			var html = Mustache.render(tpl, data);
+			$('#listrepresentatives').append(html);
+			
+			$('#listrepresentatives').select2({
+			    placeholder: "Selecione",
+			    allowClear: false,
+			    width: '300px'
+			})
+			
+			$(".nav-representative").removeClass("fs-display-none");
+			
+			campanhavendas.getcampanha();
+		} else {
+			campanhavendas.getcampanha();
+		}
+		
 	},
 	
 	changepaginacao: function(el, ev) {
@@ -103,7 +168,8 @@ var campanhavendas = SuperWidget.extend({
 	
 	savePreferences: function(el, ev) {
 		var args = {
-			"foldercampanha": $('input[id="foldercampanha"]', this.DOM).val()
+			"foldercampanha": $('input[id="foldercampanha"]', this.DOM).val(),
+			"grouprca": $('input[id="grouprca"]', this.DOM).val()
 		};
 		console.log(args);
 		
@@ -156,12 +222,12 @@ var campanhavendas = SuperWidget.extend({
 			$(".image-detail").attr("src", campanhavendas.context + "/resources/images/loading.gif");	
 		}
 		
-		
-		var c1 = DatasetFactory.createConstraint("campanha", $(el).data("id"), $(el).data("id"), ConstraintType.MUST, false);
+		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
-		var c3 = DatasetFactory.createConstraint("limit", "50", "50", ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("limit", "1", "1", ConstraintType.MUST, false);
+		var c4 = DatasetFactory.createConstraint("representante", WCMAPI.userLogin, WCMAPI.userLogin, ConstraintType.MUST, false);
 
-		DatasetFactory.getDataset("ds_campanha_vendas_detalhe", null, [c1, c2, c3], null, {"success": campanhavendas.onreadygetcampanhadetalhe} );
+		DatasetFactory.getDataset("ds_campanha_vendas_detalhe", null, [c1, c2, c3, c4], null, {"success": campanhavendas.onreadygetmyranking} );
 		
 	},
 	
@@ -180,7 +246,6 @@ var campanhavendas = SuperWidget.extend({
 		}
 		
 		var htmlrank = "";
-		var htmlmyrank = "";
 		for (var i = 0; i<values.length; i++) {
 			var row = values[i];
 			
@@ -209,34 +274,14 @@ var campanhavendas = SuperWidget.extend({
 				p = row["pontos"];
 			}
 			
-			htmlrank += "<tr " + (row["situacao"].toLowerCase() == "premiado" ? "class='success'" : "") + "><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td>" + row["nomeparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td></tr>";
-			
-			if (row["codparticipante"] == WCMAPI.userLogin) {
-				htmlmyrank += "<tr " + (row["situacao"].toLowerCase() == "premiado" ? "class='success'" : "") + "><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td>" + row["nomeparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td></tr>";
-			} 
+			htmlrank += "<tr " + (row["situacao"].toLowerCase() == "premiado" ? "class='success'" : "") + "><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td></tr>";
 			
 			console.log(row);
 		}
 		
 		$('#table-ranking > tbody').html(htmlrank);
 		
-		if (htmlmyrank != "") {
-			campanhavendas.loading.hide();
-			$('#table-myranking > tbody').html(htmlmyrank);
-		} else {
-			campanhavendas.getmyranking();
-		}
-		
-		
-	},
-	
-	getmyranking: function() {
-		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);
-		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
-		var c3 = DatasetFactory.createConstraint("limit", "1", "1", ConstraintType.MUST, false);
-		var c4 = DatasetFactory.createConstraint("representante", WCMAPI.userLogin, WCMAPI.userLogin, ConstraintType.MUST, false);
-
-		DatasetFactory.getDataset("ds_campanha_vendas_detalhe", null, [c1, c2, c3, c4], null, {"success": campanhavendas.onreadygetmyranking} );
+		campanhavendas.loading.hide();
 		
 	},
 	
@@ -284,7 +329,12 @@ var campanhavendas = SuperWidget.extend({
 		var htmlmyrank = "<tr " + (row["situacao"].toLowerCase() == "premiado" ? "class='success'" : "") + "><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td>" + row["nomeparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td></tr>";
 		$('#table-myranking > tbody').html(htmlmyrank);
 		
-		campanhavendas.loading.hide();
+		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("limit", "50", "50", ConstraintType.MUST, false);
+		var c4 = DatasetFactory.createConstraint("grupo", row["codgrupo"], row["codgrupo"], ConstraintType.MUST, false);
+
+		DatasetFactory.getDataset("ds_campanha_vendas_detalhe", null, [c1, c2, c3, c4], null, {"success": campanhavendas.onreadygetcampanhadetalhe} );
 		
 	},
 	

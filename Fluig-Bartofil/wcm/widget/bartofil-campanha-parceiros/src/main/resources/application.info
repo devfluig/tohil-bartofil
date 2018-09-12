@@ -1,0 +1,19 @@
+application.type=widget
+application.code=bartofil_campanha_parceiros
+application.title=Campanha Parceiros 100%
+application.description=Campanha Parceiros 100%
+application.category=SYSTEM
+application.renderer=freemarker
+developer.code=DevFluig
+developer.name=Developer Fluig
+developer.url=http://www.fluig.com
+application.uiwidget=true
+application.mobileapp=true
+view.file=view.ftl
+edit.file=edit.ftl
+application.resource.css.1=/resources/css/bartofil_campanha_parceiros.css
+application.resource.js.2=/resources/js/bartofil_campanha_parceiros.js
+application.resource.js.3=/resources/js/moment/moment-with-locales.min.js
+application.resource.js.4=/resources/js/mask/jquery.mask.min.js
+application.resource.component.5=mustache
+

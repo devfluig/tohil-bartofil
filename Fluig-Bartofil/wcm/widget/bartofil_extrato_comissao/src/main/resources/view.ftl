@@ -1,5 +1,5 @@
 <div id="extrato_campanha_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide toprint"
-	data-params="extratocampanha.instance()">
+	data-params="extratocampanha.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}' })">
 
 	<div class="page-header">
 		<h1>${i18n.getTranslation('extrato.comissao')}</h1>
@@ -24,8 +24,8 @@
 	    		<input type="radio" name="visualizacao" id="visualizacaoresumido" value="resumido" data-click-resumido>${i18n.getTranslation('resumido')}
 	    	</label>
 		</div>
-		<label class="fs-md-space">${i18n.getTranslation('representante')}:</label>
-    	<div class="form-group">
+		<label class="fs-md-space nav-representative fs-display-none">${i18n.getTranslation('representante')}:</label>
+    	<div class="form-group nav-representative fs-display-none">
     		<select class="form-control" id="listrepresentatives" data-change-representante>
 			    <script type="text/template" class="tpl-representante">
 			        {{#items}}

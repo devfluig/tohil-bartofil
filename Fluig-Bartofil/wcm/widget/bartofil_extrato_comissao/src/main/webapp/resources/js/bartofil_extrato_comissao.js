@@ -8,6 +8,9 @@ var extratocampanha = SuperWidget.extend({
 		$(".pageTitle").parent().remove();
 		extratocampanha.loading.show();
 		
+		extratocampanha.grouprca = this.grouprca;
+		
+		
 		if (extratocampanha.mobile) {
 			$('#visualizacaoresumido').prop('checked', true);
 			extratocampanha.showresumido();
@@ -36,9 +39,27 @@ var extratocampanha = SuperWidget.extend({
 			"click-resumido": ['click_showresumido'],
 			"change-periodo": ['change_getcomissoes'],
 			"click-print": ['click_print'],
+			'save-preferences': ['click_savePreferences'],
 			"change-representante": ['change_listcomissoes']
 		}
 	},
+	
+	savePreferences: function(el, ev) {
+		var args = {
+			"grouprca": $('input[id="grouprca"]', this.DOM).val()
+		};
+		console.log(args);
+		
+		WCMSpaceAPI.PageService.UPDATEPREFERENCES({
+		    async: true,
+		    success: function (data) {
+		    	console.log("UPDATEPREFERENCES", data);
+		    },
+		    fail: function (xhr, message, errorData) {
+		    	console.log("UPDATEPREFERENCES fail", xhr, message, errorData);
+		    }
+		}, this.instanceId, args );
+	},	
 	
 	listcomissoes: function(el, ev) {
 		extratocampanha.loading.show();
