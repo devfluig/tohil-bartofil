@@ -9,13 +9,13 @@
 	    <div class="panel-heading">${i18n.getTranslation('campanha.parceiros.100')}</div>
 	    <div class="panel-body">
 	    	<div class="row">
-	    		<div class="col-md-2 col-sm-1 user-avatar">
+	    		<div class="col-md-1 col-sm-1 user-avatar">
 				    <script type="text/template" class="tpl-avatar">
 				    	<img data-update-image-profile="{{userCode}}" data-image-size="X_SMALL_PICTURE" src="/social/api/rest/social/image/profile/{{userCode}}/X_SMALL_PICTURE" class="fluig-style-guide thumb-profile thumb-profile-md"></img>
 				    </script>
 	    		</div>
 	    		
-	    		<div class="col-md-10 col-sm-11">
+	    		<div class="col-md-11 col-sm-11">
 					<form class="form-horizontal" role="form">
 						<div class="form-group">
 					        <label for="codrca" class="col-sm-1 control-label">${i18n.getTranslation('cod.rca')}</label>
@@ -59,10 +59,13 @@
 	    		</div>
 	    	</div>
 		</div>
+		<div class="panel-footer fs-txt-center">
+			<label class="label label-default fs-float-left" id="dataprocessamento" style="font-size: 100%; margin-top: 5px;">${i18n.getTranslation('data.proces')}: 10/09/2018</label>		
+			<button type="button" class="btn btn-default">${i18n.getTranslation('colocacao.trimestre')}</button>&nbsp;<button type="button" class="btn btn-default">${i18n.getTranslation('detalhamento')}</button>
+		</div>
 	</div>
 	
-
-	<form class="form-inline header-itens-campanha" role="form">
+	<form class="form-inline" role="form">
 		<label>${i18n.getTranslation('ordernar.por')}:</label>
     	<div class="form-group">
     		<select class="form-control" id="ordenar" data-change-ordenar>
@@ -87,220 +90,63 @@
         <div class="form-group">
             <input type="text" class="form-control" id="busca" placeholder="${i18n.getTranslation('digite.texto')}">
         </div>
+		<label>${i18n.getTranslation('trimestre')}:</label>
+    	<div class="form-group">
+    		<select class="form-control" id="paginacao" data-change-trimestre>
+    			<option value="1">1</option>
+    			<option value="2">2</option>
+    			<option value="3">3</option>
+    			<option value="4">4</option>
+    		</select>
+    	</div>
+		<label class="fs-md-space nav-representative fs-display-none">${i18n.getTranslation('representante')}:</label>
+    	<div class="form-group nav-representative fs-display-none">
+    		<select class="form-control" id="listrepresentatives" data-change-representante>
+			    <script type="text/template" class="tpl-representante">
+			        {{#items}}
+		    			<option value="{{id}}">{{name}}</option>
+			        {{/items}}
+			    </script>
+    		</select>
+    	</div>
 	</form>
+
 	<br>
 	
-    <script type="text/template" class="tpl-continuous-scroll-campanhas">
-		<div class="row clearfix itens-campanha">
-	        {{#items}}
-				<div class="col-sm-4 col-md-3">
-				    <div class="thumbnail" data-click-campanha data-id="{{id}}">
-				        <img id="img{{id}}" src="{{image}}" style="height: 300px;">
-				        <div class="caption">
-				            <h4>{{id}} - {{descricao}}</h4>
-				            <p>{{{posicao}}}<button type="button" class="btn {{classbutton}} fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
-				            <p style="padding-top: 5px;"><span class="label label-default">Iniciada {{dainiciado}}</span><span class="label {{classlabel}}">{{labelfim}}</span></p>
-				        </div>
-				    </div>
-				</div>
-	        {{/items}}
-	    </div>
-    </script>
-	
-   	<div class="table-responsive fs-display-none premiados">
-		<div class="panel panel-info">
-		    <div class="panel-heading" style="height: 53px;">DETALHES DA CAMPANHA<button type="button" class="btn btn-default fs-float-right" data-click-fechar>Voltar</button></div>
-		    <div class="panel-body">
-		    	<div class="row">
-		    		<div class="col-md-7 col-sm-9">
-						<ul class="list-group">
-						    <li class="list-group-item active">Minha posição</li>
-						</ul>	    		
-				    	<table id="table-myranking" class="table table-striped with-border table-hover table-condensed">
-				    		<thead>
-				    			<tr class="primary">
-				    				<th class="fs-txt-center">${i18n.getTranslation('situacao')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('gp')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('pos')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('rca')}</th>
-				    				<th>${i18n.getTranslation('nome.rca')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('apurado')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('premiacao')}</th>
-				    				<th>${i18n.getTranslation('equipe')}</th>
-				    			</tr>
-				    		</thead>
-				    		<tbody>
-				    			<tr class="success">
-				    				<td class="fs-txt-center">Premiado</td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">3</td>
-				    				<td class="fs-txt-center">20683</td>
-				    				<td>Marcelo</td>
-				    				<td class="fs-txt-center">10.221,80</td>
-				    				<td class="fs-txt-center"><span class="fluigicon fluigicon-certificate fluigicon-sm"></span>&nbsp;1.100,00</td>
-				    				<td>Bahia 2</td>
-				    			</tr>
-				    		</tbody>
-				    	</table>
-						<ul class="list-group">
-						    <li class="list-group-item list-group-item-warning">Ranking Geral</li>
-						</ul>	    		
-				    	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed">
-				    		<thead>
-				    			<tr class="primary">
-				    				<th class="fs-txt-center">${i18n.getTranslation('situacao')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('gp')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('pos')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('rca')}</th>
-				    				<th>${i18n.getTranslation('nome.rca')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('apurado')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('premiacao')}</th>
-				    				<th>${i18n.getTranslation('equipe')}</th>
-				    			</tr>
-				    		</thead>
-				    		<tbody>
-				    			<tr class="success">
-				    				<td class="fs-txt-center">Premiado</td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">20683</td>
-				    				<td>Marcelo</td>
-				    				<td class="fs-txt-center">10.221,80</td>
-				    				<td class="fs-txt-center"><span class="fluigicon fluigicon-certificate fluigicon-sm"></span>&nbsp;1.100,00</td>
-				    				<td>Bahia 2</td>
-				    			</tr>
-				    			<tr class="success">
-				    				<td class="fs-txt-center">Premiado</td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">2</td>
-				    				<td class="fs-txt-center">31940</td>
-				    				<td>Anderson</td>
-				    				<td class="fs-txt-center">7.790,77</td>
-				    				<td class="fs-txt-center"><span class="fluigicon fluigicon-certificate fluigicon-sm"></span>&nbsp;1.000,00</td>
-				    				<td>Norte 2</td>
-				    			</tr>
-				    			<tr class="success">
-				    				<td class="fs-txt-center">Premiado</td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">3</td>
-				    				<td class="fs-txt-center">22860</td>
-				    				<td>Anderson</td>
-				    				<td class="fs-txt-center">7.550,16</td>
-				    				<td class="fs-txt-center"><span class="fluigicon fluigicon-certificate fluigicon-sm"></span>&nbsp;900,00</td>
-				    				<td>Rio de Janeiro</td>
-				    			</tr>
-				    			<tr class="success">
-				    				<td class="fs-txt-center">Premiado</td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">4</td>
-				    				<td class="fs-txt-center">22046</td>
-				    				<td>Donato</td>
-				    				<td class="fs-txt-center">7.337,02</td>
-				    				<td class="fs-txt-center"><span class="fluigicon fluigicon-certificate fluigicon-sm"></span>&nbsp;800,00</td>
-				    				<td>Rio de Janeiro</td>
-				    			</tr>
-				    			<tr class="success">
-				    				<td class="fs-txt-center">Premiado</td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">5</td>
-				    				<td class="fs-txt-center">12725</td>
-				    				<td>Joao Alves</td>
-				    				<td class="fs-txt-center">7.312,06</td>
-				    				<td class="fs-txt-center"><span class="fluigicon fluigicon-certificate fluigicon-sm"></span>&nbsp;700,00</td>
-				    				<td>Minas Gerais 4</td>
-				    			</tr>
-				    			<tr>
-				    				<td></td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">6</td>
-				    				<td class="fs-txt-center">12725</td>
-				    				<td>Joao Alves</td>
-				    				<td class="fs-txt-center">7.312,06</td>
-				    				<td></td>
-				    				<td>Minas Gerais 4</td>
-				    			</tr>
-				    			<tr>
-				    				<td></td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">7</td>
-				    				<td class="fs-txt-center">12725</td>
-				    				<td>Joao Alves</td>
-				    				<td class="fs-txt-center">7.312,06</td>
-				    				<td></td>
-				    				<td>Minas Gerais 4</td>
-				    			</tr>
-				    			<tr>
-				    				<td></td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">7</td>
-				    				<td class="fs-txt-center">12725</td>
-				    				<td>Joao Alves</td>
-				    				<td class="fs-txt-center">7.312,06</td>
-				    				<td></td>
-				    				<td>Minas Gerais 4</td>
-				    			</tr>
-				    			<tr>
-				    				<td></td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">7</td>
-				    				<td class="fs-txt-center">12725</td>
-				    				<td>Joao Alves</td>
-				    				<td class="fs-txt-center">7.312,06</td>
-				    				<td></td>
-				    				<td>Minas Gerais 4</td>
-				    			</tr>
-				    			<tr>
-				    				<td></td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">7</td>
-				    				<td class="fs-txt-center">12725</td>
-				    				<td>Joao Alves</td>
-				    				<td class="fs-txt-center">7.312,06</td>
-				    				<td></td>
-				    				<td>Minas Gerais 4</td>
-				    			</tr>
-				    			<tr>
-				    				<td></td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">7</td>
-				    				<td class="fs-txt-center">12725</td>
-				    				<td>Joao Alves</td>
-				    				<td class="fs-txt-center">7.312,06</td>
-				    				<td></td>
-				    				<td>Minas Gerais 4</td>
-				    			</tr>
-				    			<tr>
-				    				<td></td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">7</td>
-				    				<td class="fs-txt-center">12725</td>
-				    				<td>Joao Alves</td>
-				    				<td class="fs-txt-center">7.312,06</td>
-				    				<td></td>
-				    				<td>Minas Gerais 4</td>
-				    			</tr>
-				    			<tr>
-				    				<td></td>
-				    				<td class="fs-txt-center">1</td>
-				    				<td class="fs-txt-center">7</td>
-				    				<td class="fs-txt-center">12725</td>
-				    				<td>Joao Alves</td>
-				    				<td class="fs-txt-center">7.312,06</td>
-				    				<td></td>
-				    				<td>Minas Gerais 4</td>
-				    			</tr>
-				    		</tbody>
-				    	</table>
-		    		</div>
-		    		<div class="col-md-5 col-sm-3 list-imagens-detail">
-			            <a href="#" data-image-prev><span class="fluigicon fluigicon-chevron-left fluigicon-md prev-image"></span></a>
-			            <img src="/bartofil_campanha_vendas/resources/images/campanha1.png" class="image-detail" style="width: 90%">
-			            <a href="#" data-image-next><span class="fluigicon fluigicon-chevron-right fluigicon-md next-image"></span></a>
-		    		</div>
-		    	</div>
-		    </div>
-		</div>   		
-    </div>
+   	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed">
+   		<thead>
+   			<tr class="primary">
+   				<th class="fs-txt-center">${i18n.getTranslation('codigo')}</th>
+   				<th class="fs-txt-center">${i18n.getTranslation('nome.rca')}</th>
+   				<th class="fs-txt-center">${i18n.getTranslation('pontos')}</th>
+   				<th class="fs-txt-center">${i18n.getTranslation('ordem')}</th>
+   				<th>${i18n.getTranslation('premio')}</th>
+   				<th class="fs-txt-center">${i18n.getTranslation('equipe')}</th>
+   			</tr>
+   		</thead>
+   		<tbody>
+		    <script type="text/template" class="tpl-item-ranking">
+		        {{#items}}
+		  			<tr class="{{premiado}}">
+		  				<td class="fs-txt-center">{{codigo}}</td>
+		  				<td class="fs-txt-center">{{nome}}</td>
+		  				<td class="fs-txt-center">{{pontos}}</td>
+		  				<td class="fs-txt-center">{{ordem}}</td>
+		  				<td>{{premio}}</td>
+		  				<td class="fs-txt-center">{{equipe}}</td>
+		  			</tr>
+		        {{/items}}
+		    </script>
+   			<tr class="success">
+   				<td class="fs-txt-center">Premiado</td>
+   				<td class="fs-txt-center">20683</td>
+   				<td>Marcelo</td>
+   				<td class="fs-txt-center">10.221,80</td>
+   				<td class="fs-txt-center"><span class="fluigicon fluigicon-certificate fluigicon-sm"></span>&nbsp;1.100,00</td>
+   				<td>Bahia 2</td>
+   			</tr>
+   		</tbody>
+   	</table>
 </div>
 
 <script type="text/javascript" src="/webdesk/vcXMLRPC.js"></script>

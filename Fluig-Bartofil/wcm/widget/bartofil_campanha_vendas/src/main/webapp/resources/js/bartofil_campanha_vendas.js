@@ -9,17 +9,18 @@ var campanhavendas = SuperWidget.extend({
 	context: "/bartofil_campanha_vendas",
 	current: null,
 	grouprca: null,
-	representate: null,
+	representante: null,
 	
 	init : function() {
 		$(".pageTitle").parent().remove();
 		
 		campanhavendas.foldercampanha = this.foldercampanha;
 		campanhavendas.grouprca = this.grouprca;
+		campanhavendas.representante = WCMAPI.userLogin;
+		
 		if (this.isrca() == false) {
 			this.showrepresentative();
 		} else {
-			campanhavendas.representate = WCMAPI.userLogin;
 			campanhavendas.getcampanha();
 		}
 		
@@ -225,7 +226,7 @@ var campanhavendas = SuperWidget.extend({
 		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("limit", "1", "1", ConstraintType.MUST, false);
-		var c4 = DatasetFactory.createConstraint("representante", WCMAPI.userLogin, WCMAPI.userLogin, ConstraintType.MUST, false);
+		var c4 = DatasetFactory.createConstraint("representante", campanhavendas.representante, campanhavendas.representante, ConstraintType.MUST, false);
 
 		DatasetFactory.getDataset("ds_campanha_vendas_detalhe", null, [c1, c2, c3, c4], null, {"success": campanhavendas.onreadygetmyranking} );
 		
@@ -326,7 +327,7 @@ var campanhavendas = SuperWidget.extend({
 			p = row["pontos"];
 		}
 		
-		var htmlmyrank = "<tr " + (row["situacao"].toLowerCase() == "premiado" ? "class='success'" : "") + "><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td>" + row["nomeparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td></tr>";
+		var htmlmyrank = "<tr " + (row["situacao"].toLowerCase() == "premiado" ? "class='success'" : "") + "><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td></tr>";
 		$('#table-myranking > tbody').html(htmlmyrank);
 		
 		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);
@@ -357,7 +358,7 @@ var campanhavendas = SuperWidget.extend({
 	getcampanha: function() {
 		var limit = $("#paginacao").val();
 		
-		var c1 = DatasetFactory.createConstraint("representante", WCMAPI.userLogin, WCMAPI.userLogin, ConstraintType.MUST, false);
+		var c1 = DatasetFactory.createConstraint("representante", campanhavendas.representante, campanhavendas.representante, ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("limit", "999", "999", ConstraintType.MUST, false);
 
