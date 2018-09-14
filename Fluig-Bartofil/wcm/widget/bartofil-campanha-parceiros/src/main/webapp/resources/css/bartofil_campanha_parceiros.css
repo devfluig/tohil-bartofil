@@ -1,19 +1,4 @@
 /* Coloque aqui seu codigo CSS */
-.with-border {
-	border: 2px solid #f0f0f0;
-    padding: 10px;
-    box-shadow: 2px 2px #d1e0e0;
-}
-
-.thumbnail:hover {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-	cursor: pointer;	
-}
-
-.thumbnail:hover .caption {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);	
-}
-
-.thumbnail:hover img {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);	
+.nav-pills {
+	border-bottom: 1px solid #ddd;
 }

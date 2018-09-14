@@ -59,31 +59,32 @@
 	    		</div>
 	    	</div>
 		</div>
-		<div class="panel-footer fs-txt-center">
-			<label class="label label-default fs-float-left" id="dataprocessamento" style="font-size: 100%; margin-top: 5px;">${i18n.getTranslation('data.proces')}: 10/09/2018</label>		
-			<button type="button" class="btn btn-default">${i18n.getTranslation('colocacao.trimestre')}</button>&nbsp;<button type="button" class="btn btn-default">${i18n.getTranslation('detalhamento')}</button>
-		</div>
+		<div class="panel-footer fs-txt-center" style="height: 40px">
+			<label class="label label-info fs-float-left" id="dataprocessamento" style="font-size: 100%;">${i18n.getTranslation('data.proces')}: 10/09/2018</label>
+		</div>		
 	</div>
 	
-	<form class="form-inline" role="form">
+	<ul class="nav nav-pills clearfix" role="tablist">
+	    <li class="active" data-click-tab data-tab="tab-colocacao"><a href="#">COLOCA&Ccedil;&Atilde;O TRIMESTRE</a></li>
+	    <li data-click-tab data-tab="tab-detalhamento"><a href="#">DETALHAMENTO</a></li>
+	</ul>
+	<br>
+	<form class="form-inline tab-colocacao" role="form">
 		<label>${i18n.getTranslation('ordernar.por')}:</label>
     	<div class="form-group">
     		<select class="form-control" id="ordenar" data-change-ordenar>
-    			<option value="id" data-type="integer">C&Oacute;DIGO</option>
-    			<option value="dtainicio" data-type="date">DATA INICIO</option>
-    			<option value="dtaprorrogado" data-type="date">${i18n.getTranslation('data.prorrogado')}</option>
-    			<option value="dtaencerrado" data-type="date">DATA ENCERRAMENTO</option>
-    			<option value="descricao" data-type="string">DESCRI&Ccedil;&Atilde;O</option>
+    			<option value="ordem" data-type="integer">COLOCA&Ccedil;&Atilde;O</option>
+    			<option value="nome" data-type="string">NOME</option>
+    			<option value="pontos" data-type="integer">PONTOS</option>
     		</select>
     	</div>
 		<label>${i18n.getTranslation('por.pagina')}:</label>
     	<div class="form-group">
     		<select class="form-control" id="paginacao" data-change-paginacao>
-    			<option value="8">8</option>
-    			<option value="16">16</option>
-    			<option value="24">24</option>
-    			<option value="32">32</option>
-    			<option value="999">Todas</option>
+    			<option value="30">30</option>
+    			<option value="50">50</option>
+    			<option value="75">75</option>
+    			<option value="100">100</option>
     		</select>
     	</div>
 		<label>${i18n.getTranslation('busca')}:</label>
@@ -113,7 +114,7 @@
 
 	<br>
 	
-   	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed">
+   	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed tab-colocacao">
    		<thead>
    			<tr class="primary">
    				<th class="fs-txt-center">${i18n.getTranslation('codigo')}</th>
@@ -125,18 +126,6 @@
    			</tr>
    		</thead>
    		<tbody>
-		    <script type="text/template" class="tpl-item-ranking">
-		        {{#items}}
-		  			<tr class="{{premiado}}">
-		  				<td class="fs-txt-center">{{codigo}}</td>
-		  				<td class="fs-txt-center">{{nome}}</td>
-		  				<td class="fs-txt-center">{{pontos}}</td>
-		  				<td class="fs-txt-center">{{ordem}}</td>
-		  				<td>{{premio}}</td>
-		  				<td class="fs-txt-center">{{equipe}}</td>
-		  			</tr>
-		        {{/items}}
-		    </script>
    			<tr class="success">
    				<td class="fs-txt-center">Premiado</td>
    				<td class="fs-txt-center">20683</td>
@@ -147,6 +136,23 @@
    			</tr>
    		</tbody>
    	</table>
+   	
+   	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed tab-detalhamento fs-display-none">
+   	</table>
+   	
+   <script type="text/template" class="tpl-item-ranking">
+       {{#items}}
+ 			<tr class="{{premiado}}">
+ 				<td class="fs-txt-center">{{codigo}}</td>
+ 				<td class="fs-txt-center">{{nome}}</td>
+ 				<td class="fs-txt-center">{{pontos}}</td>
+ 				<td class="fs-txt-center">{{ordem}}</td>
+ 				<td>{{premio}}</td>
+ 				<td class="fs-txt-center">{{equipe}}</td>
+ 			</tr>
+       {{/items}}
+   </script>
+   	
 </div>
 
 <script type="text/javascript" src="/webdesk/vcXMLRPC.js"></script>
