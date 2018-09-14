@@ -13,10 +13,11 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("codgrupo");
 	dataset.addColumn("descequipe");
 	
-	var campanha = "160";
+	var campanha = "87";
 	var representante = null;
 	var offset = "0";
-	var limit = "20";
+	var limit = "1";
+	var grupo = null;
 	if (constraints != null) {
 		for (var c in constraints){
 			if (constraints[c].getFieldName() == "campanha"){
@@ -27,6 +28,8 @@ function createDataset(fields, constraints, sortFields) {
 				limit = constraints[c].getInitialValue(); 
 			} else if (constraints[c].getFieldName() == "representante"){
 				representante = constraints[c].getInitialValue(); 
+			} else if (constraints[c].getFieldName() == "grupo") {
+				grupo = constraints[c].getInitialValue(); 
 			}
 		}
 	}
@@ -37,8 +40,13 @@ function createDataset(fields, constraints, sortFields) {
 		
 		var where = "";
 		if (representante != null) {
-			where = "&codparticipante=" + representante
+			where += "&codparticipante=" + representante
 		}
+		if (grupo != null) {
+			where += "&codgrupo=" + grupo
+		}
+		
+		console.log(where)
 		
         var clientService = fluigAPI.getAuthorizeClientService();
         var data = {
