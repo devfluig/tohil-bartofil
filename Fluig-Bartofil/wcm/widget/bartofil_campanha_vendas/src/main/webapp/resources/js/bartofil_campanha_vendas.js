@@ -6,7 +6,7 @@ var campanhavendas = SuperWidget.extend({
 	list: [],
 	instanceId: null,
 	foldercampanha: null,
-	context: "/bartofil_campanha_vendas",
+	code: "bartofil_campanha_vendas",
 	current: null,
 	grouprca: null,
 	representante: null,
@@ -41,7 +41,6 @@ var campanhavendas = SuperWidget.extend({
 	bindings : {
 		local : {},
 		global : {
-			"click-detalhado": ['click_showdetalhado'],
 			"click-campanha": ['click_clickcampanha'],
 			'save-preferences': ['click_savePreferences'],
 			"click-fechar": ['click_clickfechar'],
@@ -50,6 +49,7 @@ var campanhavendas = SuperWidget.extend({
 			'change-paginacao': ['change_changepaginacao'],
 			"change-representante": ['change_listcampanha'],
 			'change-ordenar': ['change_changeordenacao'],
+			'click-detail': ['click_showdetail'],
 		}
 	},
 	
@@ -105,6 +105,52 @@ var campanhavendas = SuperWidget.extend({
 		} else {
 			campanhavendas.getcampanha();
 		}
+		
+	},
+	
+	showdetail: function (el, ev) {
+		campanhavendas.loading.show();
+		
+		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("limit", "999", "999", ConstraintType.MUST, false);
+		var c4 = DatasetFactory.createConstraint("representante", campanhavendas.representante, campanhavendas.representante, ConstraintType.MUST, false);
+
+		DatasetFactory.getDataset("ds_campanha_vendas_participante", null, [c1, c2, c3, c4], null, {"success": campanhavendas.onreadyshowdetail} );
+		
+	},
+	
+	onreadyshowdetail: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			campanhavendas.loading.hide();
+			WCMC.messageError('Campanhas de vendas não possui detalhes do representante!');	    			
+			return;
+		}
+		
+		console.log("onreadyshowdetail")
+		
+		var params = { "values": rows.values }
+		
+		WCMAPI.convertFtlAsync(campanhavendas.code, 'detalhe.ftl', { "params": params },
+				function (data) {
+				   FLUIGC.modal({
+					    title: 'Detalhes do Campanha',
+					    content: data,
+					    id: 'fluig-modal',
+					    size: 'full',
+					    actions: [{
+					        'label': 'Fechar',
+					        'autoClose': true
+					    }]
+					}, function(err, data) {
+						console.log(err, data)
+					});
+					campanhavendas.loading.hide();
+			   },
+			   function(err) { }
+	  );		
+		
+				
 		
 	},
 	
@@ -220,8 +266,10 @@ var campanhavendas = SuperWidget.extend({
 				
 			}
 		} else {
-			$(".image-detail").attr("src", campanhavendas.context + "/resources/images/loading.gif");	
+			$(".image-detail").attr("src", "/" + campanhavendas.code + "/resources/images/loading.gif");	
 		}
+		
+		$(".title-detail").html("<b>" + campanhavendas.current["id"] + " " + campanhavendas.current["descricao"] + "</b> - DETALHES DA CAMPANHA");
 		
 		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
@@ -327,7 +375,7 @@ var campanhavendas = SuperWidget.extend({
 			p = row["pontos"];
 		}
 		
-		var htmlmyrank = "<tr " + (row["situacao"].toLowerCase() == "premiado" ? "class='success'" : "") + "><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td></tr>";
+		var htmlmyrank = "<tr data-click-detail class='fs-cursor-pointer " + (row["situacao"].toLowerCase() == "premiado" ? "success" : "") + "'><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td><td><span class='fluigicon fluigicon-th'></span></td></tr>";
 		$('#table-myranking > tbody').html(htmlmyrank);
 		
 		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);
@@ -450,7 +498,7 @@ var campanhavendas = SuperWidget.extend({
 					images[row["numero"]] = null;
 					if (row["descricao"] == c["id"]) {
 						c["toloading"] = row["numero"]; 
-						c["image"] = campanhavendas.context + "/resources/images/loading.gif";
+						c["image"] = "/" + campanhavendas.code + "/resources/images/loading.gif";
 					}
 				}
 			}
@@ -459,9 +507,9 @@ var campanhavendas = SuperWidget.extend({
 			
 			if (c["image"] == null && $.isEmptyObject(images) == false) { 
 				c["toloading"] = Object.keys(images)[0]; 
-				c["image"] = campanhavendas.context + "/resources/images/loading.gif";
+				c["image"] = "/" + campanhavendas.code + "/resources/images/loading.gif";
 			} else if (c["toloading"] == null) {  
-				c["image"] = campanhavendas.context + "/resources/images/no-img.png"; 
+				c["image"] = "/" + campanhavendas.code + "/resources/images/no-img.png"; 
 			}
 			
 			campanhavendas.list[i] = c;
@@ -555,7 +603,7 @@ var campanhavendas = SuperWidget.extend({
 					    c["image"] = data.content;
 					    campanhavendas.list[index] = c;
 					}).fail(function() {
-					    $("#img" + c["id"]).attr("src", campanhavendas.context + "/resources/images/no-img.png");
+					    $("#img" + c["id"]).attr("src", "/" + campanhavendas.code + "/resources/images/no-img.png");
 					}).complete(function() {
 						index++;
 						campanhavendas.geturlfromfluig(index);
@@ -569,7 +617,7 @@ var campanhavendas = SuperWidget.extend({
 			$.ajax(WCMAPI.serverURL + "/api/public/2.0/documents/getDownloadURL/" + doc).done(function(data) {
 				onready({ "doc": doc, "content": data.content}); 
 			}).fail(function() {
-				onready({ "doc": doc, "content": campanhavendas.context + "/resources/images/no-img.png"});
+				onready({ "doc": doc, "content": "/" + campanhavendas.code + "/resources/images/no-img.png"});
 			});
 		} 
 	}

@@ -6,7 +6,7 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("prioridade");
 	dataset.addColumn("campanha");
 	
-	var pasta = 114;
+	var pasta = 267;
 	var empresa = 1;
 	if (constraints != null) {
 		for (var c in constraints){
@@ -25,7 +25,7 @@ function createDataset(fields, constraints, sortFields) {
     try {
     	var conn = ds.getConnection();
     	var stmt = conn.createStatement();
-    	var rs = stmt.executeQuery("select d.NR_DOCUMENTO, d.DS_PRINCIPAL_DOCUMENTO, D.NUM_PRIORID, (select DS_PRINCIPAL_DOCUMENTO from DOCUMENTO where COD_EMPRESA = d.COD_EMPRESA and NR_DOCUMENTO = d.NR_DOCUMENTO_PAI) as CAMPANHA from DOCUMENTO d where d.COD_EMPRESA = " + empresa + " and d.NR_DOCUMENTO_PAI in (select NR_DOCUMENTO from DOCUMENTO where COD_EMPRESA = " + empresa + " and NR_DOCUMENTO_PAI = " + pasta + ")");
+    	var rs = stmt.executeQuery("select d.NR_DOCUMENTO, d.DS_PRINCIPAL_DOCUMENTO, D.NUM_PRIORID, (select DS_PRINCIPAL_DOCUMENTO from DOCUMENTO where COD_EMPRESA = d.COD_EMPRESA and NR_DOCUMENTO = d.NR_DOCUMENTO_PAI) as CAMPANHA from DOCUMENTO d where d.COD_EMPRESA = " + empresa + " and d.versao_ativa = 1 and d.NR_DOCUMENTO_PAI in (select NR_DOCUMENTO from DOCUMENTO where COD_EMPRESA = " + empresa + " and NR_DOCUMENTO_PAI = " + pasta + ")");
     	var columnCount = rs.getMetaData().getColumnCount();
         while(rs.next()) {
         	var Arr = new Array();

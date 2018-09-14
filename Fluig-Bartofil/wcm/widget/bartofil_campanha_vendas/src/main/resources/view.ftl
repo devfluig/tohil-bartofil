@@ -62,7 +62,7 @@
 	
    	<div class="table-responsive fs-display-none premiados">
 		<div class="panel panel-info">
-		    <div class="panel-heading" style="height: 53px;">DETALHES DA CAMPANHA<button type="button" class="btn btn-default fs-float-right" data-click-fechar>Voltar</button></div>
+		    <div class="panel-heading" style="height: 53px;"><span class="title-detail">DETALHES DA CAMPANHA</span><button type="button" class="btn btn-default fs-float-right" data-click-fechar>Voltar</button></div>
 		    <div class="panel-body">
 		    	<div class="row">
 		    		<div class="col-md-7 col-sm-9">
@@ -79,6 +79,7 @@
 				    				<th class="fs-txt-center">${i18n.getTranslation('apurado')}</th>
 				    				<th class="fs-txt-center">${i18n.getTranslation('premiacao')}</th>
 				    				<th>${i18n.getTranslation('equipe')}</th>
+				    				<th>#</th>
 				    			</tr>
 				    		</thead>
 				    		<tbody>
