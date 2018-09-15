@@ -18,39 +18,39 @@
 	    		<div class="col-md-11 col-sm-11">
 					<form class="form-horizontal" role="form">
 						<div class="form-group">
-					        <label for="codrca" class="col-sm-1 control-label">${i18n.getTranslation('cod.rca')}</label>
+					        <label for="codrca" class="col-sm-2 control-label">${i18n.getTranslation('cod.rca')}:</label>
 					        <div class="col-sm-2">
 					            <input type="text" class="form-control" id="codrca" readonly >
 					        </div>
-					        <label for="gerencia" class="col-sm-1 control-label">${i18n.getTranslation('gerencia')}</label>
+					        <label for="gerencia" class="col-sm-1 control-label">${i18n.getTranslation('gerencia')}:</label>
 					        <div class="col-sm-3">
 					            <input type="text" class="form-control" id="gerencia" readonly >
 					        </div>
-					        <label for="totalpontos" class="col-sm-1 control-label">${i18n.getTranslation('total.pontos')}</label>
+					        <label for="totalpontos" class="col-sm-1 control-label">${i18n.getTranslation('total.pontos')}:</label>
 					        <div class="col-sm-2">
 					            <input type="text" class="form-control" id="totalpontos" readonly >
 					        </div>
 					    </div>						
 						<div class="form-group">
-					        <label for="nomerca" class="col-sm-1 control-label">${i18n.getTranslation('nome.rca')}</label>
+					        <label for="nomerca" class="col-sm-2 control-label">${i18n.getTranslation('nome.rca')}:</label>
 					        <div class="col-sm-2">
 					            <input type="text" class="form-control" id="nomerca" readonly >
 					        </div>
-					        <label for="equipe" class="col-sm-1 control-label">${i18n.getTranslation('equipe')}</label>
+					        <label for="equipe" class="col-sm-1 control-label">${i18n.getTranslation('equipe')}:</label>
 					        <div class="col-sm-3">
 					            <input type="text" class="form-control" id="equipe" readonly >
 					        </div>
-					        <label for="colocacao" class="col-sm-1 control-label">${i18n.getTranslation('colocacao')}</label>
+					        <label for="colocacao" class="col-sm-1 control-label">${i18n.getTranslation('colocacao')}:</label>
 					        <div class="col-sm-2">
 					            <input type="text" class="form-control" id="colocacao" readonly >
 					        </div>
 					    </div>						
 						<div class="form-group">
-					        <label for="divisao" class="col-sm-offset-3 col-sm-1 control-label">${i18n.getTranslation('divisao')}</label>
+					        <label for="divisao" class="col-sm-offset-4 col-sm-1 control-label">${i18n.getTranslation('divisao')}:</label>
 					        <div class="col-sm-3">
 					            <input type="text" class="form-control" id="divisao" readonly >
 					        </div>
-					        <label for="premio" class="col-sm-1 control-label">${i18n.getTranslation('premio')}</label>
+					        <label for="premio" class="col-sm-1 control-label">${i18n.getTranslation('premio')}:</label>
 					        <div class="col-sm-2">
 					            <input type="text" class="form-control" id="premio" readonly >
 					        </div>
@@ -60,22 +60,22 @@
 	    	</div>
 		</div>
 		<div class="panel-footer fs-txt-center" style="height: 40px">
-			<label class="label label-info fs-float-left" id="dataprocessamento" style="font-size: 100%;">${i18n.getTranslation('data.proces')}: 10/09/2018</label>
+			<label class="label label-info fs-float-left" id="dataprocessamento" style="font-size: 100%;">${i18n.getTranslation('data.proces')}: <span class="data-proces"></span></label>
 		</div>		
 	</div>
 	
 	<ul class="nav nav-pills clearfix" role="tablist">
-	    <li class="active" data-click-tab data-tab="tab-colocacao"><a href="#">COLOCA&Ccedil;&Atilde;O TRIMESTRE</a></li>
-	    <li data-click-tab data-tab="tab-detalhamento"><a href="#">DETALHAMENTO</a></li>
+	    <li class="active" data-click-tab data-tab="tab-colocacao"><a href="#">${i18n.getTranslation('colocacao.trimestre')}</a></li>
+	    <li data-click-tab data-tab="tab-detalhamento"><a href="#">${i18n.getTranslation('detalhamento')}</a></li>
 	</ul>
 	<br>
 	<form class="form-inline tab-colocacao" role="form">
 		<label>${i18n.getTranslation('ordernar.por')}:</label>
     	<div class="form-group">
     		<select class="form-control" id="ordenar" data-change-ordenar>
-    			<option value="ordem" data-type="integer">COLOCA&Ccedil;&Atilde;O</option>
-    			<option value="nome" data-type="string">NOME</option>
-    			<option value="pontos" data-type="integer">PONTOS</option>
+    			<option value="ordem" data-type="integer">${i18n.getTranslation('colocacao')}</option>
+    			<option value="nome" data-type="string">${i18n.getTranslation('nome')}</option>
+    			<option value="pontos" data-type="integer">${i18n.getTranslation('pontos')}</option>
     		</select>
     	</div>
 		<label>${i18n.getTranslation('por.pagina')}:</label>
@@ -91,9 +91,9 @@
         <div class="form-group">
             <input type="text" class="form-control" id="busca" placeholder="${i18n.getTranslation('digite.texto')}">
         </div>
-		<label>${i18n.getTranslation('trimestre')}:</label>
+		<label class="fs-text-uppercase">${i18n.getTranslation('trimestre')}:</label>
     	<div class="form-group">
-    		<select class="form-control" id="paginacao" data-change-trimestre>
+    		<select class="form-control" id="trimestre" data-change-trimestre>
     			<option value="1">1</option>
     			<option value="2">2</option>
     			<option value="3">3</option>
@@ -158,10 +158,10 @@
 						   	<table class="table table-striped with-border table-hover table-condensed">
 						   		<thead>
 						   			<tr class="primary">
-						   				<th class="fs-txt-center">INICIO</th>
-						   				<th class="fs-txt-center">FINAL</th>
-						   				<th class="fs-txt-center">APURADO</th>
-						   				<th class="fs-txt-center">PONTOS</th>
+						   				<th class="fs-txt-center">${i18n.getTranslation('inicio')}</th>
+						   				<th class="fs-txt-center">${i18n.getTranslation('final')}</th>
+						   				<th class="fs-txt-center">${i18n.getTranslation('apurado')}</th>
+						   				<th class="fs-txt-center">${i18n.getTranslation('pontos')}</th>
 						   			</tr>
 						   		</thead>
 						   		<tbody>
