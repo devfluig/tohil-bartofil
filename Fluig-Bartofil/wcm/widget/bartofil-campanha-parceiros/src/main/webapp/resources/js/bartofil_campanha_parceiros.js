@@ -124,6 +124,7 @@ var campanhaparceiros = SuperWidget.extend({
 	listcampanha: function(el, ev) {
 		campanhaparceiros.loading.show();
 		campanhaparceiros.representante = $('#listrepresentatives').val();
+		$('.tab-detalhamento').html("");
 		campanhaparceiros.list = [];
 		campanhaparceiros.offset = 0;
 		campanhaparceiros.limit = parseInt($("#paginacao").val());
@@ -136,6 +137,9 @@ var campanhaparceiros = SuperWidget.extend({
 		var c3 = DatasetFactory.createConstraint("limit", "1", "1", ConstraintType.MUST, false);
 
 		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3], null, {"success": campanhaparceiros.onreadygetranking} );
+		
+		campanhaparceiros.getdetalhamentos();
+		
 		
 	},
 	
@@ -294,6 +298,83 @@ var campanhaparceiros = SuperWidget.extend({
 		$('#table-ranking > tbody').append(html);
 
 		campanhaparceiros.loading.hide();
+	},
+	
+	getdetalhamentos: function() {
+		
+		FLUIGC.loading(".tab-detalhamento").show();
+		
+		var c1 = DatasetFactory.createConstraint("representante", campanhaparceiros.representante, campanhaparceiros.representante, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("limit", "1", "1", ConstraintType.MUST, false);
+
+		DatasetFactory.getDataset("ds_campanha_parceiros_detalhe", null, [c1, c2, c3], null, {"success": campanhaparceiros.onreadygetdetalhamentos} );
+		
+	},
+	
+	onreadygetdetalhamentos: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			FLUIGC.loading(".tab-detalhamento").hide();
+			$(".tab-detalhamento").html('<p>Campanhas de Parceiros 100% não possui detalhamento!</p>');	    			
+			return;
+		}
+		var values = rows["values"];
+		if (values[0].tipapuracao == "erro") {
+			FLUIGC.loading(".tab-detalhamento").hide();
+			$(".tab-detalhamento").html('<p>Campanhas de Parceiros 100% não possui detalhamento!</p>');	    			
+			return;
+		}
+		
+		var items = {};
+		for (var i=0; i<values.length; i++) {
+			var row = values[i];
+			
+			var o = items[row["quesito"]];
+			if (o) {
+				o["pontos"] += +(row["pontos"]);
+				o["items"].push({ 
+					"datainicio": row["datainicio"],
+					"datafinal": row["datafinal"],
+					"pontos": +(row["pontos"]),
+					"apurado": +(row["apurado"]) 
+				});
+			} else {
+				var id = FLUIGC.utilities.randomUUID();
+				items[row["quesito"]] = {
+					"id": id,
+					"hashid": "#" + id,
+					"quesito": row["quesito"],
+					"pontos": +(row["pontos"]),
+					"items": [{ 
+						"datainicio": row["datainicio"],
+					    "datafinal": row["datafinal"],
+						"pontos": +(row["pontos"]),
+						"apurado": +(row["apurado"]) 
+					}]
+				}
+			}
+		}
+		
+		console.log(items);
+		
+		for (var key in items) {
+			var o = items[key];
+			var tpl = $('.tpl-detalhamento').html();
+			
+			var classbadge = "badge-default";
+			if (o["pontos"] > 0) {
+				classbadge = "badge-success";
+			} else if (o["pontos"] < 0) {
+				classbadge = "badge-danger";
+			}
+			
+			var data = { "items": o["items"], "quesito": o["quesito"], "id": o["id"], "hashid": o["hashid"], "total": o["pontos"], "classbadge": classbadge };
+			var html = Mustache.render(tpl, data);
+			$('.tab-detalhamento').append(html);
+		}
+		
+		FLUIGC.loading(".tab-detalhamento").hide();
+		
 	},
 	
 	mask: function (valor) {
