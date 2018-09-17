@@ -1,5 +1,5 @@
 <div id="campanha_parceiros_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide widget-parceiros"
-	data-params="campanhaparceiros.instance({instanceId: ${instanceId}})">
+	data-params="campanhaparceiros.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}'})">
 
 	<div class="page-header">
 		<h1>${i18n.getTranslation('posicao.rca.campanha')}</h1>
@@ -139,7 +139,7 @@
        	{{/items}}
    	</script>
    	
-   	<div class="panel-group tab-detalhamento fs-display-none">
+   	<div class="panel-group tab-detalhamento fs-display-none"></div>
    		
    	<script type="text/template" class="tpl-detalhamento">
 	    <div class="panel panel-default">
@@ -182,7 +182,6 @@
 	    </div>   		
 	</script>
    		
-   	</div>
 </div>
 
 <script type="text/javascript" src="/webdesk/vcXMLRPC.js"></script>

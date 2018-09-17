@@ -14,6 +14,7 @@ var campanhaparceiros = SuperWidget.extend({
 	init : function() {
 		$(".pageTitle").parent().remove();
 		
+		
 		var tpl = $('.tpl-avatar').html();
 		var data = { "userCode": WCMAPI.userCode };
 		var html = Mustache.render(tpl, data);
@@ -33,7 +34,8 @@ var campanhaparceiros = SuperWidget.extend({
 		});
 		
 		campanhaparceiros.loading.show();
-		campanhaparceiros.representate = WCMAPI.userLogin;
+		campanhaparceiros.representante = WCMAPI.userLogin;
+		campanhaparceiros.grouprca = this.grouprca;
 		
 		if (this.isrca() == false) {
 			this.showrepresentative();
@@ -48,12 +50,42 @@ var campanhaparceiros = SuperWidget.extend({
 		global : {
 			"click-detalhado": ['click_showdetalhado'],
 			'change-paginacao': ['change_changepaginacao'],
-			"change-representante": ['change_getranking'],
+			"change-representante": ['change_changerepresentante'],
 			'change-ordenar': ['change_changeordenacao'],
+			'save-preferences': ['click_savePreferences'],
 			'click-tab': ['click_showtab'],
 			'change-trimestre': ['change_changetrimestre'],
 		}
 	},
+	
+	changerepresentante: function () {
+		campanhaparceiros.loading.show();
+		campanhaparceiros.representante = $('#listrepresentatives').val();
+		campanhaparceiros.list = [];
+		campanhaparceiros.offset = 0;
+		$(".tab-detalhamento").html("");
+		campanhaparceiros.current = null;
+		campanhaparceiros.limit = parseInt($("#paginacao").val());
+		campanhaparceiros.getranking();
+		
+	},
+	
+	savePreferences: function(el, ev) {
+		var args = {
+			"grouprca": $('input[id="grouprca"]', this.DOM).val()
+		};
+		console.log(args);
+		
+		WCMSpaceAPI.PageService.UPDATEPREFERENCES({
+		    async: true,
+		    success: function (data) {
+				WCMC.messageInfo('Preferencias salvas com sucesso!');	    			
+		    },
+		    fail: function (xhr, message, errorData) {
+		    	console.log("UPDATEPREFERENCES fail", xhr, message, errorData);
+		    }
+		}, this.instanceId, args );
+	},	
 	
 	changetrimestre: function() {
 		campanhaparceiros.showranking(true);		
@@ -156,7 +188,7 @@ var campanhaparceiros = SuperWidget.extend({
 		}
 		
 		var values = rows["values"];
-		if (values[0].tipapuracao == "erro") {
+		if (values[0].apelido == "erro") {
 			campanhaparceiros.loading.hide();
 			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking!');	    			
 			return;
@@ -189,6 +221,8 @@ var campanhaparceiros = SuperWidget.extend({
 		$("#colocacao").val(row["ordem"]);
 		$("#divisao").val(row["divisao"]);
 		$("#premio").val(v);
+		
+		$(".data-proces").html(row["dataprocessamento"]);
 		
 		campanhaparceiros.mydivision = row["divisao"]; 
 		
@@ -320,7 +354,7 @@ var campanhaparceiros = SuperWidget.extend({
 		
 		var c1 = DatasetFactory.createConstraint("representante", campanhaparceiros.representante, campanhaparceiros.representante, ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
-		var c3 = DatasetFactory.createConstraint("limit", "1", "1", ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("limit", "999", "999", ConstraintType.MUST, false);
 
 		DatasetFactory.getDataset("ds_campanha_parceiros_detalhe", null, [c1, c2, c3], null, {"success": campanhaparceiros.onreadygetdetalhamentos} );
 		
