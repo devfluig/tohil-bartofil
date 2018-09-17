@@ -1,19 +1,16 @@
 /* Coloque aqui seu codigo CSS */
-.with-border {
-	border: 2px solid #f0f0f0;
-    padding: 10px;
-    box-shadow: 2px 2px #d1e0e0;
+.nav-pills {
+	border-bottom: 1px solid #ddd;
 }
 
-.thumbnail:hover {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-	cursor: pointer;	
+.badge-success {
+    background-color: #5cb85c !important;
 }
 
-.thumbnail:hover .caption {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);	
+.badge-danger {
+    background-color: #d9534f !important;
 }
 
-.thumbnail:hover img {
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);	
+.badge-default {
+    background-color: #777 !important;
 }

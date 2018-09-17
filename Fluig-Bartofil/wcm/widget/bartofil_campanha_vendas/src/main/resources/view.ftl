@@ -106,7 +106,7 @@
 		    		</div>
 		    		<div class="col-md-5 col-sm-3 list-imagens-detail">
 			            <a href="#" data-image-prev><span class="fluigicon fluigicon-chevron-left fluigicon-md prev-image"></span></a>
-			            <img src="" class="image-detail" style="width: 90%">
+			            <img src="" class="image-detail">
 			            <a href="#" data-image-next><span class="fluigicon fluigicon-chevron-right fluigicon-md next-image"></span></a>
 		    		</div>
 		    	</div>
