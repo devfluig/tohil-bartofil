@@ -14,6 +14,7 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("enderrua");
 	dataset.addColumn("cnpjcpfdigito");
 	dataset.addColumn("nomerazao");
+	dataset.addColumn("foto");
 	
 	var representante = "20009";
 	if (constraints != null) {
@@ -32,7 +33,7 @@ function createDataset(fields, constraints, sortFields) {
         var data = {
             companyId : getValue("WKCompany") + '',
             serviceCode : 'RCA',
-            endpoint : "/v1/representante?fields=codpessoarepresentante,codrepresentante,nomerazao,apelido,cnpjcpfnumero,cnpjcpfdigito,enderrua,enderbairro,endercidade,enderuf,endercep,nroregcore,inscinss&codrepresentante=" + representante + "&sessionid=123abc",
+            endpoint : "/v1/representante?fields=codpessoarepresentante,codrepresentante,nomerazao,apelido,cnpjcpfnumero,cnpjcpfdigito,enderrua,enderbairro,endercidade,enderuf,endercep,nroregcore,inscinss,foto&codrepresentante=" + representante + "&sessionid=123abc",
             method : 'get',     
             timeoutService: '1000',
 	        options : {
@@ -60,7 +61,8 @@ function createDataset(fields, constraints, sortFields) {
 			    		 dados["cnpjcpfnumero"],
 			    		 dados["enderrua"],
 			    		 dados["cnpjcpfdigito"],
-			    		 dados["nomerazao"]));
+			    		 dados["nomerazao"],
+			    		 dados["foto"]));
             }
             
         }

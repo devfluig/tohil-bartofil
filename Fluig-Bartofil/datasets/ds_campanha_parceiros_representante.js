@@ -19,6 +19,8 @@ function createDataset(fields, constraints, sortFields) {
 	var limit = 999;
 	var offset = 0;
 	var divisao = null;
+	var periodo = null;
+	var equipesuperior = null;
 	if (constraints != null) {
 		for (var c in constraints){
 			if (constraints[c].getFieldName() == "representante") {
@@ -29,7 +31,12 @@ function createDataset(fields, constraints, sortFields) {
 				offset = +(constraints[c].getInitialValue()); 
 			} else if (constraints[c].getFieldName() == "divisao") {
 				divisao = constraints[c].getInitialValue(); 
-			}
+			} else if (constraints[c].getFieldName() == "periodo") {
+				periodo = constraints[c].getInitialValue(); 
+			} else if (constraints[c].getFieldName() == "equipesuperior") {
+				equipesuperior = constraints[c].getInitialValue(); 
+			} 
+			
 		}
 	}
 	
@@ -37,7 +44,13 @@ function createDataset(fields, constraints, sortFields) {
 		
 		var where = "";
 		if (divisao != null) {
-			where = "&divisao=" + divisao;
+			where += "&divisao=" + divisao;
+		}
+		if (periodo != null) {
+			where += "&periodo=" + periodo;
+		}
+		if (equipesuperior != null) {
+			where += "&nroequipesuperior=" + equipesuperior;
 		}
 		
   		var clientService = fluigAPI.getAuthorizeClientService();

@@ -9,11 +9,7 @@
 	    <div class="panel-heading">${i18n.getTranslation('campanha.parceiros.100')}</div>
 	    <div class="panel-body">
 	    	<div class="row">
-	    		<div class="col-md-1 col-sm-1 user-avatar">
-				    <script type="text/template" class="tpl-avatar">
-				    	<img data-update-image-profile="{{userCode}}" data-image-size="X_SMALL_PICTURE" src="/social/api/rest/social/image/profile/{{userCode}}/X_SMALL_PICTURE" class="fluig-style-guide thumb-profile thumb-profile-md"></img>
-				    </script>
-	    		</div>
+	    		<div class="col-md-1 col-sm-1 user-avatar"></div>
 	    		
 	    		<div class="col-md-11 col-sm-11">
 					<form class="form-horizontal" role="form">
@@ -116,7 +112,6 @@
    		<thead>
    			<tr class="primary">
    				<th class="fs-txt-center">${i18n.getTranslation('codigo')}</th>
-   				<th class="fs-txt-center">${i18n.getTranslation('nome.rca')}</th>
    				<th class="fs-txt-center">${i18n.getTranslation('pontos')}</th>
    				<th class="fs-txt-center">${i18n.getTranslation('ordem')}</th>
    				<th>${i18n.getTranslation('premio')}</th>
@@ -130,7 +125,6 @@
     	{{#items}}
  			<tr class="{{premiado}}">
  				<td class="fs-txt-center">{{codigo}}</td>
- 				<td class="fs-txt-center">{{nome}}</td>
  				<td class="fs-txt-center">{{pontos}}</td>
  				<td class="fs-txt-center">{{ordem}}</td>
  				<td>{{premio}}</td>
@@ -182,6 +176,9 @@
 	    </div>   		
 	</script>
    		
+    <script type="text/template" class="tpl-avatar">
+    	<img data-update-image-profile="{{userCode}}" data-image-size="X_SMALL_PICTURE" src="{{image}}" class="fluig-style-guide thumb-profile thumb-profile-md"></img>
+    </script>
 </div>
 
 <script type="text/javascript" src="/webdesk/vcXMLRPC.js"></script>

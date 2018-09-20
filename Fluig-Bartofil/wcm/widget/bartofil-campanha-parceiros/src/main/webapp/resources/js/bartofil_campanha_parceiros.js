@@ -10,15 +10,11 @@ var campanhaparceiros = SuperWidget.extend({
 	context: "/bartofil_campanha_parceiros",
 	current: null,
 	mydivision: "1",
+	trimestre: null,
+	equipesuperior: null,
 	
 	init : function() {
 		$(".pageTitle").parent().remove();
-		
-		
-		var tpl = $('.tpl-avatar').html();
-		var data = { "userCode": WCMAPI.userCode };
-		var html = Mustache.render(tpl, data);
-		$('.user-avatar').append(html);
 		
 		$(window).onScrollEnd(function() {
 			if ($(".tab-detalhamento").hasClass("fs-display-none")) {
@@ -37,10 +33,32 @@ var campanhaparceiros = SuperWidget.extend({
 		campanhaparceiros.representante = WCMAPI.userLogin;
 		campanhaparceiros.grouprca = this.grouprca;
 		
+		var today = moment(new Date());
+		var trimestre = 0;
+		if (today.date() < 17) {
+			if (today.month() == 0) {
+				trimestre = 4;
+			} else {
+				trimestre = today.quarter() - 1;
+			}
+		} else {
+			trimestre = today.quarter();
+		}
+		
+		campanhaparceiros.trimestre = trimestre;
+		$("#trimestre").val(trimestre);
+		
+		$("#trimestre option").each(function() {
+		    if ($(this).val() > trimestre) {
+		    	$(this).hide();
+		    }
+		});		
+		
 		if (this.isrca() == false) {
 			this.showrepresentative();
 		} else {
 			this.getranking();
+			this.getfoto();
 		}		
 		
 	},
@@ -70,6 +88,33 @@ var campanhaparceiros = SuperWidget.extend({
 		
 	},
 	
+	getfoto: function() {
+		var c1 = DatasetFactory.createConstraint("representante", campanhaparceiros.representante, campanhaparceiros.representante, ConstraintType.MUST, false);
+		DatasetFactory.getDataset("ds_representante", null, [c1], null, {"success": campanhaparceiros.onreadygetfoto} );
+	},
+	
+	onreadygetfoto: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			campanhaparceiros.loading.hide();
+			return;
+		}
+		
+		var values = rows["values"];
+		if (values[0].apelido == "erro") {
+			campanhaparceiros.loading.hide();
+			return;
+		}
+		
+		var row = values[0];
+
+		var tpl = $('.tpl-avatar').html();
+		var data = { "userCode": campanhaparceiros.representante, "image": row["foto"] };
+		var html = Mustache.render(tpl, data);
+		$('.user-avatar').html(html);
+		
+		
+	},
+	
 	savePreferences: function(el, ev) {
 		var args = {
 			"grouprca": $('input[id="grouprca"]', this.DOM).val()
@@ -87,8 +132,13 @@ var campanhaparceiros = SuperWidget.extend({
 		}, this.instanceId, args );
 	},	
 	
-	changetrimestre: function() {
-		campanhaparceiros.showranking(true);		
+	changetrimestre: function(el ,ev) {
+		campanhaparceiros.loading.show();
+		campanhaparceiros.trimestre = $(el).val();
+		campanhaparceiros.list = [];
+		campanhaparceiros.offset = 0;
+		campanhaparceiros.limit = parseInt($("#paginacao").val());
+		campanhaparceiros.getfullranking();		
 	},
 	showtab: function(el, ev) {
 		$(el).parent().find("li").removeClass("active")
@@ -151,8 +201,10 @@ var campanhaparceiros = SuperWidget.extend({
 			$(".nav-representative").removeClass("fs-display-none");
 			
 			campanhaparceiros.getranking();
+			campanhaparceiros.getfoto();
 		} else {
 			campanhaparceiros.getranking();
+			campanhaparceiros.getfoto();
 		}
 		
 	},
@@ -175,9 +227,6 @@ var campanhaparceiros = SuperWidget.extend({
 
 		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3], null, {"success": campanhaparceiros.onreadygetranking} );
 		
-		campanhaparceiros.getdetalhamentos();
-		
-		
 	},
 	
 	onreadygetranking: function(rows) {
@@ -195,48 +244,85 @@ var campanhaparceiros = SuperWidget.extend({
 		}
 		
 		var row = values[0];
-		campanhaparceiros.current = row;
 		
-		var v = "";
-		try {
-			v = parseFloat(row["vlrpremio"]);
-			rowclass = "success";
-			if (isNaN(v)) {
+		if (row["nrorepresentante"] == campanhaparceiros.representante) {
+			campanhaparceiros.current = row;
+			
+			var v = "";
+			try {
+				v = parseFloat(row["vlrpremio"]);
+				rowclass = "success";
+				if (isNaN(v)) {
+					v = row["vlrpremio"];
+				} else if (v > 0) {
+					v = campanhaparceiros.mask(v.toFixed(2));
+					v = "R$ " + v;
+				} else {
+					v = "";
+				}
+			} catch (e) {
 				v = row["vlrpremio"];
-			} else if (v > 0) {
-				v = campanhaparceiros.mask(v.toFixed(2));
-				v = "R$ " + v;
-			} else {
-				v = "";
 			}
-		} catch (e) {
-			v = row["vlrpremio"];
+			
+			$("#codrca").val(row["nrorepresentante"]);
+			$("#gerencia").val(row["gerencia"]);
+			$("#totalpontos").val(row["pontos"]);
+			$("#nomerca").val(row["apelido"]);
+			$("#equipe").val(row["descequipe"]);
+			$("#colocacao").val(row["ordem"]);
+			$("#divisao").val(row["divisao"]);
+			$("#premio").val(v);
+			
+			$(".data-proces").html(row["dataprocessamento"]);
+			
+			campanhaparceiros.mydivision = row["divisao"];
+			campanhaparceiros.equipesuperior = row["nroequipesuperior"];
+			
+			campanhaparceiros.getdetalhamentos();
+			campanhaparceiros.getfoto();
+			campanhaparceiros.getfullranking();
+			
+		} else {
+			$("#codrca").val("");
+			$("#gerencia").val("");
+			$("#totalpontos").val("");
+			$("#nomerca").val("");
+			$("#equipe").val("");
+			$("#colocacao").val("");
+			$("#divisao").val("");
+			$("#premio").val("");
+			campanhaparceiros.current = null;
+			campanhaparceiros.mydivision = null;
+			campanhaparceiros.equipesuperior = null;
+			
+			$('#table-ranking > tbody').html("");
+			$(".tab-detalhamento").html("");
+			
+			var tpl = $('.tpl-avatar').html();
+			var data = { "userCode": WCMAPI.userCode, "image": campanhaparceiros.context + "/resources/images/no-img.png" };
+			var html = Mustache.render(tpl, data);
+			$('.user-avatar').html(html);
+			
+			$(".data-proces").html("");
+			campanhaparceiros.loading.hide();
+			
 		}
 		
-		$("#codrca").val(row["nrorepresentante"]);
-		$("#gerencia").val(row["gerencia"]);
-		$("#totalpontos").val(row["pontos"]);
-		$("#nomerca").val(row["apelido"]);
-		$("#equipe").val(row["descequipe"]);
-		$("#colocacao").val(row["ordem"]);
-		$("#divisao").val(row["divisao"]);
-		$("#premio").val(v);
-		
-		$(".data-proces").html(row["dataprocessamento"]);
-		
-		campanhaparceiros.mydivision = row["divisao"]; 
-		
-		campanhaparceiros.getfullranking();
 		
 	},
 	
 	getfullranking: function() {
+		
+		var today = new Date();
+		var periodo = today.getFullYear() + "0" + campanhaparceiros.trimestre;
 
 		var c1 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("limit", "9999", "9999", ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("divisao", campanhaparceiros.mydivision, campanhaparceiros.mydivision, ConstraintType.MUST, false);
+		var c4 = DatasetFactory.createConstraint("periodo", periodo, periodo, ConstraintType.MUST, false);
+		var c5 = DatasetFactory.createConstraint("equipesuperior", campanhaparceiros.equipesuperior, campanhaparceiros.equipesuperior, ConstraintType.MUST, false);
 
-		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3], null, {"success": campanhaparceiros.onreadygetfullranking} );
+		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3, c4, c5], null, {"success": campanhaparceiros.onreadygetfullranking} );
 		
 	},
 	
@@ -334,7 +420,7 @@ var campanhaparceiros = SuperWidget.extend({
 		
 		for (var i = campanhaparceiros.offset; i<campanhaparceiros.limit; i++) {
 			var o = filter[i];
-			if (o && o["trimestre"] == $("#trimestre").val() && o["divisao"] == campanhaparceiros.mydivision) {
+			if (o && +(o["trimestre"]) == +($("#trimestre").val()) && o["divisao"] == campanhaparceiros.mydivision) {
 				mylist.push(o);
 			}
 		}
