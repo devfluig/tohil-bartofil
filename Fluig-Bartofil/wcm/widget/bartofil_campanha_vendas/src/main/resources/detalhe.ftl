@@ -1,10 +1,11 @@
 <table class="table table-striped with-border table-hover table-condensed">
 	<thead>
   		<tr class="primary">
+  			<th class="fs-txt-center">Seq Pessoa</th>
   			<th class="fs-txt-center">Tipo</th>
-  			<th class="fs-txt-center">Ped Venda</th>
+  			<th class="fs-txt-center">Ped Devolu&ccedil;&atilde;o</th>
   			<th class="fs-txt-center">Ped Venda 90</th>
-  			<th class="fs-txt-center">Doc Venda</th>
+  			<th class="fs-txt-center">Ped Fat Cruzado</th>
   			<th class="fs-txt-center">Produto</th>
   			<th>Descri&ccedil;&atilde;o</th>
   			<th class="fs-txt-center">Qtde</th>
@@ -21,6 +22,7 @@
 			<#else> 
 				<tr> 
 			</#if>
+	  			<td class="fs-txt-center">${row.seqpessoa}</td>
 	  			<td class="fs-txt-center">${row.tipo}</td>
 	  			<td class="fs-txt-center">${row.nropedvendaorigem}</td>
 	  			<td class="fs-txt-center">${row.nropedant90}</td>
