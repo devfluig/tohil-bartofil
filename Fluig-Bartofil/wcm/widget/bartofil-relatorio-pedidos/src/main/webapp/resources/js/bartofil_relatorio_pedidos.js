@@ -48,24 +48,26 @@ var relatorioPedidos = SuperWidget.extend({
 		var o = relatorioPedidos["current"].totais[[type]];
 		
 		$(".titleResumo").html(o["situacao"]);
-
 		$(".ul-resumo").html("");
+		
+		var tpl = $('.tpl-resumo').html();
 		for (var key in o["cgo"]) {
 			var row = o.cgo[key];
 			
 			var o = {
 				"badge": "",
-				"valor": "R$ " + relatorioPedidos.mask(row["total"].toFixed(2)),
+				"group": "",
+				"total": "R$ " + relatorioPedidos.mask(row["total"].toFixed(2)),
+				"comissao": "R$ " + relatorioPedidos.mask(row["comissao"].toFixed(2)),
+				"quantidade": relatorioPedidos.mask(row["quantidade"].toFixed(0)),
 				"descricao": key
 			}
-			var tpl = $('.tpl-resumo').html();
-			var data = { "item": o};
-			var html = Mustache.render(tpl, data);
+			var html = Mustache.render(tpl, o);
 			$(".ul-resumo").append(html);
 		}
 		
 		var total = {
-			"pedido": 0,
+			"total": 0,
 			"comissao": 0,
 			"quantidade": 0,
 			"mensalRegiao": 0,
@@ -73,21 +75,115 @@ var relatorioPedidos = SuperWidget.extend({
 			"diarioRemanescente": 0,
 			"dias": 0
 		};
+		
+		var origem = {};
+		
 		for (var i=0; i<relatorioPedidos.list.length; i++) {
 			var item = relatorioPedidos.list[i];
 			
-			total["pedido"] += item["valortotalacobrar"];
-			total["comissao"] += item["valortotalcomissao"];
-			total["comissao"] += 1;
+			var valorcobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
+			var valortotalcomissao = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+			var valortotalpedido = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+			
+			total["total"] += valorcobrar;
+			total["comissao"] += valortotalcomissao;
+			total["quantidade"] += 1;
 			
 			if (total["mensalRegiao"] == 0) {
-				total["mensalRegiao"] = item["metavlrvenda"];
+				total["mensalRegiao"] = parseFloat(item["metavlrvenda"].replace(/,/g, '').replace(",", "."));
 			}
 			if (total["dias"] == 0) {
-				total["dias"] = item["diasuteisrestantes"];
+				total["dias"] = +(item["diasuteisrestantes"]);
 			}
 			
+			if (item["situacao"] == type) {
+				origem[item["descorigempedido"]] = (origem[item["descorigempedido"]] ? origem[item["descorigempedido"]] + valortotalpedido : valortotalpedido)
+			}
 		}
+		
+		var t = {
+			"descricao": "TOTAL",
+			"group": "list-group-item-success",
+			"total": "R$ " + relatorioPedidos.mask(total["total"].toFixed(2)),
+			"comissao": "R$ " + relatorioPedidos.mask(total["comissao"].toFixed(2)),
+			"quantidade": relatorioPedidos.mask(total["quantidade"].toFixed(0)),
+		}
+		html = Mustache.render(tpl, t);
+		$(".ul-resumo").append(html);
+		
+		var despesas = relatorioPedidos["current"].despesas;
+		if (!despesas) {
+			despesas = {
+				"total": 0,
+				"comissao": 0,
+				"quantidade": 0
+			}
+		}
+		var td = {
+			"descricao": "TOTAL - Devolução",
+			"group": "list-group-item-success",
+			"total": "R$ " + relatorioPedidos.mask((total["total"] - despesas["total"]).toFixed(2))
+		}
+		
+		var d = {
+			"total": "R$ " + relatorioPedidos.mask(despesas["total"].toFixed(2)),
+			"comissao": "R$ " + relatorioPedidos.mask(despesas["comissao"].toFixed(2)),
+			"quantidade": relatorioPedidos.mask(despesas["quantidade"].toFixed(0)),
+			"descricao": "Devolução",
+			"group": "list-group-item-danger"
+		}
+
+		html = Mustache.render(tpl, d);
+		$(".ul-resumo").append(html);
+
+		html = Mustache.render(tpl, td);
+		$(".ul-resumo").append(html);
+
+		var p = {
+			"descricao": "Potenc. Mensal Região",
+			"group": "list-group-item-info",
+			"total": "R$ " + relatorioPedidos.mask((total["mensalRegiao"]).toFixed(2))
+		}
+		
+		html = Mustache.render(tpl, p);
+		$(".ul-resumo").append(html);
+		
+		var r = {
+			"descricao": "Potenc. Mensal Remanescente",
+			"group": "list-group-item-info",
+			"total": "R$ " + relatorioPedidos.mask((total["mensalRegiao"] - total["total"] - despesas["total"]).toFixed(2))
+		}
+		html = Mustache.render(tpl, r);
+		$(".ul-resumo").append(html);
+		
+		var sf = (total["mensalRegiao"] - total["total"] - despesas["total"]);
+		if (total["dias"] > 0) {
+			sf = sf / total["dias"]; 
+		}
+		var f = {
+			"descricao": "Potenc. Mensal Remanescente",
+			"group": "list-group-item-info",
+			"total": "R$ " + relatorioPedidos.mask(sf.toFixed(2))
+		}
+
+		html = Mustache.render(tpl, f);
+		$(".ul-resumo").append(html);
+		
+		var data = [];
+		for (var key in origem) {
+			var o = {
+				"value": origem[key].toFixed(2),
+				"label": key
+			}
+			data.push(o);
+		}
+		
+		console.log("chart", data)
+		
+		var chart = FLUIGC.chart('#chartOrigem');
+		console.log("chart", chart)
+		var pie = chart.pie(data, {"animateRotate": false});
+		console.log("chart", pie)
 		
 	},
 	

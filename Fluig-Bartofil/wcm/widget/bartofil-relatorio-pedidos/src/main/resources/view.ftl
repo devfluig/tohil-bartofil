@@ -12,9 +12,15 @@
 	</script>
 	
 	<script type="text/template" class="tpl-resumo">
-	    <li class="list-group-item">
-	        <span class="badge {{ item.badge }}">{{ item.valor }}</span>
-	        {{item.descricao}}
+	    <li class="list-group-item {{ group }}">
+	        <span class="badge badge-success">{{ total }}</span>
+	        {{#comissao}}
+	        	<span class="badge badge-info">{{ comissao}}</span>
+	        {{/comissao}}
+			{{#quantidade}}	        
+	        	<span class="badge badge-warning">{{ quantidade }}</span>
+	        {{/quantidade}}
+	        {{descricao}}
 	    </li>
 	</script>
 	
@@ -61,6 +67,7 @@
 			<div class="panel panel-info">
 		    	<div class="panel-heading">PEDIDOS POR ORIGEM - <span class="titleResumo"></span></div>
 		    	<div class="panel-body">
+		    		<div id="chartOrigem"></div>
 		    	</div>
 		    </div>
 		</div>

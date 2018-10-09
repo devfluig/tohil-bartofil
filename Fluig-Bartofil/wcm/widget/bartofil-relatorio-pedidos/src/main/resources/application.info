@@ -17,5 +17,5 @@ application.resource.js.3=/resources/js/bartofil_relatorio_pedidos.js
 application.resource.js.4=/resources/js/moment/moment-with-locales.min.js
 application.resource.js.5=/resources/js/mask/jquery.mask.min.js
 application.resource.js.6=/resources/js/select2/js/select2.min.js
+application.resource.component.1=fluigchart
 application.resource.component.5=mustache
-
