@@ -4,7 +4,10 @@ var relatorioPedidos = SuperWidget.extend({
 	loading: FLUIGC.loading(window),
 	background: ["bg-aqua", "bg-red", "bg-light-blue", "bg-green", "bg-navy", "bg-olive", "bg-orange", "bg-teal"],
 	list: null,
-	current: {}, 
+	pieChart: null,
+	dataTable: null,
+	current: {},
+	clicked: null,
 	
 	init : function() {
 		$(".pageTitle").parent().remove();
@@ -30,9 +33,9 @@ var relatorioPedidos = SuperWidget.extend({
 	bindings : {
 		local : {},
 		global : {
-			"change-periodo": ['change_getcomissoes'],
+			"change-periodo": ['change_listpedidos'],
 			'save-preferences': ['click_savePreferences'],
-			"change-representante": ['change_listcomissoes'],
+			"change-representante": ['change_listpedidos'],
 			'click-item': ['click_clickItem']
 		}
 	},
@@ -78,12 +81,13 @@ var relatorioPedidos = SuperWidget.extend({
 		
 		var origem = {};
 		
+		var dataRequest = [];
 		for (var i=0; i<relatorioPedidos.list.length; i++) {
 			var item = relatorioPedidos.list[i];
 			
 			var valorcobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
 			var valortotalcomissao = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
-			var valortotalpedido = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+			var valortotalacobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
 			
 			total["total"] += valorcobrar;
 			total["comissao"] += valortotalcomissao;
@@ -96,8 +100,18 @@ var relatorioPedidos = SuperWidget.extend({
 				total["dias"] = +(item["diasuteisrestantes"]);
 			}
 			
+			if (item["situacao"] == type && item["naturezaoperacao"] == "V") {
+				origem[item["descorigempedido"]] = (origem[item["descorigempedido"]] ? origem[item["descorigempedido"]] + valortotalacobrar : valortotalacobrar)
+			}
 			if (item["situacao"] == type) {
-				origem[item["descorigempedido"]] = (origem[item["descorigempedido"]] ? origem[item["descorigempedido"]] + valortotalpedido : valortotalpedido)
+				var m = moment(item["datainclusao"]);
+				item["datainclusao"] = m.format("DD/MM/YYYY");
+				item["valor"] = (item["situacao"] == "") ? item["valortotalpedido"] : item["valortotalacobrar"];
+				item["valor"] = parseFloat(item["valor"].replace(/,/g, '').replace(",", "."));
+				item["valor"] = relatorioPedidos.mask(item["valor"].toFixed(2));
+				item["comissao"] = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+				item["comissao"] = relatorioPedidos.mask(item["comissao"].toFixed(2));
+				dataRequest.push(item);
 			}
 		}
 		
@@ -172,18 +186,85 @@ var relatorioPedidos = SuperWidget.extend({
 		var data = [];
 		for (var key in origem) {
 			var o = {
-				"value": origem[key].toFixed(2),
+				"value": parseFloat(origem[key].toFixed(2)),
 				"label": key
 			}
 			data.push(o);
 		}
 		
-		console.log("chart", data)
+		var chart = FLUIGC.chart('#chartOrigem', {
+		    id: 'set_an_id_for_my_chart',
+		    width: '700',
+		    height: '200',
+		    /* See the list of options */
+		});
+		// call the pie function
+		var options = {
+			"segmentShowStroke": true,
+			"tooltipTemplate": '<%if (label){%><%=label%><%}%><%=" - "%><%=value%><%=" - "%><%= Math.round(100*(value/pieChart.total)) %>%'
+		}
+		pieChart = chart.pie(data, options);
 		
-		var chart = FLUIGC.chart('#chartOrigem');
-		console.log("chart", chart)
-		var pie = chart.pie(data, {"animateRotate": false});
-		console.log("chart", pie)
+		relatorioPedidos.dataTable = FLUIGC.datatable('#datatablePedidos', {
+			dataRequest: dataRequest,
+			renderContent: ".template_datatable",
+		    header: [
+		        {'title': 'PEDIDO'},
+		        {'title': 'DATA'},
+		        {'title': 'VALOR'},
+		        {'title': 'COMISSÃO'},
+		        {'title': 'CLIENTE'},
+		        {'title': 'NOME CLIENTE'},
+		        {'title': 'ORIGEM'},
+		        {'title': 'SIT.'}
+		    ],
+		    multiSelect: false,
+		    classSelected: 'success',
+		    search: {
+		        enabled: true,
+		        onSearch: function(response) {
+                    var value = response.toLowerCase();
+                    $(".table-datatable tbody tr").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+		        },
+		        onlyEnterkey: false,
+		        searchAreaStyle: 'col-md-3'
+		    },
+		    scroll: {
+		        enabled: false
+		    },
+		    actions: {
+		        enabled: false
+		    },
+		    navButtons: {
+		        enabled: false,
+		    },
+		    emptyMessage: '<div class="text-center">Sem informações.</div>',
+		    tableStyle: 'table-striped',
+		    draggable: {
+		        enabled: false
+		    }
+		}, function(err, data) {
+		    // DO SOMETHING (error or success)
+		});
+		
+		relatorioPedidos.dataTable.on('fluig.datatable.onselectrow', function(data) { 
+			console.log(data);
+			data.stopPropagation();
+			var row = relatorioPedidos.dataTable.getData()[data.selectedIndex[0]/2];
+			console.log("row", row)
+			if (relatorioPedidos.clicked != row["nropedidovenda"]) {
+				if ($(".detail" + row["nropedidovenda"]).hasClass("fs-display-none")) {
+					$(".detail" + row["nropedidovenda"]).removeClass("fs-display-none");
+				} else {
+					$(".detail" + row["nropedidovenda"]).addClass("fs-display-none");
+				}
+				relatorioPedidos.clicked = row["nropedidovenda"]; 
+			} else {
+				relatorioPedidos.clicked = null;
+			}
+		});		
 		
 	},
 	
