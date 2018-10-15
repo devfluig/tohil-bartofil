@@ -4,6 +4,8 @@ var relatorioPedidos = SuperWidget.extend({
 	loading: FLUIGC.loading(window),
 	background: ["bg-aqua", "bg-red", "bg-light-blue", "bg-green", "bg-navy", "bg-olive", "bg-orange", "bg-teal"],
 	list: null,
+	instanceId: null,
+	grouprca: null,
 	pieChart: null,
 	dataTable: null,
 	current: {},
@@ -16,10 +18,8 @@ var relatorioPedidos = SuperWidget.extend({
 		relatorioPedidos.grouprca = this.grouprca;
 		
 		if (this.isrca() == false) {
-			console.log("showrepresentative");
 			this.showrepresentative();
 		} else {
-			console.log("no rca");
 			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
 			var tpl = $('.tpl-representante').html();
 			var data = { "items": list};
@@ -41,10 +41,7 @@ var relatorioPedidos = SuperWidget.extend({
 	},
 	
 	clickItem: function(el, ev) {
-		console.log(el, ev);
-		
 		relatorioPedidos.showResumo($(el).data("id"));
-		
 	},
 	
 	showResumo: function(type) {
@@ -56,8 +53,7 @@ var relatorioPedidos = SuperWidget.extend({
 		var tpl = $('.tpl-resumo').html();
 		for (var key in o["cgo"]) {
 			var row = o.cgo[key];
-			
-			var o = {
+			var t = {
 				"badge": "",
 				"group": "",
 				"total": "R$ " + relatorioPedidos.mask(row["total"].toFixed(2)),
@@ -65,7 +61,7 @@ var relatorioPedidos = SuperWidget.extend({
 				"quantidade": relatorioPedidos.mask(row["quantidade"].toFixed(0)),
 				"descricao": key
 			}
-			var html = Mustache.render(tpl, o);
+			var html = Mustache.render(tpl, t);
 			$(".ul-resumo").append(html);
 		}
 		
@@ -114,6 +110,9 @@ var relatorioPedidos = SuperWidget.extend({
 				dataRequest.push(item);
 			}
 		}
+		
+		html = '<li class="list-group-item active">TOTAIS DOS PEDIDOS</li>';
+		$(".ul-resumo").append(html);
 		
 		var t = {
 			"descricao": "TOTAL",
@@ -204,6 +203,19 @@ var relatorioPedidos = SuperWidget.extend({
 			"tooltipTemplate": '<%if (label){%><%=label%><%}%><%=" - "%><%=value%><%=" - "%><%= Math.round(100*(value/pieChart.total)) %>%'
 		}
 		pieChart = chart.pie(data, options);
+		
+		var htmlLegend = "<div class='fs-border'>";
+		for (var l of pieChart.segments) {
+			console.log(l)
+			htmlLegend += '<div class="row"><span class="minicolors-swatch-color" style="opacity: 1; background-color: ' + l["fillColor"] + ';"></span>' + l["label"] + "</div>";
+		}
+		htmlLegend += "</div>"
+		console.log(pieChart);
+		console.log(pieChart.generateLegend());
+		console.log(htmlLegend);
+		
+		
+		$(".legend-chart").html(pieChart.generateLegend());
 		
 		relatorioPedidos.dataTable = FLUIGC.datatable('#datatablePedidos', {
 			dataRequest: dataRequest,
@@ -302,7 +314,6 @@ var relatorioPedidos = SuperWidget.extend({
 	
 	showrepresentative: function() {
 		var c1 = DatasetFactory.createConstraint("grupo", relatorioPedidos.grouprca, relatorioPedidos.grouprca, ConstraintType.MUST, false);
-		console.log("show", c1)
 		var dataset = DatasetFactory.getDataset("ds_lista_usuarios_grupo", null, [c1], null);
 		if (dataset && dataset.values && dataset.values.length > 0) {
 			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
@@ -315,8 +326,6 @@ var relatorioPedidos = SuperWidget.extend({
 				}
 			}
 
-			console.log("show", list)
-			
 			var tpl = $('.tpl-representante').html();
 			var data = { "items": list};
 			var html = Mustache.render(tpl, data);
@@ -436,9 +445,19 @@ var relatorioPedidos = SuperWidget.extend({
 					total[row["situacao"]].quantidade = total[row["situacao"]].quantidade + 1;
 					total[row["situacao"]].total = total[row["situacao"]].total + (row["situacao"] == "C" ? valortotalpedido : valorcobrar);
 					total[row["situacao"]].comissao = total[row["situacao"]].comissao + valortotalcomissao;
-					total[row["situacao"]].cgo[description].total = total[row["situacao"]].cgo[description].total + (row["situacao"] == "C" ? valortotalpedido : valorcobrar);
-					total[row["situacao"]].cgo[description].comissao = total[row["situacao"]].cgo[description].comissao + valortotalcomissao;
-					total[row["situacao"]].cgo[description].quantidade = total[row["situacao"]].cgo[description].quantidade + 1;
+					
+					if (total[row["situacao"]].cgo[description]) {
+						total[row["situacao"]].cgo[description].total = total[row["situacao"]].cgo[description].total + (row["situacao"] == "C" ? valortotalpedido : valorcobrar);
+						total[row["situacao"]].cgo[description].comissao = total[row["situacao"]].cgo[description].comissao + valortotalcomissao;
+						total[row["situacao"]].cgo[description].quantidade = total[row["situacao"]].cgo[description].quantidade + 1;
+					} else {
+						total[row["situacao"]].cgo[description] = {
+							"total": (row["situacao"] == "C" ? valortotalpedido : valorcobrar),
+							"comissao": valortotalcomissao,
+							"quantidade": 1
+						}
+					}
+					
 				} else {
 					total[row["situacao"]] = {
 						"quantidade": 1,
@@ -481,6 +500,7 @@ var relatorioPedidos = SuperWidget.extend({
 		
 		var colClassLine1 = null;
 		var colClassLine2 = null;
+		var line = Object.keys(items).length;
 		if (Object.keys(items).length == 1) {
 			colClassLine1 = "col-md-12";
 		} else if (Object.keys(items).length == 2) {
@@ -490,20 +510,24 @@ var relatorioPedidos = SuperWidget.extend({
 		} else if (Object.keys(items).length == 4) {
 			colClassLine1 = "col-md-3";
 		} else if (Object.keys(items).length == 5) {
+			line = 3;
 			colClassLine1 = "col-md-4";
 			colClassLine2 = "col-md-6";
 		} else if (Object.keys(items).length == 6) {
+			line = 3;
 			colClassLine1 = "col-md-4";
 			colClassLine2 = "col-md-4";
 		} else if (Object.keys(items).length == 7) {
+			line = 4;
 			colClassLine1 = "col-md-4";
 			colClassLine2 = "col-md-3";
 		} else if (Object.keys(items).length == 8) {
+			line = 4;
 			colClassLine1 = "col-md-3";
 			colClassLine2 = "col-md-3";
 		}
 		
-		console.log(Object.keys(items).length);
+		console.log(colClassLine1, colClassLine2);
 		
 		var index = 0;
 		for (var key in items) {
@@ -520,12 +544,14 @@ var relatorioPedidos = SuperWidget.extend({
 			}
 
 			var inrow = "line-1";
-			if (index < 4) {
+			if (index < line) {
 				o["classItem"] = colClassLine1;
 			} else {
 				o["classItem"] = colClassLine2;
 				inrow = "line-2";
 			}
+			
+			console.log(index, inrow)
 			
 			var tpl = $('.tpl-detalhamento').html();
 			var data = { "item": o};
@@ -535,7 +561,6 @@ var relatorioPedidos = SuperWidget.extend({
 			
 			if (index == 0) {
 				relatorioPedidos.showResumo(key);
-
 			}
 			
 			index++;

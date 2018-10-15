@@ -1,7 +1,7 @@
 application.type=widget
 application.code=bartofil_relatorio_pedidos
-application.title=Relatório de Pedidos
-application.description=Relatório de Pedidos
+application.title=Relatorio de Pedidos
+application.description=Relatorio de Pedidos
 application.category=SYSTEM
 application.renderer=freemarker
 developer.code=DevFluig

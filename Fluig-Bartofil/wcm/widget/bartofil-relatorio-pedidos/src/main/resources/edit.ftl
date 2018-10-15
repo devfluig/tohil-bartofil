@@ -1,4 +1,4 @@
-<div id="extrato_campanha_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide" data-params="extratocampanha.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}' })">
+<div id="relatorio_pedidos_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide" data-params="relatorioPedidos.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}' })">
 
 	<form class="form-horizontal" role="form">
 	    <div class="form-group">
@@ -12,3 +12,4 @@
 
 </div>
 
+<script src="/webdesk/vcXMLRPC.js"></script>

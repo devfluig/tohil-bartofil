@@ -1,4 +1,4 @@
-<div id="relatorioPedidos_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide" data-params="relatorioPedidos.instance()">
+<div id="relatorioPedidos_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide" data-params="relatorioPedidos.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}' })">
 	<script type="text/template" class="tpl-detalhamento">
 		<div class="{{ item.classItem }}">
 			<div class="small-box {{ item.background }}" data-id="{{ item.id }}" data-click-item>
@@ -82,7 +82,10 @@
 			<div class="panel panel-info">
 		    	<div class="panel-heading">PEDIDOS POR ORIGEM - <span class="titleResumo"></span></div>
 		    	<div class="panel-body">
-		    		<div id="chartOrigem"></div>
+		    		<div class="row">
+						<div class="col-md-2 legend-chart"></div>
+						<div class="col-md-10"><div id="chartOrigem"></div></div>
+		    		</div>
 		    	</div>
 		    </div>
 		</div>
