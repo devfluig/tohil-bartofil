@@ -21,9 +21,6 @@
 	        <td class="fs-txt-center">{{descorigempedido}}</td>
 	        <td class="fs-txt-center">{{situacao}}</td>
 	    </tr>
-	    <tr class='detail{{nropedidovenda}} fs-display-none warning'>
-	        <td colspan=8 class="fs-txt-center">{{descparcelamento}}</td>
-	    </tr>
 	</script>
 	
 	<script type="text/template" class="tpl-resumo">
@@ -83,8 +80,8 @@
 		    	<div class="panel-heading">PEDIDOS POR ORIGEM - <span class="titleResumo"></span></div>
 		    	<div class="panel-body">
 		    		<div class="row">
-						<div class="col-md-2 legend-chart"></div>
-						<div class="col-md-10"><div id="chartOrigem"></div></div>
+						<div class="col-md-3 legend-chart"></div>
+						<div class="col-md-9"><div id="chartOrigem"></div></div>
 		    		</div>
 		    	</div>
 		    </div>

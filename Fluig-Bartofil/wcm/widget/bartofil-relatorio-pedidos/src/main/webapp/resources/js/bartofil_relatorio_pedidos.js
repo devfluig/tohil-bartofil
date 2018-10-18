@@ -2,6 +2,7 @@ var relatorioPedidos = SuperWidget.extend({
 	current: null,
 	mobile: FLUIGC.utilities.checkDevice().isMobile,
 	loading: FLUIGC.loading(window),
+	code: "bartofil_relatorio_pedidos",
 	background: ["bg-aqua", "bg-red", "bg-light-blue", "bg-green", "bg-navy", "bg-olive", "bg-orange", "bg-teal"],
 	list: null,
 	instanceId: null,
@@ -9,7 +10,9 @@ var relatorioPedidos = SuperWidget.extend({
 	pieChart: null,
 	dataTable: null,
 	current: {},
-	clicked: null,
+	clickedPedido: null,
+	listItems: null,
+	listConditions: null,
 	
 	init : function() {
 		$(".pageTitle").parent().remove();
@@ -204,16 +207,8 @@ var relatorioPedidos = SuperWidget.extend({
 		}
 		pieChart = chart.pie(data, options);
 		
-		var htmlLegend = "<div class='fs-border'>";
-		for (var l of pieChart.segments) {
-			console.log(l)
-			htmlLegend += '<div class="row"><span class="minicolors-swatch-color" style="opacity: 1; background-color: ' + l["fillColor"] + ';"></span>' + l["label"] + "</div>";
-		}
-		htmlLegend += "</div>"
 		console.log(pieChart);
 		console.log(pieChart.generateLegend());
-		console.log(htmlLegend);
-		
 		
 		$(".legend-chart").html(pieChart.generateLegend());
 		
@@ -264,18 +259,9 @@ var relatorioPedidos = SuperWidget.extend({
 		relatorioPedidos.dataTable.on('fluig.datatable.onselectrow', function(data) { 
 			console.log(data);
 			data.stopPropagation();
-			var row = relatorioPedidos.dataTable.getData()[data.selectedIndex[0]/2];
+			var row = relatorioPedidos.dataTable.getData()[data.selectedIndex[0]];
 			console.log("row", row)
-			if (relatorioPedidos.clicked != row["nropedidovenda"]) {
-				if ($(".detail" + row["nropedidovenda"]).hasClass("fs-display-none")) {
-					$(".detail" + row["nropedidovenda"]).removeClass("fs-display-none");
-				} else {
-					$(".detail" + row["nropedidovenda"]).addClass("fs-display-none");
-				}
-				relatorioPedidos.clicked = row["nropedidovenda"]; 
-			} else {
-				relatorioPedidos.clicked = null;
-			}
+			relatorioPedidos.onClickPedido(row["nropedidovenda"]);
 		});		
 		
 	},
@@ -577,4 +563,77 @@ var relatorioPedidos = SuperWidget.extend({
 	    return valor                    
 	},
 	
+	onClickPedido: function(pedido) {
+		relatorioPedidos.loading.show();
+		
+		var c1 = DatasetFactory.createConstraint("pedido", pedido, pedido, ConstraintType.MUST, false);
+		relatorioPedidos.listConditions = null;
+		relatorioPedidos.listItems = null;
+		relatorioPedidos.clickedPedido = pedido; 
+		console.log("dataset", c1)
+	      
+		DatasetFactory.getDataset('ds_pedido_condicao', null, [c1], null, {"success": relatorioPedidos.onReadyGetCondicao});
+		DatasetFactory.getDataset('ds_pedido_item', null, [c1], null, {"success": relatorioPedidos.onReadyGetItem});
+		
+	},
+	onReadyGetCondicao: function(rows) {
+		console.log("dataset", rows)
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			relatorioPedidos.listConditions = [];
+		} else {
+			relatorioPedidos.listConditions = rows["values"];
+		}
+		relatorioPedidos.showItemsPedido();
+	},
+	
+	onReadyGetItem: function(rows) {
+		console.log("dataset", rows)
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			relatorioPedidos.listItems = [];
+		} else {
+			relatorioPedidos.listItems = rows["values"];		
+		}
+		relatorioPedidos.showItemsPedido();
+	},
+	showItemsPedido: function() {
+		if (relatorioPedidos.listConditions != null && relatorioPedidos.listItems != null) {
+			relatorioPedidos.sortInt(relatorioPedidos.listConditions, "nroparcela");
+			relatorioPedidos.sortInt(relatorioPedidos.listItems, "seqitem");
+			
+			var params = { 
+				"condicoes": relatorioPedidos.listConditions, 
+				"items": relatorioPedidos.listItems
+			}
+			
+			WCMAPI.convertFtlAsync(relatorioPedidos.code, 'detalhe.ftl', { "params": params },
+				function (data) {
+				   FLUIGC.modal({
+					    title: 'ITENS DO PEDIDO - ' + relatorioPedidos.clickedPedido,
+					    content: data,
+					    id: 'fluig-modal',
+					    size: 'full',
+					    actions: [{
+					        'label': 'Fechar',
+					        'autoClose': true
+					    }]
+					}, function(err, data) {
+						console.log(err, data)
+					});
+				   relatorioPedidos.loading.hide();
+			   },
+			   function(err) { }
+		  );		
+			
+		}
+	},
+	sortInt: function (list, key) {
+		return list.sort(function (a, b) {
+	        var x = +(a[key]);
+	        var y = +(b[key]);
+	        if (x < y) return -1;
+			if (x > y) return 1;
+			
+			return 0;
+	    });
+	}
 });
