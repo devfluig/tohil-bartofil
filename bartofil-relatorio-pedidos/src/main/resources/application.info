@@ -1,0 +1,21 @@
+application.type=widget
+application.code=bartofil_relatorio_pedidos
+application.title=Relatório de Pedidos
+application.description=Relatório de Pedidos
+application.category=SYSTEM
+application.renderer=freemarker
+developer.code=DevFluig
+developer.name=Developer Fluig
+developer.url=http://www.fluig.com
+application.uiwidget=true
+application.mobileapp=true
+view.file=view.ftl
+edit.file=edit.ftl
+application.resource.css.1=/resources/css/bartofil_relatorio_pedidos.css
+application.resource.css.2=/resources/js/select2/css/select2.min.css
+application.resource.js.3=/resources/js/bartofil_extrato_comissao.js
+application.resource.js.4=/resources/js/moment/moment-with-locales.min.js
+application.resource.js.5=/resources/js/mask/jquery.mask.min.js
+application.resource.js.6=/resources/js/select2/js/select2.min.js
+application.resource.component.5=mustache
+
