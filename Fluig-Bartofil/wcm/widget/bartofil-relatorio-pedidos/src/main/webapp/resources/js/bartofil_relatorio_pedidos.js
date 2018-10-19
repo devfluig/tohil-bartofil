@@ -3,7 +3,6 @@ var relatorioPedidos = SuperWidget.extend({
 	mobile: FLUIGC.utilities.checkDevice().isMobile,
 	loading: FLUIGC.loading(window),
 	code: "bartofil_relatorio_pedidos",
-	background: ["bg-aqua", "bg-red", "bg-light-blue", "bg-green", "bg-navy", "bg-olive", "bg-orange", "bg-teal"],
 	list: null,
 	instanceId: null,
 	grouprca: null,
@@ -39,34 +38,32 @@ var relatorioPedidos = SuperWidget.extend({
 			"change-periodo": ['change_listpedidos'],
 			'save-preferences': ['click_savePreferences'],
 			"change-representante": ['change_listpedidos'],
-			'click-item': ['click_clickItem']
+			'click-item': ['click_clickItem'],
+			'click-home': ['click_clickHome']
 		}
 	},
-	
+	clickHome: function(el, ev) {
+		$(".no-detail").show( "puff", 1000 );
+		$(".in-detail").hide( "fold", 1000 );
+	},
 	clickItem: function(el, ev) {
+		
+		if ($(el).data("id") == null || $(el).data("id") == "") { return false; }
+		
+		$(".no-detail").hide( "puff", 1000 );
+		$(".in-detail").show( "fold", 1000 );
+
+		if ($(el).data("id") == "ND") {
+			$(".detail-cgo").hide();
+		} else if ($(el).data("id") != null && $(el).data("id") != "") {
+			$(".detail-cgo").show();
+		}
+		
 		relatorioPedidos.showResumo($(el).data("id"));
 	},
 	
 	showResumo: function(type) {
-		var o = relatorioPedidos["current"].totais[[type]];
-		
-		$(".titleResumo").html(o["situacao"]);
-		$(".ul-resumo").html("");
-		
-		var tpl = $('.tpl-resumo').html();
-		for (var key in o["cgo"]) {
-			var row = o.cgo[key];
-			var t = {
-				"badge": "",
-				"group": "",
-				"total": "R$ " + relatorioPedidos.mask(row["total"].toFixed(2)),
-				"comissao": "R$ " + relatorioPedidos.mask(row["comissao"].toFixed(2)),
-				"quantidade": relatorioPedidos.mask(row["quantidade"].toFixed(0)),
-				"descricao": key
-			}
-			var html = Mustache.render(tpl, t);
-			$(".ul-resumo").append(html);
-		}
+		if (type == null || type == "") { return false; }
 		
 		var total = {
 			"total": 0,
@@ -79,53 +76,130 @@ var relatorioPedidos = SuperWidget.extend({
 		};
 		
 		var origem = {};
-		
 		var dataRequest = [];
-		for (var i=0; i<relatorioPedidos.list.length; i++) {
-			var item = relatorioPedidos.list[i];
-			
-			var valorcobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
-			var valortotalcomissao = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
-			var valortotalacobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
-			
-			total["total"] += valorcobrar;
-			total["comissao"] += valortotalcomissao;
-			total["quantidade"] += 1;
-			
-			if (total["mensalRegiao"] == 0) {
-				total["mensalRegiao"] = parseFloat(item["metavlrvenda"].replace(/,/g, '').replace(",", "."));
+		
+		if (type != "ND") {
+			var cgo = null;
+			if (type.indexOf("-") != -1) {
+				cgo = type.split("-")[1];
+				type = type.split("-")[0]; 
 			}
-			if (total["dias"] == 0) {
-				total["dias"] = +(item["diasuteisrestantes"]);
+			var o = relatorioPedidos["current"].totais[[type]];
+			
+			$(".titleResumo").html(o["situacao"]);
+			$(".line-total").html("");		
+			$(".line-cgo").html("");
+			
+			var tpl = $('.tpl-resumo').html();
+			for (var key in o["cgo"]) {
+				var row = o.cgo[key];
+				
+				var t = {
+					"background": "bg-darken-2",
+					"id": type + "-" + row["codigo"],
+					"comissao": "R$ " + relatorioPedidos.mask(row["comissao"].toFixed(2)),
+					"quantidade": row["quantidade"],
+					"total": "R$ " + relatorioPedidos.mask(row["total"].toFixed(2)),
+					"tipo": key,
+					"classItem": "col-sm-3"
+				}
+				var tpl = $('.tpl-detalhamento').html();
+				var data = { "item": t};
+				var html = Mustache.render(tpl, data);
+				$(".line-cgo").append(html);		
 			}
 			
-			if (item["situacao"] == type && item["naturezaoperacao"] == "V") {
-				origem[item["descorigempedido"]] = (origem[item["descorigempedido"]] ? origem[item["descorigempedido"]] + valortotalacobrar : valortotalacobrar)
+			for (var i=0; i<relatorioPedidos.list.length; i++) {
+				var item = relatorioPedidos.list[i];
+				console.log(item);
+				console.log(item["datainclusao"]);
+				var valorcobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
+				var valortotalcomissao = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+				var valortotalacobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
+				
+				total["total"] += valorcobrar;
+				total["comissao"] += valortotalcomissao;
+				total["quantidade"] += 1;
+				
+				if (total["mensalRegiao"] == 0) {
+					total["mensalRegiao"] = parseFloat(item["metavlrvenda"].replace(/,/g, '').replace(",", "."));
+				}
+				if (total["dias"] == 0) {
+					total["dias"] = +(item["diasuteisrestantes"]);
+				}
+				
+				var validCgo = false;
+				if (cgo != null) {
+					if (item["cgo"] == cgo) { validCgo = true; }
+				} else {
+					validCgo = true;
+				}
+				
+				if (validCgo && item["situacao"] == type && item["naturezaoperacao"] == "V") {
+					origem[item["descorigempedido"]] = (origem[item["descorigempedido"]] ? origem[item["descorigempedido"]] + valortotalacobrar : valortotalacobrar)
+				}
+				if (validCgo && item["situacao"] == type) {
+					var m = moment(item["datainclusao"]);
+					console.log("moment", item["datainclusao"], m)
+					item["datainclusaof"] = m.format("DD/MM/YYYY");
+					item["valor"] = (item["situacao"] == "") ? item["valortotalpedido"] : item["valortotalacobrar"];
+					item["valor"] = parseFloat(item["valor"].replace(/,/g, '').replace(",", "."));
+					item["valor"] = relatorioPedidos.mask(item["valor"].toFixed(2));
+					item["comissao"] = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+					item["comissao"] = relatorioPedidos.mask(item["comissao"].toFixed(2));
+					dataRequest.push(item);
+				}
 			}
-			if (item["situacao"] == type) {
-				var m = moment(item["datainclusao"]);
-				item["datainclusao"] = m.format("DD/MM/YYYY");
-				item["valor"] = (item["situacao"] == "") ? item["valortotalpedido"] : item["valortotalacobrar"];
-				item["valor"] = parseFloat(item["valor"].replace(/,/g, '').replace(",", "."));
-				item["valor"] = relatorioPedidos.mask(item["valor"].toFixed(2));
-				item["comissao"] = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
-				item["comissao"] = relatorioPedidos.mask(item["comissao"].toFixed(2));
-				dataRequest.push(item);
+			
+		} else {
+			$(".titleResumo").html("DESPESAS");
+			$(".line-total").html("");		
+			for (var i=0; i<relatorioPedidos.list.length; i++) {
+				var item = relatorioPedidos.list[i];
+				
+				var valorcobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
+				var valortotalcomissao = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+				var valortotalacobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
+				
+				total["total"] += valorcobrar;
+				total["comissao"] += valortotalcomissao;
+				total["quantidade"] += 1;
+				
+				if (total["mensalRegiao"] == 0) {
+					total["mensalRegiao"] = parseFloat(item["metavlrvenda"].replace(/,/g, '').replace(",", "."));
+				}
+				if (total["dias"] == 0) {
+					total["dias"] = +(item["diasuteisrestantes"]);
+				}
+				
+				if (item["naturezaoperacao"] == "D") {
+					origem[item["descorigempedido"]] = (origem[item["descorigempedido"]] ? origem[item["descorigempedido"]] + valortotalacobrar : valortotalacobrar)
+					var m = moment(item["datainclusao"]);
+					item["datainclusao"] = m.format("DD/MM/YYYY");
+					item["valor"] = (item["situacao"] == "") ? item["valortotalpedido"] : item["valortotalacobrar"];
+					item["valor"] = parseFloat(item["valor"].replace(/,/g, '').replace(",", "."));
+					item["valor"] = relatorioPedidos.mask(item["valor"].toFixed(2));
+					item["comissao"] = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+					item["comissao"] = relatorioPedidos.mask(item["comissao"].toFixed(2));
+					dataRequest.push(item);
+				}
 			}
 		}
-		
-		html = '<li class="list-group-item active">TOTAIS DOS PEDIDOS</li>';
-		$(".ul-resumo").append(html);
 		
 		var t = {
-			"descricao": "TOTAL",
-			"group": "list-group-item-success",
-			"total": "R$ " + relatorioPedidos.mask(total["total"].toFixed(2)),
+			"background": "bg-green",
+			"id": null,
 			"comissao": "R$ " + relatorioPedidos.mask(total["comissao"].toFixed(2)),
-			"quantidade": relatorioPedidos.mask(total["quantidade"].toFixed(0)),
+			"quantidade": total["quantidade"],
+			"total": "R$ " + relatorioPedidos.mask(total["total"].toFixed(2)),
+			"tipo": "TOTAL",
+			"classItem": "col-sm-4"
 		}
-		html = Mustache.render(tpl, t);
-		$(".ul-resumo").append(html);
+
+		var tpl = $('.tpl-detalhamento').html();
+		var data = { "item": t};
+		var html = Mustache.render(tpl, data);
+		$(".line-total").append(html);		
 		
 		var despesas = relatorioPedidos["current"].despesas;
 		if (!despesas) {
@@ -135,64 +209,62 @@ var relatorioPedidos = SuperWidget.extend({
 				"quantidade": 0
 			}
 		}
-		var td = {
-			"descricao": "TOTAL - Devolução",
-			"group": "list-group-item-success",
-			"total": "R$ " + relatorioPedidos.mask((total["total"] - despesas["total"]).toFixed(2))
-		}
-		
 		var d = {
-			"total": "R$ " + relatorioPedidos.mask(despesas["total"].toFixed(2)),
+			"background": "bg-red",
+			"id": "ND",
 			"comissao": "R$ " + relatorioPedidos.mask(despesas["comissao"].toFixed(2)),
-			"quantidade": relatorioPedidos.mask(despesas["quantidade"].toFixed(0)),
-			"descricao": "Devolução",
-			"group": "list-group-item-danger"
+			"quantidade": despesas["quantidade"],
+			"total": "R$ " + relatorioPedidos.mask(despesas["total"].toFixed(2)),
+			"tipo": "DESPESAS",
+			"classItem": "col-sm-4"
 		}
-
-		html = Mustache.render(tpl, d);
-		$(".ul-resumo").append(html);
-
-		html = Mustache.render(tpl, td);
-		$(".ul-resumo").append(html);
-
-		var p = {
-			"descricao": "Potenc. Mensal Região",
-			"group": "list-group-item-info",
-			"total": "R$ " + relatorioPedidos.mask((total["mensalRegiao"]).toFixed(2))
+		var td = {
+			"background": "bg-maroon",
+			"id": null,
+			"comissao": "R$ " + relatorioPedidos.mask(total["comissao"].toFixed(2)),
+			"quantidade": total["quantidade"],
+			"total": "R$ " + relatorioPedidos.mask((total["total"] - despesas["total"]).toFixed(2)),
+			"tipo": "TOTAL - DESPESAS",
+			"classItem": "col-sm-4"
 		}
 		
-		html = Mustache.render(tpl, p);
-		$(".ul-resumo").append(html);
+		tpl = $('.tpl-detalhamento').html();
+		data = { "item": d};
+		html = Mustache.render(tpl, data);
+		$(".line-total").append(html);		
 		
-		var r = {
-			"descricao": "Potenc. Mensal Remanescente",
-			"group": "list-group-item-info",
-			"total": "R$ " + relatorioPedidos.mask((total["mensalRegiao"] - total["total"] - despesas["total"]).toFixed(2))
-		}
-		html = Mustache.render(tpl, r);
-		$(".ul-resumo").append(html);
+		tpl = $('.tpl-detalhamento').html();
+		data = { "item": td};
+		html = Mustache.render(tpl, data);
+		$(".line-total").append(html);
 		
+		var barChart = FLUIGC.chart('#barPotencial', {
+		    id: 'set_an_id_for_my_chart_bar',
+		    width: '700',
+		    height: '200',
+		});
+		var options = {
+			"barShowStroke": true,
+			"tooltipTemplate": '<%if (label){%><%=label%><%}%><%=" - "%><%=value%>'
+		};
 		var sf = (total["mensalRegiao"] - total["total"] - despesas["total"]);
+		var pr = sf;
 		if (total["dias"] > 0) {
 			sf = sf / total["dias"]; 
 		}
-		var f = {
-			"descricao": "Potenc. Mensal Remanescente",
-			"group": "list-group-item-info",
-			"total": "R$ " + relatorioPedidos.mask(sf.toFixed(2))
-		}
-
-		html = Mustache.render(tpl, f);
-		$(".ul-resumo").append(html);
+		var data = {
+		    labels: ["Potenc. Mensal Região", "Potenc. Mensal Remanescente", "Potenc. Mensal Dia"],
+		    datasets: [{
+	            label: "Valor",
+	            data: [(total["mensalRegiao"]).toFixed(2), pr.toFixed(2), sf.toFixed(2)]
+		    }]
+		};
 		
-		var data = [];
-		for (var key in origem) {
-			var o = {
-				"value": parseFloat(origem[key].toFixed(2)),
-				"label": key
-			}
-			data.push(o);
-		}
+		console.log("bar data", data);
+		
+		var barChart = barChart.bar(data, options);
+		
+		console.log("bar data foi ", barChart);
 		
 		var chart = FLUIGC.chart('#chartOrigem', {
 		    id: 'set_an_id_for_my_chart',
@@ -201,14 +273,25 @@ var relatorioPedidos = SuperWidget.extend({
 		    /* See the list of options */
 		});
 		// call the pie function
-		var options = {
+		options = {
 			"segmentShowStroke": true,
 			"tooltipTemplate": '<%if (label){%><%=label%><%}%><%=" - "%><%=value%><%=" - "%><%= Math.round(100*(value/pieChart.total)) %>%'
 		}
-		pieChart = chart.pie(data, options);
-		
-		console.log(pieChart);
-		console.log(pieChart.generateLegend());
+		data = [];
+		for (var key in origem) {
+			var o = {
+				"value": parseFloat(origem[key].toFixed(2)),
+				"label": key
+			}
+			data.push(o);
+		}
+
+		if (data.length > 0) {
+			pieChart = chart.pie(data, options);
+			
+			console.log(pieChart);
+			console.log(pieChart.generateLegend());
+		}
 		
 		$(".legend-chart").html(pieChart.generateLegend());
 		
@@ -361,10 +444,13 @@ var relatorioPedidos = SuperWidget.extend({
 	},
 	
 	getPedidos: function(el, ev) {
-
+		$(".in-detail").hide();
+		$(".no-detail").show();
 		relatorioPedidos.loading.show();
 		$(".line-1").empty();
 		$(".line-2").empty();
+		$(".line-total").empty();
+		$(".line-detail").empty();
 
 		var mes = $("#periodo :selected").data("month");
 		var ano = $("#periodo :selected").data("year");
@@ -411,16 +497,43 @@ var relatorioPedidos = SuperWidget.extend({
 			} else {
 				description = "Outros";
 			}
-			
+			console.log("row", row["datafaturamento"], row["datainclusao"]);
+			if (row["datafaturamento"]) {
+				var m = moment(row["datafaturamento"]);
+				description += " " + m.format("MM/YYYY");
+				
+			} else {
+				var m = moment(row["datainclusao"]);
+				description += " " + m.format("MM/YYYY");
+			}
+
+			var bg = "";
 			var situacao = "";
-			if (row["situacao"] == "F") { situacao = "Faturamento"; }
-			else if (row["situacao"] == "C") { situacao = "Cancelado"; }
-			else if (row["situacao"] == "A") { situacao = "Em analise"; }
-			else if (row["situacao"] == "D") { situacao = "Digitação"; }
-			else if (row["situacao"] == "L") { situacao = "Liberado"; }
-			else if (row["situacao"] == "R") { situacao = "Roteirização"; }
-			else if (row["situacao"] == "S") { situacao = "Em separação"; }
-			else if (row["situacao"] == "W") { situacao = "Em transito"; }
+			if (row["situacao"] == "F") { 
+				situacao = "Faturamento";
+				bg = "bg-olive";
+			} else if (row["situacao"] == "C") { 
+				situacao = "Cancelado";
+				bg = "bg-yellow";
+			} else if (row["situacao"] == "A") { 
+				situacao = "Em analise"; 
+				bg = "bg-aqua";
+			} else if (row["situacao"] == "D") { 
+				situacao = "Digitação"; 
+				bg = "bg-light-blue";
+			} else if (row["situacao"] == "L") { 
+				situacao = "Liberado"; 
+				bg = "bg-navy";
+			} else if (row["situacao"] == "R") { 
+				situacao = "Roteirização"; 
+				bg = "bg-fuchsia";
+			} else if (row["situacao"] == "S") { 
+				situacao = "Em separação"; 
+				bg = "bg-orange";
+			} else if (row["situacao"] == "W") { 
+				situacao = "Em transito"; 
+				bg = "bg-teal";
+			}
 			
 			var valorcobrar = parseFloat(row["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
 			var valortotalcomissao = parseFloat(row["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
@@ -440,6 +553,7 @@ var relatorioPedidos = SuperWidget.extend({
 						total[row["situacao"]].cgo[description] = {
 							"total": (row["situacao"] == "C" ? valortotalpedido : valorcobrar),
 							"comissao": valortotalcomissao,
+							"codigo": row["cgo"],
 							"quantidade": 1
 						}
 					}
@@ -449,12 +563,14 @@ var relatorioPedidos = SuperWidget.extend({
 						"quantidade": 1,
 						"total": (row["situacao"] == "C" ? valortotalpedido : valorcobrar),
 						"comissao": valortotalcomissao,
-						"situacao": situacao 
+						"situacao": situacao,
+						"bg": bg
 					}
 					total[row["situacao"]].cgo = {};
 					total[row["situacao"]].cgo[description] = {
 						"total": (row["situacao"] == "C" ? valortotalpedido : valorcobrar),
 						"comissao": valortotalcomissao,
+						"codigo": row["cgo"],
 						"quantidade": 1,
 					}
 				}
@@ -517,14 +633,13 @@ var relatorioPedidos = SuperWidget.extend({
 		
 		var index = 0;
 		for (var key in items) {
-			var background = relatorioPedidos.background[index];
 			var row = items[key];
 			
 			var o = {
-				"background": background,
+				"background": row["bg"],
 				"id": key,
 				"comissao": "R$ " + relatorioPedidos.mask(row["comissao"].toFixed(2)),
-				"quantidade": relatorioPedidos.mask(row["quantidade"].toFixed(0)),
+				"quantidade": row["quantidade"],
 				"total": "R$ " + relatorioPedidos.mask(row["total"].toFixed(2)),
 				"tipo": row["situacao"]
 			}
@@ -545,14 +660,16 @@ var relatorioPedidos = SuperWidget.extend({
 			
 			$("." + inrow).append(html);
 			
+			tpl = $('.tpl-detail-situacao').html();
+			data = { "item": o};
+			html = Mustache.render(tpl, data);
+			$(".line-detail").append(html);
+			
 			if (index == 0) {
 				relatorioPedidos.showResumo(key);
 			}
-			
 			index++;
-			
 		}
-		
 		relatorioPedidos.loading.hide();
 	},
 	mask: function (valor) {
