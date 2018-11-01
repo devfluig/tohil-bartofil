@@ -10,19 +10,23 @@
 			</div>
 		</div>
 	</script>
+	<script type="text/template" class="tpl-detail-situacao">
+		<div class="col-sm-1 col-sm-1-custom">
+			<div class="small-box {{ item.background }}" data-id="{{ item.id }}" data-click-item>
+			    <a href="#" class="small-box-footer">{{ item.tipo }}</a>
+			</div>
+		</div>
+	</script>
 	<script type="text/template" class="template_datatable">
 	    <tr>
 	        <td>{{nropedidovenda}}</td>
-	        <td class="fs-txt-center">{{datainclusao}}</td>
+	        <td class="fs-txt-center">{{datainclusaof}}</td>
 	        <td class="fs-txt-center">{{valor}}</td>
 	        <td class="fs-txt-center">{{comissao}}</td>
 	        <td class="fs-txt-center">{{codcliente}}</td>
 	        <td>{{nomecliente}}</td>
 	        <td class="fs-txt-center">{{descorigempedido}}</td>
 	        <td class="fs-txt-center">{{situacao}}</td>
-	    </tr>
-	    <tr class='detail{{nropedidovenda}} fs-display-none warning'>
-	        <td colspan=8 class="fs-txt-center">{{descparcelamento}}</td>
 	    </tr>
 	</script>
 	
@@ -40,41 +44,55 @@
 	</script>
 	
 	<div class="page-header">
-		<h1>Relatório de Pedidos</h1>
+		<div class="row">
+			<div class="col-md-4"><h1>Relatório de Pedidos</h1></div>
+			<div class="col-md-8" style="padding-top: 6px;">
+				<form class="form-inline" role="form">
+					<label>${i18n.getTranslation('periodo')}:</label>
+			    	<div class="form-group">
+			    		<select class="form-control" id="periodo" data-change-periodo>
+						    <script type="text/template" class="tpl-continuous-scroll-periodo">
+						        {{#items}}
+					    			<option data-month="{{mes}}" data-year="{{ano}}">{{periodo}}</option>
+						        {{/items}}
+						    </script>
+			    		</select>
+			    	</div>
+					<label class="fs-md-space nav-representative fs-display-none">${i18n.getTranslation('representante')}:</label>
+			    	<div class="form-group nav-representative fs-display-none">
+			    		<select class="form-control" id="listrepresentatives" data-change-representante>
+						    <script type="text/template" class="tpl-representante">
+						        {{#items}}
+					    			<option value="{{id}}">{{name}}</option>
+						        {{/items}}
+						    </script>
+			    		</select>
+			    	</div>
+					<button type="button" class="btn btn-default fs-float-right in-detail" data-click-home><span class="fluigicon fluigicon-home fluigicon-sm"></span>&nbsp;Voltar</button>
+				</form>
+			</div>
+		</div>
 	</div>
 	
-	<form class="form-inline" role="form">
-		<label>${i18n.getTranslation('periodo')}:</label>
-    	<div class="form-group">
-    		<select class="form-control" id="periodo" data-change-periodo>
-			    <script type="text/template" class="tpl-continuous-scroll-periodo">
-			        {{#items}}
-		    			<option data-month="{{mes}}" data-year="{{ano}}">{{periodo}}</option>
-			        {{/items}}
-			    </script>
-    		</select>
-    	</div>
-		<label class="fs-md-space nav-representative fs-display-none">${i18n.getTranslation('representante')}:</label>
-    	<div class="form-group nav-representative fs-display-none">
-    		<select class="form-control" id="listrepresentatives" data-change-representante>
-			    <script type="text/template" class="tpl-representante">
-			        {{#items}}
-		    			<option value="{{id}}">{{name}}</option>
-			        {{/items}}
-			    </script>
-    		</select>
-    	</div>
-	</form>
-	<br>		
-	<div class="row line-1"></div>
-	<div class="row line-2"></div>
+	<div class="row line-detail in-detail"></div>
+	<div class="row line-1 no-detail"></div>
+	<div class="row line-2 no-detail"></div>
+	<div class="page-header"></div>
+	<div class="row line-total"></div>
 	
-	<div class="row">
+	<div class="panel panel-info in-detail detail-cgo">
+    	<div class="panel-heading">CGOs- <span class="titleResumo"></span></div>
+    	<div class="panel-body">
+			<div class="row line-cgo"></div>
+    	</div>
+    </div>
+				
+	<div class="row in-detail">
 		<div class="col-md-6">
 			<div class="panel panel-info">
-		    	<div class="panel-heading">RESUMO DE PEDIDOS - <span class="titleResumo"></span></div>
+		    	<div class="panel-heading">POTENCIAL MENSAL - <span class="titleResumo"></span></div>
 		    	<div class="panel-body">
-					<ul class="list-group ul-resumo"></ul>		    	
+					<div id="barPotencial"></div>
 		    	</div>
 		    </div>
 		</div>
@@ -83,14 +101,14 @@
 		    	<div class="panel-heading">PEDIDOS POR ORIGEM - <span class="titleResumo"></span></div>
 		    	<div class="panel-body">
 		    		<div class="row">
-						<div class="col-md-2 legend-chart"></div>
-						<div class="col-md-10"><div id="chartOrigem"></div></div>
+						<div class="col-md-3 legend-chart"></div>
+						<div class="col-md-9"><div id="chartOrigem"></div></div>
 		    		</div>
 		    	</div>
 		    </div>
 		</div>
 	</div>
-	<div class="panel panel-info">
+	<div class="panel panel-info in-detail">
     	<div class="panel-heading">LISTA DE PEDIDOS - <span class="titleResumo"></span></div>
     	<div class="panel-body">
     		<div id="datatablePedidos"></div>
