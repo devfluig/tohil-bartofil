@@ -1,5 +1,4 @@
 var perfilrepresentante = SuperWidget.extend({
-	
 	loading: FLUIGC.loading(window),
 	offset: 0,
 	limit: 30,
@@ -14,55 +13,84 @@ var perfilrepresentante = SuperWidget.extend({
 	equipesuperior: null,
 	
 	init : function() {
-		$(".pageTitle").parent().remove();
+		perfilrepresentante.loading.show();
+		perfilrepresentante.grouprca = this.grouprca;
+		
+		if (this.isrca() == false) {
+			this.showrepresentative();
+		} else {
+			this.setupperiodo();
+			this.getRepresentante();
+		}
 	},
 
 	bindings : {
 		local : {},
 		global : {
-			"click-detalhado": ['click_showdetalhado'],
-			'change-paginacao': ['change_changepaginacao'],
-			"change-representante": ['change_changerepresentante'],
-			'change-ordenar': ['change_changeordenacao'],
 			'save-preferences': ['click_savePreferences'],
-			'click-tab': ['click_showtab'],
-			'change-trimestre': ['change_changetrimestre'],
+			"click-widget": ['click_widget'],
 		}
 	},
 	
+	widget: function(el, ev) {
+		$(".btn-info").removeClass("active");
+		$(el).addClass("active");
+	},
+	
+	setupperiodo: function() {
+		
+		var locale = WCMAPI.locale;
+		locale = locale.replace("_", "-"); 
+		
+		var m = moment().locale(locale);
+		var list = []; 
+		for (var i=0; i<2; i++) {
+			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MMMM") + "/" + m.format("YYYY") };
+			list.push(o);
+			m.subtract(1, 'months');
+		}
+
+		var tpl = $('.tpl-continuous-scroll-periodo').html();
+		var data = { "items": list};
+		var html = Mustache.render(tpl, data);
+		$('#periodo').append(html);
+		
+		
+	},
+	
 	changerepresentante: function () {
-		campanhaparceiros.loading.show();
-		campanhaparceiros.representante = $('#listrepresentatives').val();
-		campanhaparceiros.list = [];
-		campanhaparceiros.offset = 0;
+		perfilrepresentante.loading.show();
+		perfilrepresentante.representante = $('#listrepresentatives').val();
+		perfilrepresentante.list = [];
+		perfilrepresentante.offset = 0;
 		$(".tab-detalhamento").html("");
-		campanhaparceiros.current = null;
-		campanhaparceiros.limit = parseInt($("#paginacao").val());
-		campanhaparceiros.getranking();
+		perfilrepresentante.current = null;
+		perfilrepresentante.limit = parseInt($("#paginacao").val());
+		perfilrepresentante.getranking();
 		
 	},
 	
 	getfoto: function() {
-		var c1 = DatasetFactory.createConstraint("representante", campanhaparceiros.representante, campanhaparceiros.representante, ConstraintType.MUST, false);
-		DatasetFactory.getDataset("ds_representante", null, [c1], null, {"success": campanhaparceiros.onreadygetfoto} );
+		var c1 = DatasetFactory.createConstraint("representante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
+		DatasetFactory.getDataset("ds_representante", null, [c1], null, {"success": perfilrepresentante.onreadygetfoto} );
 	},
 	
 	onreadygetfoto: function(rows) {
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
-			campanhaparceiros.loading.hide();
+			perfilrepresentante.loading.hide();
 			return;
 		}
 		
 		var values = rows["values"];
 		if (values[0].apelido == "erro") {
-			campanhaparceiros.loading.hide();
+			perfilrepresentante.loading.hide();
 			return;
 		}
 		
 		var row = values[0];
 
 		var tpl = $('.tpl-avatar').html();
-		var data = { "userCode": campanhaparceiros.representante, "image": row["foto"] };
+		var data = { "userCode": perfilrepresentante.representante, "image": row["foto"] };
 		var html = Mustache.render(tpl, data);
 		$('.user-avatar').html(html);
 		
@@ -87,12 +115,12 @@ var perfilrepresentante = SuperWidget.extend({
 	},	
 	
 	changetrimestre: function(el ,ev) {
-		campanhaparceiros.loading.show();
-		campanhaparceiros.trimestre = $(el).val();
-		campanhaparceiros.list = [];
-		campanhaparceiros.offset = 0;
-		campanhaparceiros.limit = parseInt($("#paginacao").val());
-		campanhaparceiros.getfullranking();		
+		perfilrepresentante.loading.show();
+		perfilrepresentante.trimestre = $(el).val();
+		perfilrepresentante.list = [];
+		perfilrepresentante.offset = 0;
+		perfilrepresentante.limit = parseInt($("#paginacao").val());
+		perfilrepresentante.getfullranking();		
 	},
 	showtab: function(el, ev) {
 		$(el).parent().find("li").removeClass("active")
@@ -113,17 +141,17 @@ var perfilrepresentante = SuperWidget.extend({
 	},
 	
 	changepaginacao: function(el, ev) {
-		campanhaparceiros.loading.show();
-		campanhaparceiros.offset = 0;
-		campanhaparceiros.limit = parseInt($(el).val());
-		campanhaparceiros.showranking(true);		
+		perfilrepresentante.loading.show();
+		perfilrepresentante.offset = 0;
+		perfilrepresentante.limit = parseInt($(el).val());
+		perfilrepresentante.showranking(true);		
 	},
 	
 	changeordenacao: function(el, ev) {
-		campanhaparceiros.loading.show();
-		campanhaparceiros.offset = 0;
-		campanhaparceiros.limit = parseInt($(el).val());
-		campanhaparceiros.showranking(true);		
+		perfilrepresentante.loading.show();
+		perfilrepresentante.offset = 0;
+		perfilrepresentante.limit = parseInt($(el).val());
+		perfilrepresentante.showranking(true);		
 	},
 	
 	showrepresentative: function() {
@@ -154,53 +182,53 @@ var perfilrepresentante = SuperWidget.extend({
 			
 			$(".nav-representative").removeClass("fs-display-none");
 			
-			campanhaparceiros.getranking();
-			campanhaparceiros.getfoto();
+			perfilrepresentante.getranking();
+			perfilrepresentante.getfoto();
 		} else {
-			campanhaparceiros.getranking();
-			campanhaparceiros.getfoto();
+			perfilrepresentante.getranking();
+			perfilrepresentante.getfoto();
 		}
 		
 	},
 	
 	
 	listcampanha: function(el, ev) {
-		campanhaparceiros.loading.show();
-		campanhaparceiros.representante = $('#listrepresentatives').val();
+		perfilrepresentante.loading.show();
+		perfilrepresentante.representante = $('#listrepresentatives').val();
 		$('.tab-detalhamento').html("");
-		campanhaparceiros.list = [];
-		campanhaparceiros.offset = 0;
-		campanhaparceiros.limit = parseInt($("#paginacao").val());
-		campanhaparceiros.getranking();
+		perfilrepresentante.list = [];
+		perfilrepresentante.offset = 0;
+		perfilrepresentante.limit = parseInt($("#paginacao").val());
+		perfilrepresentante.getranking();
 	},
 	
 	getranking: function() {
-		var c1 = DatasetFactory.createConstraint("representante", campanhaparceiros.representante, campanhaparceiros.representante, ConstraintType.MUST, false);
+		var c1 = DatasetFactory.createConstraint("representante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("limit", "1", "1", ConstraintType.MUST, false);
 
-		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3], null, {"success": campanhaparceiros.onreadygetranking} );
+		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3], null, {"success": perfilrepresentante.onreadygetranking} );
 		
 	},
 	
 	onreadygetranking: function(rows) {
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
-			campanhaparceiros.loading.hide();
+			perfilrepresentante.loading.hide();
 			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking!');	    			
 			return;
 		}
 		
 		var values = rows["values"];
 		if (values[0].apelido == "erro") {
-			campanhaparceiros.loading.hide();
+			perfilrepresentante.loading.hide();
 			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking!');	    			
 			return;
 		}
 		
 		var row = values[0];
 		
-		if (row["nrorepresentante"] == campanhaparceiros.representante) {
-			campanhaparceiros.current = row;
+		if (row["nrorepresentante"] == perfilrepresentante.representante) {
+			perfilrepresentante.current = row;
 			
 			var v = "";
 			try {
@@ -209,7 +237,7 @@ var perfilrepresentante = SuperWidget.extend({
 				if (isNaN(v)) {
 					v = row["vlrpremio"];
 				} else if (v > 0) {
-					v = campanhaparceiros.mask(v.toFixed(2));
+					v = perfilrepresentante.mask(v.toFixed(2));
 					v = "R$ " + v;
 				} else {
 					v = "";
@@ -229,12 +257,12 @@ var perfilrepresentante = SuperWidget.extend({
 			
 			$(".data-proces").html(row["dataprocessamento"]);
 			
-			campanhaparceiros.mydivision = row["divisao"];
-			campanhaparceiros.equipesuperior = row["nroequipesuperior"];
+			perfilrepresentante.mydivision = row["divisao"];
+			perfilrepresentante.equipesuperior = row["nroequipesuperior"];
 			
-			campanhaparceiros.getdetalhamentos();
-			campanhaparceiros.getfoto();
-			campanhaparceiros.getfullranking();
+			perfilrepresentante.getdetalhamentos();
+			perfilrepresentante.getfoto();
+			perfilrepresentante.getfullranking();
 			
 		} else {
 			$("#codrca").val("");
@@ -245,20 +273,20 @@ var perfilrepresentante = SuperWidget.extend({
 			$("#colocacao").val("");
 			$("#divisao").val("");
 			$("#premio").val("");
-			campanhaparceiros.current = null;
-			campanhaparceiros.mydivision = null;
-			campanhaparceiros.equipesuperior = null;
+			perfilrepresentante.current = null;
+			perfilrepresentante.mydivision = null;
+			perfilrepresentante.equipesuperior = null;
 			
 			$('#table-ranking > tbody').html("");
 			$(".tab-detalhamento").html("");
 			
 			var tpl = $('.tpl-avatar').html();
-			var data = { "userCode": WCMAPI.userCode, "image": campanhaparceiros.context + "/resources/images/no-img.png" };
+			var data = { "userCode": WCMAPI.userCode, "image": perfilrepresentante.context + "/resources/images/no-img.png" };
 			var html = Mustache.render(tpl, data);
 			$('.user-avatar').html(html);
 			
 			$(".data-proces").html("");
-			campanhaparceiros.loading.hide();
+			perfilrepresentante.loading.hide();
 			
 		}
 		
@@ -268,27 +296,27 @@ var perfilrepresentante = SuperWidget.extend({
 	getfullranking: function() {
 		
 		var today = new Date();
-		var periodo = today.getFullYear() + "0" + campanhaparceiros.trimestre;
+		var periodo = today.getFullYear() + "0" + perfilrepresentante.trimestre;
 
 		var c1 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("limit", "9999", "9999", ConstraintType.MUST, false);
-		var c3 = DatasetFactory.createConstraint("divisao", campanhaparceiros.mydivision, campanhaparceiros.mydivision, ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("divisao", perfilrepresentante.mydivision, perfilrepresentante.mydivision, ConstraintType.MUST, false);
 		var c4 = DatasetFactory.createConstraint("periodo", periodo, periodo, ConstraintType.MUST, false);
-		var c5 = DatasetFactory.createConstraint("equipesuperior", campanhaparceiros.equipesuperior, campanhaparceiros.equipesuperior, ConstraintType.MUST, false);
+		var c5 = DatasetFactory.createConstraint("equipesuperior", perfilrepresentante.equipesuperior, perfilrepresentante.equipesuperior, ConstraintType.MUST, false);
 
-		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3, c4, c5], null, {"success": campanhaparceiros.onreadygetfullranking} );
+		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3, c4, c5], null, {"success": perfilrepresentante.onreadygetfullranking} );
 		
 	},
 	
 	onreadygetfullranking: function(rows) {
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
-			campanhaparceiros.loading.hide();
+			perfilrepresentante.loading.hide();
 			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking geral!');	    			
 			return;
 		}
 		var values = rows["values"];
 		if (values[0].tipapuracao == "erro") {
-			campanhaparceiros.loading.hide();
+			perfilrepresentante.loading.hide();
 			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking geral!');	    			
 			return;
 		}
@@ -306,7 +334,7 @@ var perfilrepresentante = SuperWidget.extend({
 					v = row["vlrpremio"];
 				} else if (v > 0) {
 					premiado = "success";
-					v = campanhaparceiros.mask(v.toFixed(2));
+					v = perfilrepresentante.mask(v.toFixed(2));
 					v = "R$ " + v;
 				} else {
 					v = "";
@@ -328,10 +356,10 @@ var perfilrepresentante = SuperWidget.extend({
 				
 			}
 			
-			campanhaparceiros.list.push(o);
+			perfilrepresentante.list.push(o);
 		}
 		
-		campanhaparceiros.showranking(true);
+		perfilrepresentante.showranking(true);
 		
 	},
 	
@@ -340,14 +368,14 @@ var perfilrepresentante = SuperWidget.extend({
 		
 		if (clean) {
 			$('#table-ranking > tbody').html("");
-			campanhaparceiros.offset = 0;
-			campanhaparceiros.limit = parseInt($("#paginacao").val());
+			perfilrepresentante.offset = 0;
+			perfilrepresentante.limit = parseInt($("#paginacao").val());
 		}
 
-		var filter = campanhaparceiros.list;
+		var filter = perfilrepresentante.list;
 		var search = $("#busca").val(); 
 		if (search && search != "") {
-			filter = campanhaparceiros.list.filter(function(item) {
+			filter = perfilrepresentante.list.filter(function(item) {
 				return item["nome"].toLowerCase().indexOf(search) != -1 || item["codigo"].toLowerCase() == search || item["equipe"].toLowerCase().indexOf(search) != -1;
 			})
 		}
@@ -372,9 +400,9 @@ var perfilrepresentante = SuperWidget.extend({
 		
 		var mylist = [];
 		
-		for (var i = campanhaparceiros.offset; i<campanhaparceiros.limit; i++) {
+		for (var i = perfilrepresentante.offset; i<perfilrepresentante.limit; i++) {
 			var o = filter[i];
-			if (o && +(o["trimestre"]) == +($("#trimestre").val()) && o["divisao"] == campanhaparceiros.mydivision) {
+			if (o && +(o["trimestre"]) == +($("#trimestre").val()) && o["divisao"] == perfilrepresentante.mydivision) {
 				mylist.push(o);
 			}
 		}
@@ -385,18 +413,18 @@ var perfilrepresentante = SuperWidget.extend({
 		var html = Mustache.render(tpl, data);
 		$('#table-ranking > tbody').append(html);
 
-		campanhaparceiros.loading.hide();
+		perfilrepresentante.loading.hide();
 	},
 	
 	getdetalhamentos: function() {
 		
 		FLUIGC.loading(".tab-detalhamento").show();
 		
-		var c1 = DatasetFactory.createConstraint("representante", campanhaparceiros.representante, campanhaparceiros.representante, ConstraintType.MUST, false);
+		var c1 = DatasetFactory.createConstraint("representante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("limit", "999", "999", ConstraintType.MUST, false);
 
-		DatasetFactory.getDataset("ds_campanha_parceiros_detalhe", null, [c1, c2, c3], null, {"success": campanhaparceiros.onreadygetdetalhamentos} );
+		DatasetFactory.getDataset("ds_campanha_parceiros_detalhe", null, [c1, c2, c3], null, {"success": perfilrepresentante.onreadygetdetalhamentos} );
 		
 	},
 	

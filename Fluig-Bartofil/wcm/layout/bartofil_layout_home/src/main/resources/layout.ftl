@@ -4,9 +4,9 @@
 
 	<body>
 	<#import "/wcm.ftl" as wcm/>
-	<@wcm.header />
 	
 	<#if pageRender.isEditMode()=true>
+		<@wcm.header />
 		<div name="formatBar" id="formatBar"></div>
 		<div id="edicaoPagina" class="clearfix">
 	<#else>

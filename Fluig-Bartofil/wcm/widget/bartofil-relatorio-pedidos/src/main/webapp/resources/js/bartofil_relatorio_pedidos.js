@@ -152,7 +152,7 @@ var relatorioPedidos = SuperWidget.extend({
 			}
 			
 		} else {
-			$(".titleResumo").html("DESPESAS");
+			$(".titleResumo").html("DEVOLU&Ccedil;&Otildes;ES");
 			$(".line-total").html("");		
 			for (var i=0; i<relatorioPedidos.list.length; i++) {
 				var item = relatorioPedidos.list[i];
@@ -215,7 +215,7 @@ var relatorioPedidos = SuperWidget.extend({
 			"comissao": "R$ " + relatorioPedidos.mask(despesas["comissao"].toFixed(2)),
 			"quantidade": despesas["quantidade"],
 			"total": "R$ " + relatorioPedidos.mask(despesas["total"].toFixed(2)),
-			"tipo": "DESPESAS",
+			"tipo": "DEVOLUÇÕES",
 			"classItem": "col-sm-4"
 		}
 		var td = {
@@ -224,7 +224,7 @@ var relatorioPedidos = SuperWidget.extend({
 			"comissao": "R$ " + relatorioPedidos.mask(total["comissao"].toFixed(2)),
 			"quantidade": total["quantidade"],
 			"total": "R$ " + relatorioPedidos.mask((total["total"] - despesas["total"]).toFixed(2)),
-			"tipo": "TOTAL - DESPESAS",
+			"tipo": "TOTAL - DEVOLUÇÕES",
 			"classItem": "col-sm-4"
 		}
 		
@@ -253,7 +253,7 @@ var relatorioPedidos = SuperWidget.extend({
 			sf = sf / total["dias"]; 
 		}
 		var data = {
-		    labels: ["Potenc. Mensal Região", "Potenc. Mensal Remanescente", "Potenc. Mensal Dia"],
+		    labels: ["Mensal Região", "Mensal Remanesc", "Mensal Dia"],
 		    datasets: [{
 	            label: "Valor",
 	            data: [(total["mensalRegiao"]).toFixed(2), pr.toFixed(2), sf.toFixed(2)]
@@ -485,8 +485,6 @@ var relatorioPedidos = SuperWidget.extend({
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
 			
-			console.log("row", row["situacao"], row["cgo"])
-			
 			var description = "";
 			if (row["cgo"] == "501") {
 				description = "Venda";
@@ -497,7 +495,6 @@ var relatorioPedidos = SuperWidget.extend({
 			} else {
 				description = "Outros";
 			}
-			console.log("row", row["datafaturamento"], row["datainclusao"]);
 			if (row["datafaturamento"]) {
 				var m = moment(row["datafaturamento"]);
 				description += " " + m.format("MM/YYYY");
