@@ -6,6 +6,7 @@ var perfilrepresentante = SuperWidget.extend({
 	instanceId: null,
 	representante: null,
 	grouprca: null,
+	code: "bartofil_perfil_representante",
 	context: "/bartofil_perfil_representante",
 	current: null,
 	mydivision: "1",
@@ -22,6 +23,10 @@ var perfilrepresentante = SuperWidget.extend({
 			this.setupperiodo();
 			this.getRepresentante();
 		}
+		
+		$(".widget-parceiros").hide();
+		$(".wcm-header").hide();
+		
 	},
 
 	bindings : {
@@ -29,9 +34,14 @@ var perfilrepresentante = SuperWidget.extend({
 		global : {
 			'save-preferences': ['click_savePreferences'],
 			"click-widget": ['click_widget'],
+			'change-periodo': ['change_changePeriodo'],
+			'change-representante': ['change_changeRepresentante'],
+			'click-decendio':['click_clickDecendio'],
+			'btn-close-decendio':['click_closeDecendio'],
+			'click-cfa': ['click_showExtratoDetalhe'],
+			'btn-por-cfa': ['click_showSkus'],
 		}
 	},
-	
 	widget: function(el, ev) {
 		$(".btn-info").removeClass("active");
 		$(el).addClass("active");
@@ -49,16 +59,18 @@ var perfilrepresentante = SuperWidget.extend({
 			list.push(o);
 			m.subtract(1, 'months');
 		}
+		console.log(list);
 
 		var tpl = $('.tpl-continuous-scroll-periodo').html();
 		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
+		console.log(list, html)
 		$('#periodo').append(html);
 		
 		
 	},
 	
-	changerepresentante: function () {
+	changeRepresentante: function () {
 		perfilrepresentante.loading.show();
 		perfilrepresentante.representante = $('#listrepresentatives').val();
 		perfilrepresentante.list = [];
@@ -66,7 +78,7 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".tab-detalhamento").html("");
 		perfilrepresentante.current = null;
 		perfilrepresentante.limit = parseInt($("#paginacao").val());
-		perfilrepresentante.getranking();
+		perfilrepresentante.getfoto();
 		
 	},
 	
@@ -81,6 +93,8 @@ var perfilrepresentante = SuperWidget.extend({
 			return;
 		}
 		
+		console.log(row)
+		
 		var values = rows["values"];
 		if (values[0].apelido == "erro") {
 			perfilrepresentante.loading.hide();
@@ -93,6 +107,8 @@ var perfilrepresentante = SuperWidget.extend({
 		var data = { "userCode": perfilrepresentante.representante, "image": row["foto"] };
 		var html = Mustache.render(tpl, data);
 		$('.user-avatar').html(html);
+		
+		perfilrepresentante.showGraph();
 		
 		
 	},
@@ -114,20 +130,13 @@ var perfilrepresentante = SuperWidget.extend({
 		}, this.instanceId, args );
 	},	
 	
-	changetrimestre: function(el ,ev) {
+	changePeriodo: function(el ,ev) {
 		perfilrepresentante.loading.show();
 		perfilrepresentante.trimestre = $(el).val();
 		perfilrepresentante.list = [];
 		perfilrepresentante.offset = 0;
 		perfilrepresentante.limit = parseInt($("#paginacao").val());
 		perfilrepresentante.getfullranking();		
-	},
-	showtab: function(el, ev) {
-		$(el).parent().find("li").removeClass("active")
-		$(el).addClass("active");
-		$(".tab-colocacao").addClass("fs-display-none");
-		$(".tab-detalhamento").addClass("fs-display-none");
-		$("." + $(el).data("tab")).removeClass("fs-display-none");
 	},
 	
 	isrca: function() {
@@ -138,6 +147,196 @@ var perfilrepresentante = SuperWidget.extend({
 		if (dataset && dataset.values && dataset.values.length > 0) { return true; }
 		
 		return false;
+	},
+	
+	showGraph: function() {
+	
+		var data = [{
+		        value: 110000,
+		        color: "#46BFBD",
+		        highlight: "#5AD3D1",
+		        label: "Faturado"
+		    }, {
+		        value: 18000,
+		        color:"#F7464A",
+		        highlight: "#FF5A5E",
+		        label: "Canxelado"
+		    }, {
+		        value: 45000,
+		        color: "#FDB45C",
+		        highlight: "#FFC870",
+		        label: "Em analise"
+		    }, {
+		        value: 38000,
+                color: "#949FB1",
+                highlight: "#A8B3C5",
+		        label: "Liberado"
+		    }, {
+		        value: 25000,
+		        color: "#4D5360",
+		        highlight: "#616774",
+		        label: "Em separação"
+		    }];
+
+		var options = { 
+//		    legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+			"segmentShowStroke": true,
+			"showTooltips": true
+		}
+		
+		var chart = FLUIGC.chart('#chartPie', {
+		    id: 'idChartPie',
+		    width: '700',
+		    height: '400'
+		});
+		var pieChart = chart.pie(data, options);
+		$(".legend-chart-pie").html(pieChart.generateLegend());
+
+		var chart = FLUIGC.chart('#chartGauge', {
+		    id: 'idChartGauge',
+		    width: '500',
+		    height: '200'
+		});
+		var chartGauge = chart.gauge({
+	        lines: 12,
+	        angle: 0.15,
+	        lineWidth: 0.44,
+	        pointer: {
+	            length: 0.9,
+	            strokeWidth: 0.035,
+	            color: '#000000'
+	        },
+	        limitMax: 'false',
+	        colorStart: '#6FADCF',
+	        colorStop: '#8FC0DA',
+	        strokeColor: '#E0E0E0',
+			"showTooltips": true,
+	        generateGradient: true
+	    });		
+		chartGauge.maxValue = 3000;
+		chartGauge.set(925);
+		chartGauge.value = 925;
+		$(".legend-chart-pie").html(pieChart.generateLegend());
+		
+		perfilrepresentante.showEvolucao();
+		
+	},
+	
+	showEvolucao: function() {
+		
+		$('.table-evolucao > tbody').html("");
+		
+		var list = [
+			{ "mes": "abr/18", "valorFaturado": "183.212,15", "comissaoRecebida": "8.244,55", "premiosRecebidos": "7.280,00", "valorTotal": "15.524,55", "percentual": "8,5%", "css": ""  },
+			{ "mes": "mai/18", "valorFaturado": "232.488,03", "comissaoRecebida": "10.461,96", "premiosRecebidos": "1.115,00", "valorTotal": "15.576,96", "percentual": "5,0%", "css": ""  },
+			{ "mes": "jun/18", "valorFaturado": "240.999,70", "comissaoRecebida": "10.844,99", "premiosRecebidos": "800,00", "valorTotal": "15.644,99", "percentual": "4,8%", "css": ""  },
+			{ "mes": "jul/18", "valorFaturado": "198.333,80", "comissaoRecebida": "8.925,02", "premiosRecebidos": "800,00", "valorTotal": "9.725,02", "percentual": "4,9%"  },
+			{ "mes": "ago/18", "valorFaturado": "260.213,65", "comissaoRecebida": "11.709,61", "premiosRecebidos": "6.350,00", "valorTotal": "18.059,61", "percentual": "6,9%", "css": ""  },
+			{ "mes": "set/18", "valorFaturado": "218.885,50", "comissaoRecebida": "9.849,80", "premiosRecebidos": "2.140,00", "valorTotal": "11.989,80", "percentual": "5,5%", "css": ""  },
+			{ "mes": "Semestre", "valorFaturado": "1.334.131,83", "comissaoRecebida": "60.035,93", "premiosRecebidos": "18.845,00", "valorTotal": "78.520,93", "percentual": "5,9%", "css": "info"  }
+		];
+		var tpl = $('.tpl-evolucao').html();
+		var data = { "items": list};
+		var html = Mustache.render(tpl, data);
+		console.log(list, html)
+		$('.table-evolucao > tbody').append(html);
+		
+		perfilrepresentante.showExtratoDetalhado();
+		
+	},
+	
+	showExtratoDetalhado: function() {
+		
+		$('.table-extrato-comissao > tbody').html("");
+		
+		var list = [
+			{ "cfa": "4", "valorFaturado": "89.007,90", "comissaoRecebida": "7.565,67", "percentual": "8,5%"  },
+			{ "cfa": "6", "valorFaturado": "13.560,20", "comissaoRecebida": "922,09", "percentual": "6,8%" },
+			{ "cfa": "1", "valorFaturado": "25.866,12", "comissaoRecebida": "1.681,30", "percentual": "6,5%" },
+			{ "cfa": "2", "valorFaturado": "7.504,70", "comissaoRecebida": "462,79", "percentual": "6,2%"  },
+			{ "cfa": "8", "valorFaturado": "3.260,30", "comissaoRecebida": "179,32", "percentual": "5,5%" },
+			{ "cfa": "9", "valorFaturado": "8.333,20", "comissaoRecebida": "441,66", "percentual": "5,3%"  },
+			{ "cfa": "3", "valorFaturado": "519,60", "comissaoRecebida": "24,94", "percentual": "4,8%" }
+		];
+		var tpl = $('.tpl-extrato-comissao').html();
+		var data = { "items": list};
+		var html = Mustache.render(tpl, data);
+		console.log(list, html)
+		$('.table-extrato-comissao > tbody').append(html);
+	},
+	
+	showExtratoDetalhe: function (el, ev) {
+		perfilrepresentante.loading.show();
+		
+		var params = {
+			"values": [
+				{"produto": "32226 - Produto A", "valorFaturado": "315,17", "comissaoRecebida": "25,21", "comissaoMedia": "8,0%" },
+				{"produto": "15220 - Produto D", "valorFaturado": "690,13", "comissaoRecebida": "44,86", "comissaoMedia": "6,5%" },
+				{"produto": "9008763 - Produto H", "valorFaturado": "2.220,00", "comissaoRecebida": "139,86", "comissaoMedia": "6,3%" },
+				{"produto": "72138 - Produto C", "valorFaturado": "1.800,50", "comissaoRecebida": "108,03", "comissaoMedia": "6,0%" },
+				{"produto": "100229 - Produto F", "valorFaturado": "300,80", "comissaoRecebida": "18,05", "comissaoMedia": "6,0%" },
+				{"produto": "822 - Produto E", "valorFaturado": "1.350,10", "comissaoRecebida": "81,01", "comissaoMedia": "6,0%" },
+				{"produto": "25766 - Produto B", "valorFaturado": "78,00", "comissaoRecebida": "4,52", "comissaoMedia": "5,8%" },
+				{"produto": "17 - Produto G", "valorFaturado": "750,00", "comissaoRecebida": "41,25", "comissaoMedia": "5,5%" },
+			]
+		};
+		
+		WCMAPI.convertFtlAsync(perfilrepresentante.code, 'detalhe.ftl', { "params": params },
+				function (data) {
+				   FLUIGC.modal({
+					    title: 'CFA - ' + $(el).data("id"),
+					    content: data,
+					    id: 'fluig-modal',
+					    size: 'full',
+					    actions: [{
+					        'label': 'Fechar',
+					        'autoClose': true
+					    }]
+					}, function(err, data) {
+						console.log(err, data)
+					});
+				   perfilrepresentante.loading.hide();
+			   },
+			   function(err) { }
+		  );		
+		
+	},
+	
+	showSkus: function (el, ev) {
+		perfilrepresentante.loading.show();
+		
+		var params = {
+			"values": [
+				{"produto": "9008763 - Produto H", "valorFaturado": "2.220,00" },
+				{"produto": "72138 - Produto C", "valorFaturado": "1.800,50" },
+				{"produto": "822 - Produto E", "valorFaturado": "1.350,10" },
+				{"produto": "17 - Produto G", "valorFaturado": "750,00" },
+				{"produto": "15220 - Produto D", "valorFaturado": "690,13" },
+				{"produto": "32226 - Produto A", "valorFaturado": "315,17" },
+				{"produto": "100229 - Produto F", "valorFaturado": "300,80" },
+				{"produto": "25766 - Produto B", "valorFaturado": "78,00" },
+			]
+		};
+		
+		WCMAPI.convertFtlAsync(perfilrepresentante.code, 'skus.ftl', { "params": params },
+				function (data) {
+				   FLUIGC.modal({
+					    title: 'Quantidade de Itens (SKUs) dos Parceiros',
+					    content: data,
+					    id: 'fluig-modal',
+					    size: 'large',
+					    actions: [{
+					        'label': 'Fechar',
+					        'autoClose': true
+					    }]
+					}, function(err, data) {
+						console.log(err, data)
+					});
+				   perfilrepresentante.loading.hide();
+			   },
+			   function(err) { }
+		  );		
+		
 	},
 	
 	changepaginacao: function(el, ev) {
@@ -152,6 +351,27 @@ var perfilrepresentante = SuperWidget.extend({
 		perfilrepresentante.offset = 0;
 		perfilrepresentante.limit = parseInt($(el).val());
 		perfilrepresentante.showranking(true);		
+	},
+	
+	clickDecendio: function(el, ev) {
+		var tpl = $('.tpl-decendio').html();
+		var data = { "items": []};
+		var html = Mustache.render(tpl, data);
+
+		FLUIGC.modal({
+		    title:  $(el).text(),
+		    content: html,
+		    id: 'fluig-modal',
+		    size: 'large',
+		    actions: [{
+		        'label': 'Fechar',
+		        'autoClose': true
+		    }]
+		}, function(err, data) {
+			console.log(err, data)
+		});
+		
+				  
 	},
 	
 	showrepresentative: function() {
@@ -182,10 +402,10 @@ var perfilrepresentante = SuperWidget.extend({
 			
 			$(".nav-representative").removeClass("fs-display-none");
 			
-			perfilrepresentante.getranking();
+			perfilrepresentante.setupperiodo();
 			perfilrepresentante.getfoto();
 		} else {
-			perfilrepresentante.getranking();
+			perfilrepresentante.setupperiodo();
 			perfilrepresentante.getfoto();
 		}
 		

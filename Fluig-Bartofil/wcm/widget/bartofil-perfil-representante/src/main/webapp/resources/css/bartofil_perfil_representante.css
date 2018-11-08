@@ -6,3 +6,18 @@
 .button-home {
 	height: 68px !important;
 }
+
+.pie-legend li span {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 5px;
+}
+
+.fluig-style-guide .list-group-item-custom {
+    padding: 2px 15px !important;
+}
+
+.fluig-style-guide .popover {
+	max-width: 400px !important;
+}

@@ -13,4 +13,5 @@ view.file=view.ftl
 edit.file=edit.ftl
 application.resource.css.1=/resources/css/bartofil_perfil_representante.css
 application.resource.js.3=/resources/js/bartofil_perfil_representante.js
+application.resource.component.1=fluigchart
 application.resource.component.5=mustache
