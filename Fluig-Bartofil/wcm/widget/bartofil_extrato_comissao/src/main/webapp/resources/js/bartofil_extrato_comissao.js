@@ -2,14 +2,14 @@ var extratocampanha = SuperWidget.extend({
 	grouprca: "RCA",
 	current: null,
 	mobile: FLUIGC.utilities.checkDevice().isMobile,
-	loading: FLUIGC.loading(window),
-
+	loading: FLUIGC.loading(".widget-extrato"),
+	representante: null,
 	init : function() {
 		$(".pageTitle").parent().remove();
 		extratocampanha.loading.show();
 		
-		extratocampanha.grouprca = this.grouprca;
-		
+		extratocampanha.grouprca = perfilrepresentante.grouprca;
+		extratocampanha.current = perfilrepresentante.representante; 
 		
 		if (extratocampanha.mobile) {
 			$('#visualizacaoresumido').prop('checked', true);
@@ -17,19 +17,7 @@ var extratocampanha = SuperWidget.extend({
 			$("[data-click-print]").hide();
 		}
 		
-		if (this.isrca() == false) {
-			this.showrepresentative();
-		} else {
-			
-			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
-			var tpl = $('.tpl-representante').html();
-			var data = { "items": list};
-			var html = Mustache.render(tpl, data);
-			$('#listrepresentatives').append(html);
-			
-			this.setupperiodo();
-			this.getrepresentante(WCMAPI.userLogin);
-		}
+		this.getcomissoes();
 	},
 
 	bindings : {
@@ -64,53 +52,6 @@ var extratocampanha = SuperWidget.extend({
 	listcomissoes: function(el, ev) {
 		extratocampanha.loading.show();
 		this.getrepresentante($('#listrepresentatives').val());
-	},
-	
-	isrca: function() {
-		var c1 = DatasetFactory.createConstraint("colleagueGroupPK.colleagueId", WCMAPI.userCode, WCMAPI.userCode, ConstraintType.MUST, false);
-		var c2 = DatasetFactory.createConstraint("colleagueGroupPK.groupId", this.grouprca, this.grouprca, ConstraintType.MUST, false);
-
-		var dataset = DatasetFactory.getDataset("colleagueGroup", null, [c1, c2], null);
-		if (dataset && dataset.values && dataset.values.length > 0) { return true; }
-		
-		return false;
-	},
-	
-	showrepresentative: function() {
-		var c1 = DatasetFactory.createConstraint("grupo", this.grouprca, this.grouprca, ConstraintType.MUST, false);
-
-		var dataset = DatasetFactory.getDataset("ds_lista_usuarios_grupo", null, [c1], null);
-		if (dataset && dataset.values && dataset.values.length > 0) {
-			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
-			var values = dataset["values"];
-			for (var i=0; i<values.length; i++) {
-				var row = values[i];
-				if (WCMAPI.userCode != row["colleagueId"]) {
-					var o = { "id": row["login"], "name": row["login"] + " - " + row["colleagueName"] }
-					list.push(o);
-				}
-			}
-
-			var tpl = $('.tpl-representante').html();
-			var data = { "items": list};
-			var html = Mustache.render(tpl, data);
-			$('#listrepresentatives').append(html);
-			
-			$('#listrepresentatives').select2({
-			    placeholder: "Selecione",
-			    allowClear: false,
-			    width: '300px'
-			})
-			
-			$(".nav-representative").removeClass("fs-display-none");
-			
-			this.setupperiodo();
-			this.getrepresentante(WCMAPI.userLogin);
-		} else {
-			this.setupperiodo();
-			this.getrepresentante(WCMAPI.userLogin);
-		}
-		
 	},
 	
 	print: function() {

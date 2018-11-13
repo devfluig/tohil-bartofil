@@ -1,7 +1,132 @@
+class Pedidos {
+
+  constructor() { }
+
+  get cgo() { return this._cgo; }
+  set cgo(value) { this._cgo = value; }
+
+  get codcliente() { return this._codcliente; }
+  set codcliente(value) { this._codcliente = value; }
+  
+  get datainclusao() { return this._datainclusao; }
+  set datainclusao(value) { this._datainclusao = value; }
+  
+  get descorigempedido() { return this._descorigempedido; }
+  set descorigempedido(value) { this._descorigempedido = value; }
+  
+  get descparcelamento() { return this._descparcelamento; }
+  set descparcelamento(value) { this._descparcelamento = value; }
+  
+  get diasuteisrestantes() { return this._diasuteisrestantes; }
+  set diasuteisrestantes(value) { this._diasuteisrestantes = value; }
+  
+  get metavlrvenda() { return this._metavlrvenda; }
+  set metavlrvenda(value) { this._metavlrvenda = value; }
+
+  get motcancelamento() { return this._motcancelamento; }
+  set motcancelamento(value) { this._motcancelamento = value; }
+
+  get naturezaoperacao() { return this._naturezaoperacao; }
+  set naturezaoperacao(value) { this._naturezaoperacao = value; }
+
+  get nomecliente() { return this._nomecliente; }
+  set nomecliente(value) { this._nomecliente = value; }
+
+  get nropedidovenda() { return this._nropedidovenda; }
+  set nropedidovenda(value) { this._nropedidovenda = value; }
+
+  get origem() { return this._origem; }
+  set origem(value) { this._origem = value; }
+
+  get situacao() { return this._situacao; }
+  set situacao(value) { this._situacao = value; }
+
+  get valortotalacobrar() { return this._valortotalacobrar; }
+  set valortotalacobrar(value) { this._valortotalacobrar = parseFloat(value); }
+
+  get valortotalcomissao() { return this._valortotalcomissao; }
+  set valortotalcomissao(value) { this._valortotalcomissao = parseFloat(value); }
+
+  get valortotalpedido() { return this._valortotalpedido; }
+  set valortotalpedido(value) { this._valortotalpedido = parseFloat(value); }
+
+  get datafaturamento() { return this._datafaturamento; }
+  set datafaturamento(value) { this._datafaturamento = value; }
+  
+  parse(obj) {
+	  this._cgo = obj["cgo"]; 
+	  this._codcliente = obj["codcliente"]; 
+	  this._datainclusao = obj["datainclusao"]; 
+	  this._datafaturamento = obj["datafaturamento"]; 
+	  this._descorigempedido = obj["descorigempedido"]; 
+	  this._descparcelamento = obj["descparcelamento"]; 
+	  this._diasuteisrestantes = obj["diasuteisrestantes"]; 
+	  this._metavlrvenda = obj["metavlrvenda"]; 
+	  this._motcancelamento = obj["motcancelamento"]; 
+	  this._naturezaoperacao = obj["naturezaoperacao"]; 
+	  this._nomecliente = obj["nomecliente"]; 
+	  this._nropedidovenda = obj["nropedidovenda"]; 
+	  this._origem = obj["origem"]; 
+	  this._situacao = obj["situacao"]; 
+	  this._valortotalacobrar = parseFloat(obj["valortotalacobrar"]); 
+	  this._valortotalcomissao = parseFloat(obj["valortotalcomissao"]); 
+	  this._valortotalpedido = parseFloat(obj["valortotalpedido"]);
+  }
+  
+};
+
+class PedidosServices {
+  constructor() { 
+	  this._list = [];
+  }
+  add(pedido) {
+	  this._list.push(pedido);
+	  return this._list.length - 1;
+  }
+  list() {
+	  return this._list;
+  }
+  total(situacao) {
+	  var t = 0;
+	  for (var i=0; i<this._list.length; i++) {
+		  var p = this._list[i];
+		  if (p.situacao == situacao) {
+			  t += (p.situacao != "C" ? p.valortotalpedido : p.valorcobrar)
+		  } 
+	  }
+	  return t.toFixed(2);
+  }
+};
+
+
+const SituacaoEnum = {
+    FATURAMENTO: 'F',
+    CANCELADO: 'C',
+    ANALISE: 'A',
+    DIGITACAO: 'D',
+    LIBERADO: 'L',
+    ROTEIRIZACAO: 'R',
+    SEPARACAO: 'S',
+    TRANSITO: 'W',
+    properties: {
+        'F': {name: "Faturamento", code: "F"},
+        'C': {name: "Cancelado", code: "C"},
+        'A': {name: "Em analise", code: "A"},
+        'D': {name: "Digitação", code: "D"},
+        'L': {name: "Liberado", code: "L"},
+        'R': {name: "Roteirização", code: "R"},
+        'S': {name: "Em separação", code: "S"},
+        'W': {name: "Em transito", code: "W"},
+      }
+}
+
+Object.freeze(SituacaoEnum);
+
 var perfilrepresentante = SuperWidget.extend({
 	loading: FLUIGC.loading(window),
 	offset: 0,
 	limit: 30,
+	pedidos: new PedidosServices(),
 	list: [],
 	instanceId: null,
 	representante: null,
@@ -21,10 +146,13 @@ var perfilrepresentante = SuperWidget.extend({
 			this.showrepresentative();
 		} else {
 			this.setupperiodo();
-			this.getRepresentante();
+			this.getfoto();
 		}
 		
 		$(".widget-parceiros").hide();
+		$(".widget-extrato").hide();
+		$(".widget-pedidos").hide();
+		$(".widget-campanha").hide();
 		$(".wcm-header").hide();
 		
 	},
@@ -45,6 +173,14 @@ var perfilrepresentante = SuperWidget.extend({
 	widget: function(el, ev) {
 		$(".btn-info").removeClass("active");
 		$(el).addClass("active");
+		
+		$(".widget-home").hide();
+		$(".widget-extrato").hide();
+		$(".widget-pedidos").hide();
+		$(".widget-campanha").hide();
+		$(".widget-parceiros").hide();
+		
+		$("."+$(el).data("widget")).show();
 	},
 	
 	setupperiodo: function() {
@@ -93,8 +229,6 @@ var perfilrepresentante = SuperWidget.extend({
 			return;
 		}
 		
-		console.log(row)
-		
 		var values = rows["values"];
 		if (values[0].apelido == "erro") {
 			perfilrepresentante.loading.hide();
@@ -108,8 +242,69 @@ var perfilrepresentante = SuperWidget.extend({
 		var html = Mustache.render(tpl, data);
 		$('.user-avatar').html(html);
 		
-		perfilrepresentante.showGraph();
+		var dataadmissao = moment(row["dataadmissao"]);
+
+		$(".contato").html(row["apelido"]);
+		$(".data-admissao").html(dataadmissao.format("DD/MM/YYYY"));
+		$(".nome").html(row["nomerazao"]);
+		$(".grupo-parceiro").html(row["grupoparceiro100"]);
+		$(".codigo").html(row["codrepresentante"]);
+		$(".venda-media-trimestre").html("R$ " + perfilrepresentante.mask(parseFloat(row["valormensal3"]).toFixed(2)));
+		$(".venda-media-semestre").html("R$ " + perfilrepresentante.mask(parseFloat(row["valormensal6"]).toFixed(2)));
+		$(".venda-media-ano").html("R$ " + perfilrepresentante.mask(parseFloat(row["valormensal12"]).toFixed(2)));
+		$(".municipio").html(row["endercidade"]);
+		$(".uf").html(row["enderuf"]);
+		$(".equipe").html(row["descequipe"]);
 		
+		perfilrepresentante.getPedidos();
+		
+		
+	},
+	
+	getPedidos: function() {
+		perfilrepresentante.loading.show();
+
+		var mes = $("#periodo :selected").data("month");
+		var ano = $("#periodo :selected").data("year");
+		
+		var startOfMonth = moment(ano + "-" + mes + "-01").startOf('month').format('YYYY-MM-DD');
+		var endOfMonth   = moment(ano + "-" + mes + "-01").endOf('month').format('YYYY-MM-DD');
+		
+		var c1 = DatasetFactory.createConstraint("dataInclusaoInicio", startOfMonth, startOfMonth, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("datainclusaofim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("codRepresentante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
+		
+		console.log("dataset", c1, c2, c3, perfilrepresentante.onReadyGetPedidos)
+	      
+		DatasetFactory.getDataset('ds_webservice_meus_pedidos', null, [c1, c2, c3], null, {"success": perfilrepresentante.onReadyGetPedidos});
+		
+	},
+
+	onReadyGetPedidos: function(rows) {
+		console.log("onReadyGetPedidos perfil", rows)
+		
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			perfilrepresentante.loading.hide();
+			WCMC.messageError('Representante não possui pedidos para listar!');	    			
+			return;
+		}
+		
+		var total = { };
+		var despesas = null;
+		var values = rows["values"];
+		
+		perfilrepresentante.list = values;
+		
+		for (var i=0; i<values.length; i++) {
+			var row = values[i];
+			var p = new Pedidos();
+			p.parse(row);
+			perfilrepresentante.pedidos.add(p);
+		}
+		
+		console.log("onReadyGetPedidos", perfilrepresentante.pedidos)
+		
+		perfilrepresentante.showGraph()
 		
 	},
 	
@@ -152,32 +347,24 @@ var perfilrepresentante = SuperWidget.extend({
 	showGraph: function() {
 	
 		var data = [{
-		        value: 110000,
-		        color: "#46BFBD",
-		        highlight: "#5AD3D1",
-		        label: "Faturado"
+		        value: perfilrepresentante.pedidos.total("F"),
+		        label: SituacaoEnum.properties["F"].name
 		    }, {
 		        value: 18000,
-		        color:"#F7464A",
-		        highlight: "#FF5A5E",
-		        label: "Canxelado"
+		        label: "Cancelado"
 		    }, {
 		        value: 45000,
-		        color: "#FDB45C",
-		        highlight: "#FFC870",
 		        label: "Em analise"
 		    }, {
 		        value: 38000,
-                color: "#949FB1",
-                highlight: "#A8B3C5",
 		        label: "Liberado"
 		    }, {
 		        value: 25000,
-		        color: "#4D5360",
-		        highlight: "#616774",
 		        label: "Em separação"
 		    }];
 
+		console.log("piechar", data)
+		
 		var options = { 
 //		    legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
 			"segmentShowStroke": true,

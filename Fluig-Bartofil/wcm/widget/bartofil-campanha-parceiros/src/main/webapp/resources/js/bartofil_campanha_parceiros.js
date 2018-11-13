@@ -30,8 +30,8 @@ var campanhaparceiros = SuperWidget.extend({
 		});
 		
 		campanhaparceiros.loading.show();
-		campanhaparceiros.representante = WCMAPI.userLogin;
-		campanhaparceiros.grouprca = this.grouprca;
+		campanhaparceiros.representante = perfilrepresentante.representante;
+		campanhaparceiros.grouprca = perfilrepresentante.grouprca;
 		
 		var today = moment(new Date());
 		var trimestre = 0;
@@ -54,25 +54,20 @@ var campanhaparceiros = SuperWidget.extend({
 		    }
 		});		
 		
-		if (this.isrca() == false) {
-			this.showrepresentative();
-		} else {
-			this.getranking();
-			this.getfoto();
-		}		
+		this.getranking();
 		
 	},
 
 	bindings : {
 		local : {},
 		global : {
-			"click-detalhado": ['click_showdetalhado'],
-			'change-paginacao': ['change_changepaginacao'],
-			"change-representante": ['change_changerepresentante'],
-			'change-ordenar': ['change_changeordenacao'],
-			'save-preferences': ['click_savePreferences'],
-			'click-tab': ['click_showtab'],
-			'change-trimestre': ['change_changetrimestre'],
+			"click-detalhado-parceiro": ['click_showdetalhado'],
+			'change-paginacao-parceiro': ['change_changepaginacao'],
+			"change-representante-parceiro": ['change_changerepresentante'],
+			'change-ordenar-parceiro': ['change_changeordenacao'],
+			'save-preferences-parceiro': ['click_savePreferences'],
+			'click-tab-parceiro': ['click_showtab'],
+			'change-trimestre-parceiro': ['change_changetrimestre'],
 		}
 	},
 	
@@ -85,33 +80,6 @@ var campanhaparceiros = SuperWidget.extend({
 		campanhaparceiros.current = null;
 		campanhaparceiros.limit = parseInt($("#paginacao").val());
 		campanhaparceiros.getranking();
-		
-	},
-	
-	getfoto: function() {
-		var c1 = DatasetFactory.createConstraint("representante", campanhaparceiros.representante, campanhaparceiros.representante, ConstraintType.MUST, false);
-		DatasetFactory.getDataset("ds_representante", null, [c1], null, {"success": campanhaparceiros.onreadygetfoto} );
-	},
-	
-	onreadygetfoto: function(rows) {
-		if (!rows || !rows["values"] || rows["values"].length == 0) {
-			campanhaparceiros.loading.hide();
-			return;
-		}
-		
-		var values = rows["values"];
-		if (values[0].apelido == "erro") {
-			campanhaparceiros.loading.hide();
-			return;
-		}
-		
-		var row = values[0];
-
-		var tpl = $('.tpl-avatar').html();
-		var data = { "userCode": campanhaparceiros.representante, "image": row["foto"] };
-		var html = Mustache.render(tpl, data);
-		$('.user-avatar').html(html);
-		
 		
 	},
 	
@@ -148,16 +116,6 @@ var campanhaparceiros = SuperWidget.extend({
 		$("." + $(el).data("tab")).removeClass("fs-display-none");
 	},
 	
-	isrca: function() {
-		var c1 = DatasetFactory.createConstraint("colleagueGroupPK.colleagueId", WCMAPI.userCode, WCMAPI.userCode, ConstraintType.MUST, false);
-		var c2 = DatasetFactory.createConstraint("colleagueGroupPK.groupId", this.grouprca, this.grouprca, ConstraintType.MUST, false);
-
-		var dataset = DatasetFactory.getDataset("colleagueGroup", null, [c1, c2], null);
-		if (dataset && dataset.values && dataset.values.length > 0) { return true; }
-		
-		return false;
-	},
-	
 	changepaginacao: function(el, ev) {
 		campanhaparceiros.loading.show();
 		campanhaparceiros.offset = 0;
@@ -171,44 +129,6 @@ var campanhaparceiros = SuperWidget.extend({
 		campanhaparceiros.limit = parseInt($(el).val());
 		campanhaparceiros.showranking(true);		
 	},
-	
-	showrepresentative: function() {
-		var c1 = DatasetFactory.createConstraint("grupo", this.grouprca, this.grouprca, ConstraintType.MUST, false);
-
-		var dataset = DatasetFactory.getDataset("ds_lista_usuarios_grupo", null, [c1], null);
-		if (dataset && dataset.values && dataset.values.length > 0) {
-			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
-			var values = dataset["values"];
-			for (var i=0; i<values.length; i++) {
-				var row = values[i];
-				if (WCMAPI.userCode != row["login"]) {
-					var o = { "id": row["login"], "name": row["login"] + " - " + row["colleagueName"] }
-					list.push(o);
-				}
-			}
-
-			var tpl = $('.tpl-representante').html();
-			var data = { "items": list};
-			var html = Mustache.render(tpl, data);
-			$('#listrepresentatives').append(html);
-			
-			$('#listrepresentatives').select2({
-			    placeholder: "Selecione",
-			    allowClear: false,
-			    width: '300px'
-			})
-			
-			$(".nav-representative").removeClass("fs-display-none");
-			
-			campanhaparceiros.getranking();
-			campanhaparceiros.getfoto();
-		} else {
-			campanhaparceiros.getranking();
-			campanhaparceiros.getfoto();
-		}
-		
-	},
-	
 	
 	listcampanha: function(el, ev) {
 		campanhaparceiros.loading.show();
@@ -248,49 +168,13 @@ var campanhaparceiros = SuperWidget.extend({
 		if (row["nrorepresentante"] == campanhaparceiros.representante) {
 			campanhaparceiros.current = row;
 			
-			var v = "";
-			try {
-				v = parseFloat(row["vlrpremio"]);
-				rowclass = "success";
-				if (isNaN(v)) {
-					v = row["vlrpremio"];
-				} else if (v > 0) {
-					v = campanhaparceiros.mask(v.toFixed(2));
-					v = "R$ " + v;
-				} else {
-					v = "";
-				}
-			} catch (e) {
-				v = row["vlrpremio"];
-			}
-			
-			$("#codrca").val(row["nrorepresentante"]);
-			$("#gerencia").val(row["gerencia"]);
-			$("#totalpontos").val(row["pontos"]);
-			$("#nomerca").val(row["apelido"]);
-			$("#equipe").val(row["descequipe"]);
-			$("#colocacao").val(row["ordem"]);
-			$("#divisao").val(row["divisao"]);
-			$("#premio").val(v);
-			
-			$(".data-proces").html(row["dataprocessamento"]);
-			
 			campanhaparceiros.mydivision = row["divisao"];
 			campanhaparceiros.equipesuperior = row["nroequipesuperior"];
 			
 			campanhaparceiros.getdetalhamentos();
-			campanhaparceiros.getfoto();
 			campanhaparceiros.getfullranking();
 			
 		} else {
-			$("#codrca").val("");
-			$("#gerencia").val("");
-			$("#totalpontos").val("");
-			$("#nomerca").val("");
-			$("#equipe").val("");
-			$("#colocacao").val("");
-			$("#divisao").val("");
-			$("#premio").val("");
 			campanhaparceiros.current = null;
 			campanhaparceiros.mydivision = null;
 			campanhaparceiros.equipesuperior = null;
@@ -298,12 +182,6 @@ var campanhaparceiros = SuperWidget.extend({
 			$('#table-ranking > tbody').html("");
 			$(".tab-detalhamento").html("");
 			
-			var tpl = $('.tpl-avatar').html();
-			var data = { "userCode": WCMAPI.userCode, "image": campanhaparceiros.context + "/resources/images/no-img.png" };
-			var html = Mustache.render(tpl, data);
-			$('.user-avatar').html(html);
-			
-			$(".data-proces").html("");
 			campanhaparceiros.loading.hide();
 			
 		}

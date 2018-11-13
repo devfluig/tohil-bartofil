@@ -7,7 +7,7 @@
 	        </div>
 	    </div>
     </form>
-    <button type="submit" class="btn btn-default" data-save-preferences>Salvar</button>
+    <button type="submit" class="btn btn-default" data-save-preferences-parceiro>Salvar</button>
 
 </div>
 

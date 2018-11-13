@@ -35,78 +35,78 @@
 			    <div class="form-group custom-form-group">
 					<label class="col-sm-2 control-label">Contato:</label>
 					<div class="col-sm-3">
-						<p class="form-control-static contato">Carpegiani</p>
+						<p class="form-control-static contato"></p>
 					</div>
 					<label class="col-sm-3 control-label">Data de Admissão:</label>
 					<div class="col-sm-2">
-						<p class="form-control-static data-admissao">27/02/2009</p>
+						<p class="form-control-static data-admissao"></p>
 					</div>
 			    </div>			
 				<div class="form-group custom-form-group">
 					<label class="col-sm-2 control-label">Nome:</label>
 					<div class="col-sm-3">
-						<p class="form-control-static nome">Carpegiani Representação LTDA</p>
+						<p class="form-control-static nome"></p>
 					</div>
 					<label class="col-sm-3 control-label">Grupo Parceiros 100%:</label>
 					<div class="col-sm-2">
-						<p class="form-control-static grupo-parceiros">4 – acima de R$ 100 mil</p>
+						<p class="form-control-static grupo-parceiros"></p>
 					</div>
 			    </div>						
 				<div class="form-group custom-form-group">
 					<label class="col-sm-2 control-label">Código:</label>
 					<div class="col-sm-3">
-						<p class="form-control-static codigo">30835</p>
+						<p class="form-control-static codigo"></p>
 					</div>
 					<label class="col-sm-3 control-label">Venda média mensal último trimestre:</label>
 					<div class="col-sm-2">
-						<p class="form-control-static venda-media-trimestre">R$ 280.433,12</p>
+						<p class="form-control-static venda-media-trimestre"></p>
 					</div>
 			    </div>						
 				<div class="form-group custom-form-group">
 					<label class="col-sm-2 control-label">Equipe:</label>
 					<div class="col-sm-3">
-						<p class="form-control-static equipe">Minas Gerais 4</p>
+						<p class="form-control-static equipe"></p>
 					</div>
 					<label class="col-sm-3 control-label">Venda média mensal último semestre:</label>
 					<div class="col-sm-2">
-						<p class="form-control-static venda-media-semestre">R$ 291.556,89</p>
+						<p class="form-control-static venda-media-semestre"></p>
 					</div>
 			    </div>						
 				<div class="form-group custom-form-group">
 					<label class="col-sm-2 control-label">Município de Residência:</label>
 					<div class="col-sm-3">
-						<p class="form-control-static mucipio">Carpegiani Representação LTDA</p>
+						<p class="form-control-static municipio"></p>
 					</div>
 					<label class="col-sm-3 control-label">Venda média mensal último ano:</label>
 					<div class="col-sm-2">
-						<p class="form-control-static venda-media-ano">R$ 291.556,89</p>
+						<p class="form-control-static venda-media-ano"></p>
 					</div>
 			    </div>						
 				<div class="form-group custom-form-group">
 					<label class="col-sm-2 control-label">UF de Residência::</label>
 					<div class="col-sm-3">
-						<p class="form-control-static uf">MG</p>
+						<p class="form-control-static uf"></p>
 					</div>
 			    </div>						
 			</form>
    		</div>
    		<div class="row">
    			<div class="col-md-10 col-md-offset-1">
-	   			<a href="#" class="btn btn-info btn-lg button-home active" data-click-widget data-widget=home role="button">HOME</a>
-				<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=extrato role="button">Extrato de Comiss&atilde;o</a>
-	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=trimestral role="button">Campanha Trimestral<br>Parceiros 100%</a>
+	   			<a href="#" class="btn btn-info btn-lg button-home active" data-click-widget data-widget=widget-home role="button">HOME</a>
+				<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-extrato role="button">Extrato de Comiss&atilde;o</a>
+	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros role="button">Campanha Trimestral<br>Parceiros 100%</a>
 	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=anual role="button">Campanha Anual<br>Parceiros 100%</a>
-	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=campanha role="button">Demais Concursos e<br>Campanha de Vendas</a>
-	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=pedidos role="button">Meus pedidos</a>
+	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-campanha role="button">Demais Concursos e<br>Campanha de Vendas</a>
+	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-pedidos role="button">Meus pedidos</a>
 	   		</div>
    		</div>
 	</div>
 	
-	<div class="page-header">
+	<div class="page-header widget-home">
 	    <h2>DESEMPENHO NO MÊS</h2>
 	</div>
 	
-	<div class="row">
+	<div class="row widget-home">
 		<div class="col-md-2 legend-chart-pie"></div>
 		<div class="col-sm-3"><div id="chartPie"></div></div>
 		<div class="col-sm-4">
@@ -131,11 +131,11 @@
 		</div>
 	</div>
    		
-	<div class="page-header">
+	<div class="page-header widget-home">
 	    <h2>COMISS&Atilde;O</h2>
 	</div>
 	
-	<div class="row">
+	<div class="row widget-home">
 		<form class="form-horizontal" role="form">
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Comissão sobre venda faturada:</label>
@@ -161,17 +161,17 @@
 	    	</div>
 	    </form>
 	</div>
-	<div class="row">
+	<div class="row widget-home">
 		<div class="col-sm-6 col-sm-offset-1">
 			<button class="btn btn-primay" data-btn-por-cfa role="button">Quantidade de Itens (SKUs) dos Parceiros vendidos no mês: <b>183</b> itens</button>					
     	</div>
     </div>
 	
-	<div class="page-header">
+	<div class="page-header widget-home">
 	    <h2>Evoluç&atilde;o do Semestre (&uacute;ltimos 6 meses):</h2>
 	</div>
 	
-	<table class="table table-striped table-hover table-evolucao">
+	<table class="table table-striped table-hover table-evolucao widget-home">
 		<thead>
 			<tr>
 				<th>M&ecirc;s</th>
@@ -187,11 +187,11 @@
 		</tbody>
 	</table>
 	
-	<div class="page-header">
+	<div class="page-header widget-home">
 	    <h2>Extrato de Comiss&atilde;o Detalhado:</h2>
 	</div>
 	
-	<table class="table table-striped table-hover table-extrato-comissao">
+	<table class="table table-striped table-hover table-extrato-comissao widget-home">
 		<thead>
 			<tr>
 				<th>CFA/Produto</th>
