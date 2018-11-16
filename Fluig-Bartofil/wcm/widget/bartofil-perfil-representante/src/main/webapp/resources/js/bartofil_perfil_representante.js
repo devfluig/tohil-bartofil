@@ -137,10 +137,15 @@ var perfilrepresentante = SuperWidget.extend({
 	mydivision: "1",
 	trimestre: null,
 	equipesuperior: null,
+	valortotalpedidos: 0,
 	
 	init : function() {
 		perfilrepresentante.loading.show();
 		perfilrepresentante.grouprca = this.grouprca;
+		perfilrepresentante.representante = WCMAPI.userLogin;
+		
+		google.charts.load('current', {'packages':['corechart']});
+		google.charts.load('current', {'packages':['gauge']});
 		
 		if (this.isrca() == false) {
 			this.showrepresentative();
@@ -256,12 +261,11 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".uf").html(row["enderuf"]);
 		$(".equipe").html(row["descequipe"]);
 		
-		perfilrepresentante.getPedidos();
-		
+		google.charts.setOnLoadCallback(perfilrepresentante.getSituacaoConsolidado);		
 		
 	},
 	
-	getPedidos: function() {
+	getSituacaoConsolidado: function() {
 		perfilrepresentante.loading.show();
 
 		var mes = $("#periodo :selected").data("month");
@@ -276,36 +280,166 @@ var perfilrepresentante = SuperWidget.extend({
 		
 		console.log("dataset", c1, c2, c3, perfilrepresentante.onReadyGetPedidos)
 	      
-		DatasetFactory.getDataset('ds_webservice_meus_pedidos', null, [c1, c2, c3], null, {"success": perfilrepresentante.onReadyGetPedidos});
+		DatasetFactory.getDataset('ds_situacao_consolidada', null, [c1, c2, c3], null, {"success": perfilrepresentante.onReadyGetSituacaoConsolidado});
 		
 	},
 
-	onReadyGetPedidos: function(rows) {
+	onReadyGetSituacaoConsolidado: function(rows) {
+		console.log("onReadyGetPedidos perfil", rows)
+		
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			perfilrepresentante.getMeta();
+			return;
+		}
+		
+		var data = [["Situação", "Valor"]];
+		perfilrepresentante.valortotalpedidos = 0;
+		var comissaoFaturada = 0;
+		var comissaoAFaturar = 0;
+		var values = rows["values"];
+		for (var i=0; i<values.length; i++) {
+			var row = values[i];
+			var o = [SituacaoEnum.properties[row["situacao"]].name, parseFloat(row["valortotalgeral"])];
+			data.push(o);
+			if (row["situacao"] == "F") {
+				comissaoFaturada += parseFloat(row["valortotalcomissaogeral"]);
+			} else if (row["situacao"] == "C") {
+				comissaoFaturada -= parseFloat(row["valortotalcomissaogeral"]);
+			} else {
+				comissaoAFaturar += parseFloat(row["valortotalcomissaogeral"]);
+			}
+			if (row["situacao"] == "C") {
+				perfilrepresentante.valortotalpedidos -= parseFloat(row["valortotalgeral"]);
+			} else {
+				perfilrepresentante.valortotalpedidos += parseFloat(row["valortotalgeral"]);
+			}
+		}
+		
+		$("#comissaoVendaFaturada").val("R$ " + perfilrepresentante.mask(comissaoFaturada.toFixed(2)));
+		$("#comissaoVendaAFatura").val("R$ " + perfilrepresentante.mask(comissaoAFaturar.toFixed(2)));
+		$("#totalComissao").val("R$ " + perfilrepresentante.mask((comissaoFaturada + comissaoAFaturar).toFixed(2)));
+		
+		var options = {
+			pieSliceText: 'value',
+			width: '300px',
+			height: '300px'
+        };
+		var chart = new google.visualization.PieChart(document.getElementById('chartPie'));
+	    chart.draw(google.visualization.arrayToDataTable(data), options);		
+	    
+	    perfilrepresentante.getMeta();
+
+	},
+	
+	getMeta: function() {
+		var mes = $("#periodo :selected").data("month");
+		var ano = $("#periodo :selected").data("year");
+		
+		var startOfMonth = moment(ano + "-" + mes + "-01").startOf('month').format('YYYY-MM-DD');
+		var endOfMonth   = moment(ano + "-" + mes + "-01").endOf('month').format('YYYY-MM-DD');
+		
+		var c1 = DatasetFactory.createConstraint("dataInclusaoInicio", startOfMonth, startOfMonth, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("datainclusaofim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("codRepresentante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
+		
+		console.log("dataset", c1, c2, c3, perfilrepresentante.onReadyGetPedidos)
+	      
+		DatasetFactory.getDataset('ds_meta_consolidada', null, [c1, c2, c3], null, {"success": perfilrepresentante.onReadyGetMeta});
+	},
+	
+	onReadyGetMeta: function(rows) {
+
+		console.log("onReadyGetPedidos perfil", rows)
+		
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			perfilrepresentante.getDecendio();
+			return;
+		}
+		
+		
+		var value = rows["values"];
+		if (value.length > 0) {
+			var meta = parseFloat(value[0].metavlrvenda);
+			var percentual = (perfilrepresentante.valortotalpedidos / meta) * 100;
+			var faltante = meta - perfilrepresentante.valortotalpedidos;
+			var valordia = faltante / parseFloat(value[0].diasuteisrestantes) 
+			
+			var options = {
+				width: 400, height: 220,
+	          	redFrom: 0, redTo: 100,
+	          	yellowFrom: 100, yellowTo: 130,
+	          	greenFrom: 130, greenTo: 300,
+	          	minorTicks: 10,
+	          	max: 300
+	        };
+			
+			var data = google.visualization.arrayToDataTable([
+				['Label', 'Value'],
+		        ['Meta', parseFloat(percentual.toFixed(2))]
+		    ]);
+			
+			var chart = new google.visualization.Gauge(document.getElementById('chartGauge'));
+	        chart.draw(data, options);
+
+	        $(".valor-potencial").html(perfilrepresentante.mask(meta.toFixed(2)));
+	        $(".valor-vendido").html(perfilrepresentante.mask(perfilrepresentante.valortotalpedidos.toFixed(2)));
+	        $(".percentual-potencial").html(perfilrepresentante.mask(percentual.toFixed(2)) + "%");
+	        $(".valor-faltante").html(perfilrepresentante.mask("R$ " + faltante.toFixed(2)));
+	        $(".valor-dia").html(perfilrepresentante.mask("R$ " + valordia.toFixed(2)));
+	        
+		} else {
+	        $(".valor-potencial").html("");
+	        $(".valor-vendido").html("");
+	        $(".percentual-potencial").html("");
+	        $(".valor-faltante").html("");
+	        $(".valor-dia").html("");
+		}
+		
+		perfilrepresentante.getDecendio();
+	},
+	
+	getDecendio: function() {
+		
+		$(".decendio-1").html("00");
+		$(".decendio-2").html("00");
+		$(".decendio-3").html("00");
+		
+		var mes = $("#periodo :selected").data("month");
+		var ano = $("#periodo :selected").data("year");
+		
+		var startOfMonth = moment(ano + "-" + mes + "-01").startOf('month').format('YYYY-MM-DD');
+		var endOfMonth   = moment(ano + "-" + mes + "-01").endOf('month').format('YYYY-MM-DD');
+		
+		var c1 = DatasetFactory.createConstraint("dataInclusaoInicio", startOfMonth, startOfMonth, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("datainclusaofim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("codRepresentante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
+		
+		console.log("dataset", c1, c2, c3, perfilrepresentante.onReadyGetPedidos)
+	      
+		DatasetFactory.getDataset('ds_decendio_consolidada', null, [c1, c2, c3], null, {"success": perfilrepresentante.onReadyGeDecendio});
+	},
+	
+	onReadyGeDecendio: function(rows) {
+
 		console.log("onReadyGetPedidos perfil", rows)
 		
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
 			perfilrepresentante.loading.hide();
-			WCMC.messageError('Representante não possui pedidos para listar!');	    			
 			return;
 		}
 		
-		var total = { };
-		var despesas = null;
 		var values = rows["values"];
-		
-		perfilrepresentante.list = values;
-		
+		var itens = 0;
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
-			var p = new Pedidos();
-			p.parse(row);
-			perfilrepresentante.pedidos.add(p);
-		}
+			$(".decendio-" + row["decendio"]).html(row["quantidadeclientes"])
+			itens += parseInt(row)
+		}		
 		
-		console.log("onReadyGetPedidos", perfilrepresentante.pedidos)
+		$(".qtdeItensSkus").val(itens);
 		
-		perfilrepresentante.showGraph()
 		
+		perfilrepresentante.loading.hide();
 	},
 	
 	savePreferences: function(el, ev) {

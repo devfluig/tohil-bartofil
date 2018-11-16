@@ -107,26 +107,25 @@
 	</div>
 	
 	<div class="row widget-home">
-		<div class="col-md-2 legend-chart-pie"></div>
-		<div class="col-sm-3"><div id="chartPie"></div></div>
+		<div class="col-sm-4"><div id="chartPie" style="width: 500px; height: 300px;"></div></div>
 		<div class="col-sm-4">
-			<div id="chartGauge"></div>
-			<div class="legend-chart-gauge">
+			<div id="chartGauge" style="margin-left: 38px;"></div>
+			<div class="legend-chart-gauge col-sm-6">
 				<ul class="list-group">
-				    <li class="list-group-item list-group-item-info list-group-item-custom"><b>50.000,00</b> Potencial de Venda</li>
-				    <li class="list-group-item list-group-item-info list-group-item-custom"><b>80.341,00</b> Valor Vendido</li>
-				    <li class="list-group-item list-group-item-info list-group-item-custom"><b>89%</b>  potencial alcançado</li>
-				    <li class="list-group-item list-group-item-info list-group-item-custom">Falta <b>R$ 23.000,00</b></li>
-				    <li class="list-group-item list-group-item-info list-group-item-custom">Venda/dia necessária: <b>R$ 1.320,12</b></li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom"><b class="valor-potencial">50.000,00</b> Potencial de Venda</li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom"><b class="valor-vendido">80.341,00</b> Valor Vendido</li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom"><b class="percentual-potencial">89%</b>  potencial alcançado</li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom">Falta <b class="valor-faltante">R$ 23.000,00</b></li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom">Venda/dia necessária: <b class="valor-dia">R$ 1.320,12</b></li>
 				</ul>
 			</div>
 		</div>
 		<div class="col-md-3">
 			<div class="list-group">
 			    <a href="#" class="list-group-item disabled" data-click-decendio>Número de clientes atendidos:</a>
-			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 01: <b>23</b> clientes</a>
-			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 02: <b>19</b> clientes</a>
-			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 03: <b>00</b> clientes</a>
+			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 01: <b class="decendio-1">23</b> clientes</a>
+			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 02: <b class="decendio-2">19</b> clientes</a>
+			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 03: <b class="decendio-3">00</b> clientes</a>
 			</div>
 		</div>
 	</div>
@@ -163,7 +162,7 @@
 	</div>
 	<div class="row widget-home">
 		<div class="col-sm-6 col-sm-offset-1">
-			<button class="btn btn-primay" data-btn-por-cfa role="button">Quantidade de Itens (SKUs) dos Parceiros vendidos no mês: <b>183</b> itens</button>					
+			<button class="btn btn-primay" data-btn-por-cfa role="button">Quantidade de Itens (SKUs) dos Parceiros vendidos no mês: <b class="qtdeItensSkus">183</b> itens</button>					
     	</div>
     </div>
 	
