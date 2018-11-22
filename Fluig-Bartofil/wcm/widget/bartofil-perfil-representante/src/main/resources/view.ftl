@@ -17,9 +17,7 @@
 						    </script>
 			    		</select>
 			    	</div>
-		    	</div>
-		    	<div class="form-group custom-form-group">
-		    		<label class="col-sm-3 control-label fs-md-space nav-representative fs-display-none">Representante:</label>
+		    		<label class="col-sm-3 control-label nav-representative fs-display-none">Representante:</label>
 			    	<div class="form-group col-sm-2 nav-representative fs-display-none">
 			    		<select class="form-control" id="listrepresentatives" data-change-representante>
 						    <script type="text/template" class="tpl-representante">
@@ -173,12 +171,12 @@
 	<table class="table table-striped table-hover table-evolucao widget-home">
 		<thead>
 			<tr>
-				<th>M&ecirc;s</th>
-				<th>Valor Faturado</th>
-				<th>Comiss&atilde;o Recebida</th>
-				<th>Pr&ecirc;mios Recebidos (em dinheiro)</th>
-				<th>Valor Recebido</th>
-				<th>%</th>
+				<th class="fs-txt-center">M&ecirc;s</th>
+				<th class="fs-txt-right">Valor Faturado</th>
+				<th class="fs-txt-right">Comiss&atilde;o Recebida</th>
+				<th class="fs-txt-right">Pr&ecirc;mios Recebidos (em dinheiro)</th>
+				<th class="fs-txt-right">Valor Recebido</th>
+				<th class="fs-txt-right">%</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -207,12 +205,12 @@
     <script type="text/template" class="tpl-evolucao">
         {{#items}}
     	<tr class="{{css}}">
-    		<td>{{mes}}</td>
-    		<td>{{valorFaturado}}</td>
-    		<td>{{comissaoRecebida}}</td>
-    		<td>{{premiosRecebidos}}</td>
-    		<td>{{valorTotal}}</td>
-    		<td>{{percentual}}</td>
+    		<td class="fs-txt-center">{{mes}}</td>
+    		<td class="fs-txt-right">{{valorFaturado}}</td>
+    		<td class="fs-txt-right">{{comissaoRecebida}}</td>
+    		<td class="fs-txt-right">{{premiosRecebidos}}</td>
+    		<td class="fs-txt-right">{{valorTotal}}</td>
+    		<td class="fs-txt-right">{{percentual}}</td>
     	</tr>
         {{/items}}
     </script>

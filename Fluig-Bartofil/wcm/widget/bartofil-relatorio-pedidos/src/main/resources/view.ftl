@@ -21,10 +21,7 @@
 			<div class="panel panel-info">
 		    	<div class="panel-heading">SITUAÇÂO</div>
 		    	<div class="panel-body">
-					<div class="col-md-3">
-						<div id="legend-chart-pie-situacao"></div>
-					</div>
-					<div class="col-md-9">
+					<div class="col-md-10 col-sm-offset-1">
 						<div id="pieSituacao"></div>
 					</div>
 		    	</div>
@@ -34,10 +31,7 @@
 			<div class="panel panel-info">
 		    	<div class="panel-heading">FATURAMENTO</div>
 		    	<div class="panel-body">
-					<div class="col-md-3">
-						<div id="legend-chart-pie-faturamento"></div>
-					</div>
-					<div class="col-md-9">
+					<div class="col-md-10 col-sm-offset-1">
 						<div id="pieFaturamento"></div>
 					</div>
 		    	</div>

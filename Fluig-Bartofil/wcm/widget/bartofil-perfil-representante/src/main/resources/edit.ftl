@@ -1,4 +1,4 @@
-<div id="campanha_parceiros_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide" data-params="campanhaparceiros.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}' })">
+<div id="perfil_representante_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide" data-params="perfilrepresentante.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}' })">
 	<form class="form-horizontal" role="form">
 	    <div class="form-group">
 	        <label for="grouprca" class="col-sm-2 control-label">Grupo RCA:</label>
