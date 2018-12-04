@@ -1,7 +1,7 @@
 var relatorioPedidos = SuperWidget.extend({
 	current: null,
 	mobile: FLUIGC.utilities.checkDevice().isMobile,
-	loading: FLUIGC.loading(window),
+	loading: FLUIGC.loading(".widget-pedidos"),
 	code: "bartofil_relatorio_pedidos",
 	list: null,
 	instanceId: null,
@@ -78,7 +78,11 @@ var relatorioPedidos = SuperWidget.extend({
 				cgo = type.split("-")[1];
 				type = type.split("-")[0]; 
 			}
-			var o = relatorioPedidos["current"].totais[[type]];
+			var o = relatorioPedidos["current"].totais[type];
+			if (!o && Object.keys(relatorioPedidos["current"].totais).length > 0) {
+				o = relatorioPedidos["current"].totais[Object.keys(relatorioPedidos["current"].totais)[0]];
+				type = Object.keys(relatorioPedidos["current"].totais)[0];
+			}
 			
 			for (var i=0; i<relatorioPedidos.list.length; i++) {
 				var item = relatorioPedidos.list[i];
@@ -92,9 +96,6 @@ var relatorioPedidos = SuperWidget.extend({
 				total["comissao"] += valortotalcomissao;
 				total["quantidade"] += 1;
 				
-				if (total["mensalRegiao"] == 0) {
-					total["mensalRegiao"] = parseFloat(item["metavlrvenda"].replace(/,/g, '').replace(",", "."));
-				}
 				if (total["dias"] == 0) {
 					total["dias"] = +(item["diasuteisrestantes"]);
 				}
@@ -135,9 +136,6 @@ var relatorioPedidos = SuperWidget.extend({
 				total["comissao"] += valortotalcomissao;
 				total["quantidade"] += 1;
 				
-				if (total["mensalRegiao"] == 0) {
-					total["mensalRegiao"] = parseFloat(item["metavlrvenda"].replace(/,/g, '').replace(",", "."));
-				}
 				if (total["dias"] == 0) {
 					total["dias"] = +(item["diasuteisrestantes"]);
 				}
@@ -211,6 +209,7 @@ var relatorioPedidos = SuperWidget.extend({
 		});		
 		
 		
+		relatorioPedidos.loading.hide();
 		
 	},
 	
@@ -233,7 +232,8 @@ var relatorioPedidos = SuperWidget.extend({
 	
 	listpedidos: function(el, ev) {
 		relatorioPedidos .loading.show();
-		this.getPedidos($('#listrepresentatives').val());
+		relatorioPedidos.representante = perfilrepresentante.representante;
+		this.getPedidos();
 	},
 	
 	getPedidos: function(el, ev) {
@@ -263,10 +263,15 @@ var relatorioPedidos = SuperWidget.extend({
 			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
 			return;
 		}
+
+		var values = rows["values"];
+		if (values[0].nropedidovenda == "Erro") {
+			relatorioPedidos.loading.hide();
+			return;
+		}
 		
 		var total = { };
 		var despesas = null;
-		var values = rows["values"];
 		
 		relatorioPedidos.list = values; 
 		
@@ -400,19 +405,22 @@ var relatorioPedidos = SuperWidget.extend({
 		$(".pie-faturamento").show();
 		var data = [["Situação", "Valor"]];
 		var t = relatorioPedidos.current["totais"];
-		var f = t["F"].cgo;
-		for (var key in f) {
-			var o = f[key];
-			data.push([key, o["total"]]);
-		}
 		
-		var options = {
-			pieSliceText: 'value',
-			width: '300px',
-			height: '300px'
-        };
-		var chart = new google.visualization.PieChart(document.getElementById('pieFaturamento'));
-	    chart.draw(google.visualization.arrayToDataTable(data), options);
+		if (t["F"]) {
+			var f = t["F"].cgo;
+			for (var key in f) {
+				var o = f[key];
+				data.push([key, o["total"]]);
+			}
+			
+			var options = {
+				pieSliceText: 'value',
+				width: '300px',
+				height: '300px'
+	        };
+			var chart = new google.visualization.PieChart(document.getElementById('pieFaturamento'));
+		    chart.draw(google.visualization.arrayToDataTable(data), options);
+		}
 		
 	},
 	mask: function (valor) {

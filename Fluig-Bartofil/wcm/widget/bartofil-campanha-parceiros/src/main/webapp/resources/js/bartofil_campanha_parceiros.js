@@ -63,7 +63,7 @@ var campanhaparceiros = SuperWidget.extend({
 		global : {
 			"click-detalhado-parceiro": ['click_showdetalhado'],
 			'change-paginacao-parceiro': ['change_changepaginacao'],
-			"change-representante-parceiro": ['change_changerepresentante'],
+			"change-representante": ['change_changerepresentante'],
 			'change-ordenar-parceiro': ['change_changeordenacao'],
 			'save-preferences-parceiro': ['click_savePreferences'],
 			'click-tab-parceiro': ['click_showtab'],
@@ -73,7 +73,7 @@ var campanhaparceiros = SuperWidget.extend({
 	
 	changerepresentante: function () {
 		campanhaparceiros.loading.show();
-		campanhaparceiros.representante = $('#listrepresentatives').val();
+		campanhaparceiros.representante = perfilrepresentante.representante;
 		campanhaparceiros.list = [];
 		campanhaparceiros.offset = 0;
 		$(".tab-detalhamento").html("");

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-web>
-    <context-root>/bartofil_extrato_comissao</context-root>
+    <context-root>/bartofil_campanha_parceiros_anual</context-root>
     <disable-cross-context>false</disable-cross-context>
 </jboss-web>

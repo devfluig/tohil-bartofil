@@ -93,7 +93,7 @@
 	   			<a href="#" class="btn btn-info btn-lg button-home active" data-click-widget data-widget=widget-home role="button">HOME</a>
 				<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-extrato role="button">Extrato de Comiss&atilde;o</a>
 	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros role="button">Campanha Trimestral<br>Parceiros 100%</a>
-	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=anual role="button">Campanha Anual<br>Parceiros 100%</a>
+	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros-anual role="button">Campanha Anual<br>Parceiros 100%</a>
 	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-campanha role="button">Demais Concursos e<br>Campanha de Vendas</a>
 	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-pedidos role="button">Meus pedidos</a>
 	   		</div>
@@ -110,20 +110,20 @@
 			<div id="chartGauge" style="margin-left: 38px;"></div>
 			<div class="legend-chart-gauge col-sm-6">
 				<ul class="list-group">
-				    <li class="list-group-item list-group-item-info list-group-item-custom"><b class="valor-potencial">50.000,00</b> Potencial de Venda</li>
-				    <li class="list-group-item list-group-item-info list-group-item-custom"><b class="valor-vendido">80.341,00</b> Valor Vendido</li>
-				    <li class="list-group-item list-group-item-info list-group-item-custom"><b class="percentual-potencial">89%</b>  potencial alcançado</li>
-				    <li class="list-group-item list-group-item-info list-group-item-custom">Falta <b class="valor-faltante">R$ 23.000,00</b></li>
-				    <li class="list-group-item list-group-item-info list-group-item-custom">Venda/dia necessária: <b class="valor-dia">R$ 1.320,12</b></li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom"><b class="valor-potencial"></b> Potencial de Venda</li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom"><b class="valor-vendido"></b> Valor Vendido</li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom"><b class="percentual-potencial"></b>  potencial alcançado</li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom">Falta <b class="valor-faltante"></b></li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom">Venda/dia necessária: <b class="valor-dia"></b></li>
 				</ul>
 			</div>
 		</div>
 		<div class="col-md-3">
 			<div class="list-group">
 			    <a href="#" class="list-group-item disabled" data-click-decendio>Número de clientes atendidos:</a>
-			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 01: <b class="decendio-1">23</b> clientes</a>
-			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 02: <b class="decendio-2">19</b> clientes</a>
-			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 03: <b class="decendio-3">00</b> clientes</a>
+			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 01: <b class="decendio-1"></b> clientes</a>
+			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 02: <b class="decendio-2"></b> clientes</a>
+			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 03: <b class="decendio-3"></b> clientes</a>
 			</div>
 		</div>
 	</div>
@@ -160,7 +160,7 @@
 	</div>
 	<div class="row widget-home">
 		<div class="col-sm-6 col-sm-offset-1">
-			<button class="btn btn-primay" data-btn-por-cfa role="button">Quantidade de Itens (SKUs) dos Parceiros vendidos no mês: <b class="qtdeItensSkus">183</b> itens</button>					
+			<button class="btn btn-primay" data-btn-por-cfa role="button">Quantidade de Itens (SKUs) dos Parceiros vendidos no mês: <b class="qtdeItensSkus"></b> itens</button>					
     	</div>
     </div>
 	

@@ -5,12 +5,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
   	<groupId>bartofil-comissao</groupId>
-  	<artifactId>bartofil-relatorio-pedidos</artifactId>
+  	<artifactId>bartofil-campanha-parceiros-anual</artifactId>
   	<version>1.0</version>
 	<packaging>war</packaging>
 
-	<name>Application - Relatórios de Pedidos</name>
-	<description>Application - Relatórios de Pedidos</description>
+	<name>Application - Campanha Parceiro Anual 100%</name>
+	<description>Application - Campanha Parceiros Anual 100%</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -58,6 +58,6 @@
 			</resource>
 		</resources>
 		<sourceDirectory>src/main/java</sourceDirectory>
-		<finalName>bartofil-relatorio-pedidos</finalName>
+		<finalName>bartofil-campanha-parceiros-anual</finalName>
 	</build>
 </project>

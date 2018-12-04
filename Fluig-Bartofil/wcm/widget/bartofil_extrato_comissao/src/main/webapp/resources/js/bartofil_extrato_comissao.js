@@ -51,7 +51,8 @@ var extratocampanha = SuperWidget.extend({
 	
 	listcomissoes: function(el, ev) {
 		extratocampanha.loading.show();
-		this.getrepresentante($('#listrepresentatives').val());
+		extratocampanha.current = perfilrepresentante.representante; 
+		extratocampanha.getcomissoes();
 	},
 	
 	print: function() {
@@ -60,27 +61,6 @@ var extratocampanha = SuperWidget.extend({
 		newWin.document.write('<html><head><link type="text/css" rel="stylesheet" href="https://style.fluig.com/css/fluig-style-guide.min.css"></head><body onload="window.print()">'+$(".toprint").html()+'</body></html>');
 		newWin.document.close();
 		setTimeout(function(){newWin.close();},10);		
-	},
-	
-	setupperiodo: function() {
-	
-		var locale = WCMAPI.locale;
-		locale = locale.replace("_", "-"); 
-		
-		var m = moment().locale(locale);
-		var list = []; 
-		for (var i=0; i<6; i++) {
-			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MM") + "/" + m.format("YYYY") };
-			list.push(o);
-			m.subtract(1, 'months');
-		}
-
-		var tpl = $('.tpl-continuous-scroll-periodo').html();
-		var data = { "items": list};
-		var html = Mustache.render(tpl, data);
-		$('#periodo').append(html);
-		
-		
 	},
 	
 	getcomissoes: function(el, ev) {
@@ -267,87 +247,7 @@ var extratocampanha = SuperWidget.extend({
 	showresumido: function(el, ev) {
 		$(".detalhado").hide();
 		$(".resumido").show();
-	},
-	
-	getrepresentante: function(user) {
-
-		extratocampanha.loading.show();
-		
-		extratocampanha.current = null;
-		
-		$(".input-contato").val("");
-		
-		var c1 = DatasetFactory.createConstraint("representante", user, user, ConstraintType.MUST);
-		DatasetFactory.getDataset("ds_representante", null, [c1], null, {"success": extratocampanha.onreadygetrepresentante });
-		
-	},
-	
-	onreadygetrepresentante: function(rows) {
-		console.log("onreadygetrepresentante");
-		if (!rows) {
-			extratocampanha.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrado")}');	    			
-			return;
-		}
-		var values = rows["values"];
-		if (!values) {
-			extratocampanha.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrado")}');	    			
-			return;
-		}
-		
-		if (values.length == 0) {
-			extratocampanha.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrado")}');	    			
-			return;
-		} 
-		
-		if (values[0].enderuf == "erro") {
-			extratocampanha.loading.hide();
-			WCMC.messageError(values[0].apelido);	    			
-			return;
-		}
-		
-		
-		var row = values[0];
-		extratocampanha.current = row["codpessoarepresentante"];
-		$("#nome").val(row["nomerazao"]);
-		$("#sequenciapessoa").val(row["codpessoarepresentante"]);
-		$("#contato").val(row["apelido"]);
-		$("#cpfcnpj").val(row["cnpjcpfnumero"] + "" + row["cnpjcpfdigito"]);
-		$("#enderecocontato").val(row["enderrua"]);
-		$("#bairrocontato").val(row["enderbairro"]);
-		$("#cidadeuf").val(row["endercidade"] + " / " + row["enderuf"]);
-		$("#cepcontato").val(row["endercep"]);
-		$("#core").val(row["nroregcore"]);
-		$("#inss").val(row["inscinss"]);
-		
-		if ($("#cpfcnpj").val().length < 11) {
-			var z = "";
-			for (var i=$("#cpfcnpj").val().length; i<11; i++) {
-				z += "0";
-			}
-			$("#cpfcnpj").val(z + $("#cpfcnpj").val());
-		} else if ($("#cpfcnpj").val().length > 11 && $("#cpfcnpj").val().length < 14) {
-			var z = "";
-			for (var i=$("#cpfcnpj").val().length; i<14; i++) {
-				z += "0";
-			}
-		}
-		
-		if ($("#cpfcnpj").val().length == 11) {
-			$("#cpfcnpj").mask("999.999.999-99")
-		} else if ($("#cpfcnpj").val().length == 14) {
-			$("#cpfcnpj").mask("99.999.999/9999-99");
-		}
-		
-		extratocampanha.getcomissoes();
 	}
-
 	
-
 });
 
-var onreadygetrepresentante = function(rows) {
-	
-}

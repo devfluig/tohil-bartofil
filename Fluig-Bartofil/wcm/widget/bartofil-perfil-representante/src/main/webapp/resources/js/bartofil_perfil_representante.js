@@ -25,7 +25,6 @@ var perfilrepresentante = SuperWidget.extend({
 	loading: FLUIGC.loading(window),
 	offset: 0,
 	limit: 30,
-	pedidos: new PedidosServices(),
 	list: [],
 	instanceId: null,
 	representante: null,
@@ -38,6 +37,7 @@ var perfilrepresentante = SuperWidget.extend({
 	equipesuperior: null,
 	valortotalpedidos: 0,
 	listSkus: [],
+	listCfas: [],
 	
 	init : function() {
 		perfilrepresentante.loading.show();
@@ -58,6 +58,7 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".widget-extrato").hide();
 		$(".widget-pedidos").hide();
 		$(".widget-campanha").hide();
+		$(".widget-parceiros-anual").hide();
 		$(".wcm-header").hide();
 		
 	},
@@ -84,6 +85,7 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".widget-pedidos").hide();
 		$(".widget-campanha").hide();
 		$(".widget-parceiros").hide();
+		$(".widget-parceiros-anual").hide();
 		
 		$("."+$(el).data("widget")).show();
 	},
@@ -136,7 +138,7 @@ var perfilrepresentante = SuperWidget.extend({
 		}
 		
 		var values = rows["values"];
-		if (values[0].apelido == "erro") {
+		if (values[0].apelido == "erro" || values[0].apelido == "undefined") {
 			perfilrepresentante.loading.hide();
 			return;
 		}
@@ -460,9 +462,84 @@ var perfilrepresentante = SuperWidget.extend({
 		}
 
 		var values = rows["values"];
-		
 		$(".qtdeItensSkus").html(values.length);
 		perfilrepresentante.listSkus = values;
+		
+		perfilrepresentante.getCfas();
+		
+	},
+	getCfas: function() {
+		
+		$('.table-extrato-comissao > tbody').append("");
+		
+		var mes = $("#periodo :selected").data("month");
+		var ano = $("#periodo :selected").data("year");
+		
+		var startOfMonth = moment(ano + "-" + mes + "-01").startOf('month').format('YYYY-MM-DD');
+		var endOfMonth   = moment(ano + "-" + mes + "-01").endOf('month').format('YYYY-MM-DD');
+		
+		var c1 = DatasetFactory.createConstraint("dataInclusaoInicio", startOfMonth, startOfMonth, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("datainclusaofim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("codRepresentante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
+		
+		console.log("dataset", c1, c2, c3, perfilrepresentante.onReadyGetPedidos)
+	      
+		DatasetFactory.getDataset('ds_pedido_cfa', null, [c1, c2, c3], null, {"success": perfilrepresentante.onReadyGetCfas});
+		
+	},
+	onReadyGetCfas: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			perfilrepresentante.loading.hide();
+			return;
+		}
+
+		var values = rows["values"];
+		var cfa = {};
+		for (var i=0; i<values.length; i++) {
+			var row = values[i];
+			var valortotalcomissao = parseFloat(row["valortotalcomissao"]);
+			var valortotal = parseFloat(row["valortotal"]);
+			
+			if (cfa[row["cfa"]] == undefined) {
+				cfa[row["cfa"]] = {};
+				cfa[row["cfa"]].valortotal = 0;
+				cfa[row["cfa"]].valortotalcomissao = 0;
+			}
+			
+			cfa[row["cfa"]] = {
+				"valortotal": cfa[row["cfa"]].valortotal + valortotal,
+				"valortotalcomissao": cfa[row["cfa"]].valortotalcomissao + valortotalcomissao
+			}
+			
+		}
+		
+		var list = [];
+		for (var key in cfa) {
+			var row = cfa[key];
+			var o = {
+				"cfa": key,
+				"valorFaturado": perfilrepresentante.mask(row["valortotal"].toFixed(2)),
+				"comissaoRecebida": perfilrepresentante.mask(row["valortotalcomissao"].toFixed(2)),
+				"valorpercentual": (row["valortotalcomissao"] / row["valortotal"]) * 100,
+				"percentual": perfilrepresentante.mask(((row["valortotalcomissao"] / row["valortotal"]) * 100).toFixed(2)),
+			}
+			list.push(o);
+			
+		}
+		
+		list.sort(function (a,b) {
+			if (a.valorpercentual < b.valorpercentual) return 1;
+			if (a.valorpercentual > b.valorpercentual) return -1;
+		    return 0;			
+		}); 
+		
+		perfilrepresentante.listCfas = values;
+
+		var tpl = $('.tpl-extrato-comissao').html();
+		var data = { "items": list};
+		var html = Mustache.render(tpl, data);
+		console.log(list, html)
+		$('.table-extrato-comissao > tbody').append(html);
 		
 		perfilrepresentante.loading.hide();
 	},
@@ -611,18 +688,25 @@ var perfilrepresentante = SuperWidget.extend({
 	showExtratoDetalhe: function (el, ev) {
 		perfilrepresentante.loading.show();
 		
-		var params = {
-			"values": [
-				{"produto": "32226 - Produto A", "valorFaturado": "315,17", "comissaoRecebida": "25,21", "comissaoMedia": "8,0%" },
-				{"produto": "15220 - Produto D", "valorFaturado": "690,13", "comissaoRecebida": "44,86", "comissaoMedia": "6,5%" },
-				{"produto": "9008763 - Produto H", "valorFaturado": "2.220,00", "comissaoRecebida": "139,86", "comissaoMedia": "6,3%" },
-				{"produto": "72138 - Produto C", "valorFaturado": "1.800,50", "comissaoRecebida": "108,03", "comissaoMedia": "6,0%" },
-				{"produto": "100229 - Produto F", "valorFaturado": "300,80", "comissaoRecebida": "18,05", "comissaoMedia": "6,0%" },
-				{"produto": "822 - Produto E", "valorFaturado": "1.350,10", "comissaoRecebida": "81,01", "comissaoMedia": "6,0%" },
-				{"produto": "25766 - Produto B", "valorFaturado": "78,00", "comissaoRecebida": "4,52", "comissaoMedia": "5,8%" },
-				{"produto": "17 - Produto G", "valorFaturado": "750,00", "comissaoRecebida": "41,25", "comissaoMedia": "5,5%" },
-			]
-		};
+		var list = [];
+		for (var i=0; i<perfilrepresentante.listCfas.length; i++) {
+			var row = perfilrepresentante.listCfas[i];
+			
+			if (row["cfa"] == $(el).data("id")) {
+				var valortotalcomissao = parseFloat(row["valortotalcomissao"]);
+				var valortotal = parseFloat(row["valortotal"]);
+				var o = {
+					"produto": row["codproduto"] + " - " + row["descproduto"],
+					"valorFaturado": perfilrepresentante.mask(valortotal.toFixed(2)),
+					"comissaoRecebida": perfilrepresentante.mask(valortotalcomissao.toFixed(2)),
+					"comissaoMedia": perfilrepresentante.mask(((valortotalcomissao / valortotal) * 100).toFixed(2))
+				}
+				list.push(o);
+			}
+			
+		}
+		
+		var params = { "values": list };
 		
 		WCMAPI.convertFtlAsync(perfilrepresentante.code, 'detalhe.ftl', { "params": params },
 				function (data) {
