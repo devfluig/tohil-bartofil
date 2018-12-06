@@ -102,12 +102,10 @@ var perfilrepresentante = SuperWidget.extend({
 			list.push(o);
 			m.subtract(1, 'months');
 		}
-		console.log(list);
 
 		var tpl = $('.tpl-continuous-scroll-periodo').html();
 		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
-		console.log(list, html)
 		$('#periodo').append(html);
 		
 		
@@ -121,7 +119,6 @@ var perfilrepresentante = SuperWidget.extend({
 		perfilrepresentante.offset = 0;
 		$(".tab-detalhamento").html("");
 		perfilrepresentante.current = null;
-		perfilrepresentante.limit = parseInt($("#paginacao").val());
 		perfilrepresentante.getfoto();
 		
 	},
@@ -470,7 +467,7 @@ var perfilrepresentante = SuperWidget.extend({
 	},
 	getCfas: function() {
 		
-		$('.table-extrato-comissao > tbody').append("");
+		$('.table-extrato-comissao > tbody').html("");
 		
 		var mes = $("#periodo :selected").data("month");
 		var ano = $("#periodo :selected").data("year");

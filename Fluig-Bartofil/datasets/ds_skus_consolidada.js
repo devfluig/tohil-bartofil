@@ -10,11 +10,11 @@ function createDataset(fields, constraints, sortFields) {
 	var datafim = "31-10-2018";
 	if (constraints != null) {
 		for (var c in constraints){
-			if (constraints[c].getFieldName() == "representante"){
+			if (constraints[c].getFieldName() == "codRepresentante"){
 				representante = constraints[c].getInitialValue(); 
-			} else if (constraints[c].getFieldName() == "data-inicio"){
+			} else if (constraints[c].getFieldName() == "dataInclusaoInicio"){
 				datainicio = constraints[c].getInitialValue(); 
-			} else if (constraints[c].getFieldName() == "data-fim"){
+			} else if (constraints[c].getFieldName() == "datainclusaofim"){
 				datafim = constraints[c].getInitialValue(); 
 			}
 		}
