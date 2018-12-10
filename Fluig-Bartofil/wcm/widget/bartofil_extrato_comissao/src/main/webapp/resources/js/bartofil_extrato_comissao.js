@@ -2,14 +2,14 @@ var extratocampanha = SuperWidget.extend({
 	grouprca: "RCA",
 	current: null,
 	mobile: FLUIGC.utilities.checkDevice().isMobile,
-	loading: FLUIGC.loading(window),
-
+	loading: FLUIGC.loading(".widget-extrato"),
+	representante: null,
 	init : function() {
 		$(".pageTitle").parent().remove();
 		extratocampanha.loading.show();
 		
-		extratocampanha.grouprca = this.grouprca;
-		
+		extratocampanha.grouprca = perfilrepresentante.grouprca;
+		extratocampanha.current = perfilrepresentante.representante; 
 		
 		if (extratocampanha.mobile) {
 			$('#visualizacaoresumido').prop('checked', true);
@@ -17,19 +17,7 @@ var extratocampanha = SuperWidget.extend({
 			$("[data-click-print]").hide();
 		}
 		
-		if (this.isrca() == false) {
-			this.showrepresentative();
-		} else {
-			
-			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
-			var tpl = $('.tpl-representante').html();
-			var data = { "items": list};
-			var html = Mustache.render(tpl, data);
-			$('#listrepresentatives').append(html);
-			
-			this.setupperiodo();
-			this.getrepresentante(WCMAPI.userLogin);
-		}
+		this.getcomissoes();
 	},
 
 	bindings : {
@@ -63,54 +51,8 @@ var extratocampanha = SuperWidget.extend({
 	
 	listcomissoes: function(el, ev) {
 		extratocampanha.loading.show();
-		this.getrepresentante($('#listrepresentatives').val());
-	},
-	
-	isrca: function() {
-		var c1 = DatasetFactory.createConstraint("colleagueGroupPK.colleagueId", WCMAPI.userCode, WCMAPI.userCode, ConstraintType.MUST, false);
-		var c2 = DatasetFactory.createConstraint("colleagueGroupPK.groupId", this.grouprca, this.grouprca, ConstraintType.MUST, false);
-
-		var dataset = DatasetFactory.getDataset("colleagueGroup", null, [c1, c2], null);
-		if (dataset && dataset.values && dataset.values.length > 0) { return true; }
-		
-		return false;
-	},
-	
-	showrepresentative: function() {
-		var c1 = DatasetFactory.createConstraint("grupo", this.grouprca, this.grouprca, ConstraintType.MUST, false);
-
-		var dataset = DatasetFactory.getDataset("ds_lista_usuarios_grupo", null, [c1], null);
-		if (dataset && dataset.values && dataset.values.length > 0) {
-			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
-			var values = dataset["values"];
-			for (var i=0; i<values.length; i++) {
-				var row = values[i];
-				if (WCMAPI.userCode != row["colleagueId"]) {
-					var o = { "id": row["login"], "name": row["login"] + " - " + row["colleagueName"] }
-					list.push(o);
-				}
-			}
-
-			var tpl = $('.tpl-representante').html();
-			var data = { "items": list};
-			var html = Mustache.render(tpl, data);
-			$('#listrepresentatives').append(html);
-			
-			$('#listrepresentatives').select2({
-			    placeholder: "Selecione",
-			    allowClear: false,
-			    width: '300px'
-			})
-			
-			$(".nav-representative").removeClass("fs-display-none");
-			
-			this.setupperiodo();
-			this.getrepresentante(WCMAPI.userLogin);
-		} else {
-			this.setupperiodo();
-			this.getrepresentante(WCMAPI.userLogin);
-		}
-		
+		extratocampanha.current = perfilrepresentante.representante; 
+		extratocampanha.getcomissoes();
 	},
 	
 	print: function() {
@@ -119,27 +61,6 @@ var extratocampanha = SuperWidget.extend({
 		newWin.document.write('<html><head><link type="text/css" rel="stylesheet" href="https://style.fluig.com/css/fluig-style-guide.min.css"></head><body onload="window.print()">'+$(".toprint").html()+'</body></html>');
 		newWin.document.close();
 		setTimeout(function(){newWin.close();},10);		
-	},
-	
-	setupperiodo: function() {
-	
-		var locale = WCMAPI.locale;
-		locale = locale.replace("_", "-"); 
-		
-		var m = moment().locale(locale);
-		var list = []; 
-		for (var i=0; i<6; i++) {
-			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MM") + "/" + m.format("YYYY") };
-			list.push(o);
-			m.subtract(1, 'months');
-		}
-
-		var tpl = $('.tpl-continuous-scroll-periodo').html();
-		var data = { "items": list};
-		var html = Mustache.render(tpl, data);
-		$('#periodo').append(html);
-		
-		
 	},
 	
 	getcomissoes: function(el, ev) {
@@ -291,16 +212,18 @@ var extratocampanha = SuperWidget.extend({
 		var total = 0;
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
-			var ano = row["datapedido"].substr(0,4);
-			var mes = row["datapedido"].substr(4,2);
-			var pedido = new Date();
-			if (ano && mes && ano != "" & mes != "") {
-				pedido = new Date(+(ano), +(mes) - 1, 1);
+			if (row["datapedido"]) {
+				var ano = row["datapedido"].substr(0,4);
+				var mes = row["datapedido"].substr(4,2);
+				var pedido = new Date();
+				if (ano && mes && ano != "" & mes != "") {
+					pedido = new Date(+(ano), +(mes) - 1, 1);
+				}
+				var m = moment(pedido);
+				var v = parseFloat(row["valor"].replace(/,/g, '').replace(",", "."));
+				total += v; 
+				html += '<tr><td>' + m.format("MMMM/YYYY") + '</td><td class="fs-txt-right">' + extratocampanha.mask(v.toFixed(2)) + '</td></tr>';
 			}
-			var m = moment(pedido);
-			var v = parseFloat(row["valor"].replace(/,/g, '').replace(",", "."));
-			total += v; 
-			html += '<tr><td>' + m.format("MMMM/YYYY") + '</td><td class="fs-txt-right">' + extratocampanha.mask(v.toFixed(2)) + '</td></tr>';
 		}		
 		$('#table-meses > tbody').html(html);
 		
@@ -326,87 +249,7 @@ var extratocampanha = SuperWidget.extend({
 	showresumido: function(el, ev) {
 		$(".detalhado").hide();
 		$(".resumido").show();
-	},
-	
-	getrepresentante: function(user) {
-
-		extratocampanha.loading.show();
-		
-		extratocampanha.current = null;
-		
-		$(".input-contato").val("");
-		
-		var c1 = DatasetFactory.createConstraint("representante", user, user, ConstraintType.MUST);
-		DatasetFactory.getDataset("ds_representante", null, [c1], null, {"success": extratocampanha.onreadygetrepresentante });
-		
-	},
-	
-	onreadygetrepresentante: function(rows) {
-		console.log("onreadygetrepresentante");
-		if (!rows) {
-			extratocampanha.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrado")}');	    			
-			return;
-		}
-		var values = rows["values"];
-		if (!values) {
-			extratocampanha.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrado")}');	    			
-			return;
-		}
-		
-		if (values.length == 0) {
-			extratocampanha.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.encontrado")}');	    			
-			return;
-		} 
-		
-		if (values[0].enderuf == "erro") {
-			extratocampanha.loading.hide();
-			WCMC.messageError(values[0].apelido);	    			
-			return;
-		}
-		
-		
-		var row = values[0];
-		extratocampanha.current = row["codpessoarepresentante"];
-		$("#nome").val(row["nomerazao"]);
-		$("#sequenciapessoa").val(row["codpessoarepresentante"]);
-		$("#contato").val(row["apelido"]);
-		$("#cpfcnpj").val(row["cnpjcpfnumero"] + "" + row["cnpjcpfdigito"]);
-		$("#enderecocontato").val(row["enderrua"]);
-		$("#bairrocontato").val(row["enderbairro"]);
-		$("#cidadeuf").val(row["endercidade"] + " / " + row["enderuf"]);
-		$("#cepcontato").val(row["endercep"]);
-		$("#core").val(row["nroregcore"]);
-		$("#inss").val(row["inscinss"]);
-		
-		if ($("#cpfcnpj").val().length < 11) {
-			var z = "";
-			for (var i=$("#cpfcnpj").val().length; i<11; i++) {
-				z += "0";
-			}
-			$("#cpfcnpj").val(z + $("#cpfcnpj").val());
-		} else if ($("#cpfcnpj").val().length > 11 && $("#cpfcnpj").val().length < 14) {
-			var z = "";
-			for (var i=$("#cpfcnpj").val().length; i<14; i++) {
-				z += "0";
-			}
-		}
-		
-		if ($("#cpfcnpj").val().length == 11) {
-			$("#cpfcnpj").mask("999.999.999-99")
-		} else if ($("#cpfcnpj").val().length == 14) {
-			$("#cpfcnpj").mask("99.999.999/9999-99");
-		}
-		
-		extratocampanha.getcomissoes();
 	}
-
 	
-
 });
 
-var onreadygetrepresentante = function(rows) {
-	
-}

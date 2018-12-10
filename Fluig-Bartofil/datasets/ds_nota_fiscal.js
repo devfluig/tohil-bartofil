@@ -27,7 +27,7 @@ function createDataset(fields, constraints, sortFields) {
         var data = {
             companyId : getValue("WKCompany") + '',
             serviceCode : 'RCA',
-            endpoint : "/v1/notafiscal?sessionid=123abc&fields=datapedido,valor&codpessoarepresentante=" + pessoa + "&mesanofaturamento=" + ano + "" + mes + "&resume=S&order=datapedido&offset=0&limit=999",
+            endpoint : "/v1/notafiscal?sessionid=123abc&fields=datapedido,valor&representante=" + pessoa + "&mesanofaturamento=" + ano + "" + mes + "&resume=S&order=datapedido&offset=0&limit=999",
             method : 'get',     
             timeoutService: '1000',
 	        options : {

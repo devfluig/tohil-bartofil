@@ -30,16 +30,6 @@
         <div class="form-group">
             <input type="text" class="form-control" id="busca" placeholder="${i18n.getTranslation('digite.texto')}">
         </div>
-		<label class="fs-md-space nav-representative fs-display-none">${i18n.getTranslation('representante')}:</label>
-    	<div class="form-group nav-representative fs-display-none">
-    		<select class="form-control" id="listrepresentatives" data-change-representante>
-			    <script type="text/template" class="tpl-representante">
-			        {{#items}}
-		    			<option value="{{id}}">{{name}}</option>
-			        {{/items}}
-			    </script>
-    		</select>
-    	</div>
 	</form>
 	<br>
 	

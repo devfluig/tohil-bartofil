@@ -1,35 +1,29 @@
 var relatorioPedidos = SuperWidget.extend({
 	current: null,
 	mobile: FLUIGC.utilities.checkDevice().isMobile,
-	loading: FLUIGC.loading(window),
+	loading: FLUIGC.loading(".widget-pedidos"),
 	code: "bartofil_relatorio_pedidos",
 	list: null,
 	instanceId: null,
 	grouprca: null,
+	representante: null,
 	pieChart: null,
 	dataTable: null,
 	current: {},
 	clickedPedido: null,
 	listItems: null,
 	listConditions: null,
-	
+	pieChartData: [],
 	init : function() {
 		$(".pageTitle").parent().remove();
 		relatorioPedidos.loading.show();
 		
-		relatorioPedidos.grouprca = this.grouprca;
+		relatorioPedidos.grouprca = perfilrepresentante.grouprca;
+		relatorioPedidos.representante = perfilrepresentante.representante;
 		
-		if (this.isrca() == false) {
-			this.showrepresentative();
-		} else {
-			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
-			var tpl = $('.tpl-representante').html();
-			var data = { "items": list};
-			var html = Mustache.render(tpl, data);
-			$('#listrepresentatives').append(html);
-			this.setupperiodo();
-			this.getPedidos();
-		}
+		google.charts.load('current', {'packages':['corechart']});
+		google.charts.setOnLoadCallback(relatorioPedidos.getPedidos);
+		
 	},
 
 	bindings : {
@@ -84,29 +78,10 @@ var relatorioPedidos = SuperWidget.extend({
 				cgo = type.split("-")[1];
 				type = type.split("-")[0]; 
 			}
-			var o = relatorioPedidos["current"].totais[[type]];
-			
-			$(".titleResumo").html(o["situacao"]);
-			$(".line-total").html("");		
-			$(".line-cgo").html("");
-			
-			var tpl = $('.tpl-resumo').html();
-			for (var key in o["cgo"]) {
-				var row = o.cgo[key];
-				
-				var t = {
-					"background": "bg-darken-2",
-					"id": type + "-" + row["codigo"],
-					"comissao": "R$ " + relatorioPedidos.mask(row["comissao"].toFixed(2)),
-					"quantidade": row["quantidade"],
-					"total": "R$ " + relatorioPedidos.mask(row["total"].toFixed(2)),
-					"tipo": key,
-					"classItem": "col-sm-3"
-				}
-				var tpl = $('.tpl-detalhamento').html();
-				var data = { "item": t};
-				var html = Mustache.render(tpl, data);
-				$(".line-cgo").append(html);		
+			var o = relatorioPedidos["current"].totais[type];
+			if (!o && Object.keys(relatorioPedidos["current"].totais).length > 0) {
+				o = relatorioPedidos["current"].totais[Object.keys(relatorioPedidos["current"].totais)[0]];
+				type = Object.keys(relatorioPedidos["current"].totais)[0];
 			}
 			
 			for (var i=0; i<relatorioPedidos.list.length; i++) {
@@ -121,9 +96,6 @@ var relatorioPedidos = SuperWidget.extend({
 				total["comissao"] += valortotalcomissao;
 				total["quantidade"] += 1;
 				
-				if (total["mensalRegiao"] == 0) {
-					total["mensalRegiao"] = parseFloat(item["metavlrvenda"].replace(/,/g, '').replace(",", "."));
-				}
 				if (total["dias"] == 0) {
 					total["dias"] = +(item["diasuteisrestantes"]);
 				}
@@ -152,8 +124,7 @@ var relatorioPedidos = SuperWidget.extend({
 			}
 			
 		} else {
-			$(".titleResumo").html("DESPESAS");
-			$(".line-total").html("");		
+			$(".titleResumo").html("DEVOLU&Ccedil;&Otildes;ES");
 			for (var i=0; i<relatorioPedidos.list.length; i++) {
 				var item = relatorioPedidos.list[i];
 				
@@ -165,9 +136,6 @@ var relatorioPedidos = SuperWidget.extend({
 				total["comissao"] += valortotalcomissao;
 				total["quantidade"] += 1;
 				
-				if (total["mensalRegiao"] == 0) {
-					total["mensalRegiao"] = parseFloat(item["metavlrvenda"].replace(/,/g, '').replace(",", "."));
-				}
 				if (total["dias"] == 0) {
 					total["dias"] = +(item["diasuteisrestantes"]);
 				}
@@ -186,114 +154,7 @@ var relatorioPedidos = SuperWidget.extend({
 			}
 		}
 		
-		var t = {
-			"background": "bg-green",
-			"id": null,
-			"comissao": "R$ " + relatorioPedidos.mask(total["comissao"].toFixed(2)),
-			"quantidade": total["quantidade"],
-			"total": "R$ " + relatorioPedidos.mask(total["total"].toFixed(2)),
-			"tipo": "TOTAL",
-			"classItem": "col-sm-4"
-		}
-
-		var tpl = $('.tpl-detalhamento').html();
-		var data = { "item": t};
-		var html = Mustache.render(tpl, data);
-		$(".line-total").append(html);		
 		
-		var despesas = relatorioPedidos["current"].despesas;
-		if (!despesas) {
-			despesas = {
-				"total": 0,
-				"comissao": 0,
-				"quantidade": 0
-			}
-		}
-		var d = {
-			"background": "bg-red",
-			"id": "ND",
-			"comissao": "R$ " + relatorioPedidos.mask(despesas["comissao"].toFixed(2)),
-			"quantidade": despesas["quantidade"],
-			"total": "R$ " + relatorioPedidos.mask(despesas["total"].toFixed(2)),
-			"tipo": "DESPESAS",
-			"classItem": "col-sm-4"
-		}
-		var td = {
-			"background": "bg-maroon",
-			"id": null,
-			"comissao": "R$ " + relatorioPedidos.mask(total["comissao"].toFixed(2)),
-			"quantidade": total["quantidade"],
-			"total": "R$ " + relatorioPedidos.mask((total["total"] - despesas["total"]).toFixed(2)),
-			"tipo": "TOTAL - DESPESAS",
-			"classItem": "col-sm-4"
-		}
-		
-		tpl = $('.tpl-detalhamento').html();
-		data = { "item": d};
-		html = Mustache.render(tpl, data);
-		$(".line-total").append(html);		
-		
-		tpl = $('.tpl-detalhamento').html();
-		data = { "item": td};
-		html = Mustache.render(tpl, data);
-		$(".line-total").append(html);
-		
-		var barChart = FLUIGC.chart('#barPotencial', {
-		    id: 'set_an_id_for_my_chart_bar',
-		    width: '700',
-		    height: '200',
-		});
-		var options = {
-			"barShowStroke": true,
-			"tooltipTemplate": '<%if (label){%><%=label%><%}%><%=" - "%><%=value%>'
-		};
-		var sf = (total["mensalRegiao"] - total["total"] - despesas["total"]);
-		var pr = sf;
-		if (total["dias"] > 0) {
-			sf = sf / total["dias"]; 
-		}
-		var data = {
-		    labels: ["Potenc. Mensal Região", "Potenc. Mensal Remanescente", "Potenc. Mensal Dia"],
-		    datasets: [{
-	            label: "Valor",
-	            data: [(total["mensalRegiao"]).toFixed(2), pr.toFixed(2), sf.toFixed(2)]
-		    }]
-		};
-		
-		console.log("bar data", data);
-		
-		var barChart = barChart.bar(data, options);
-		
-		console.log("bar data foi ", barChart);
-		
-		var chart = FLUIGC.chart('#chartOrigem', {
-		    id: 'set_an_id_for_my_chart',
-		    width: '700',
-		    height: '200',
-		    /* See the list of options */
-		});
-		// call the pie function
-		options = {
-			"segmentShowStroke": true,
-			"tooltipTemplate": '<%if (label){%><%=label%><%}%><%=" - "%><%=value%><%=" - "%><%= Math.round(100*(value/pieChart.total)) %>%'
-		}
-		data = [];
-		for (var key in origem) {
-			var o = {
-				"value": parseFloat(origem[key].toFixed(2)),
-				"label": key
-			}
-			data.push(o);
-		}
-
-		if (data.length > 0) {
-			pieChart = chart.pie(data, options);
-			
-			console.log(pieChart);
-			console.log(pieChart.generateLegend());
-		}
-		
-		$(".legend-chart").html(pieChart.generateLegend());
 		
 		relatorioPedidos.dataTable = FLUIGC.datatable('#datatablePedidos', {
 			dataRequest: dataRequest,
@@ -347,6 +208,9 @@ var relatorioPedidos = SuperWidget.extend({
 			relatorioPedidos.onClickPedido(row["nropedidovenda"]);
 		});		
 		
+		
+		relatorioPedidos.loading.hide();
+		
 	},
 	
 	savePreferences: function(el, ev) {
@@ -368,89 +232,13 @@ var relatorioPedidos = SuperWidget.extend({
 	
 	listpedidos: function(el, ev) {
 		relatorioPedidos .loading.show();
-		this.getPedidos($('#listrepresentatives').val());
-	},
-	
-	isrca: function() {
-		var c1 = DatasetFactory.createConstraint("colleagueGroupPK.colleagueId", WCMAPI.userCode, WCMAPI.userCode, ConstraintType.MUST, false);
-		var c2 = DatasetFactory.createConstraint("colleagueGroupPK.groupId", this.grouprca, this.grouprca, ConstraintType.MUST, false);
-
-		var dataset = DatasetFactory.getDataset("colleagueGroup", null, [c1, c2], null);
-		if (dataset && dataset.values && dataset.values.length > 0) { return true; }
-		
-		return false;
-	},
-	
-	showrepresentative: function() {
-		var c1 = DatasetFactory.createConstraint("grupo", relatorioPedidos.grouprca, relatorioPedidos.grouprca, ConstraintType.MUST, false);
-		var dataset = DatasetFactory.getDataset("ds_lista_usuarios_grupo", null, [c1], null);
-		if (dataset && dataset.values && dataset.values.length > 0) {
-			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
-			var values = dataset["values"];
-			for (var i=0; i<values.length; i++) {
-				var row = values[i];
-				if (WCMAPI.userCode != row["colleagueId"]) {
-					var o = { "id": row["login"], "name": row["login"] + " - " + row["colleagueName"] }
-					list.push(o);
-				}
-			}
-
-			var tpl = $('.tpl-representante').html();
-			var data = { "items": list};
-			var html = Mustache.render(tpl, data);
-			$('#listrepresentatives').append(html);
-			
-			$('#listrepresentatives').select2({
-			    placeholder: "Selecione",
-			    allowClear: false,
-			    width: '300px'
-			})
-			
-			$(".nav-representative").removeClass("fs-display-none");
-			
-			this.setupperiodo();
-			this.getPedidos();
-		} else {
-			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
-			var tpl = $('.tpl-representante').html();
-			var data = { "items": list};
-			var html = Mustache.render(tpl, data);
-			$('#listrepresentatives').append(html);
-			this.setupperiodo();
-			this.getPedidos();
-		}
-		
-	},
-	
-	setupperiodo: function() {
-	
-		var locale = WCMAPI.locale;
-		locale = locale.replace("_", "-"); 
-		
-		var m = moment().locale(locale);
-		var list = []; 
-		for (var i=0; i<2; i++) {
-			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MMMM") + "/" + m.format("YYYY") };
-			list.push(o);
-			m.subtract(1, 'months');
-		}
-
-		var tpl = $('.tpl-continuous-scroll-periodo').html();
-		var data = { "items": list};
-		var html = Mustache.render(tpl, data);
-		$('#periodo').append(html);
-		
-		
+		relatorioPedidos.representante = perfilrepresentante.representante;
+		this.getPedidos();
 	},
 	
 	getPedidos: function(el, ev) {
-		$(".in-detail").hide();
-		$(".no-detail").show();
+		$(".in-detail").show();
 		relatorioPedidos.loading.show();
-		$(".line-1").empty();
-		$(".line-2").empty();
-		$(".line-total").empty();
-		$(".line-detail").empty();
 
 		var mes = $("#periodo :selected").data("month");
 		var ano = $("#periodo :selected").data("year");
@@ -460,7 +248,7 @@ var relatorioPedidos = SuperWidget.extend({
 		
 		var c1 = DatasetFactory.createConstraint("dataInclusaoInicio", startOfMonth, startOfMonth, ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("datainclusaofim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
-		var c3 = DatasetFactory.createConstraint("codRepresentante", $('#listrepresentatives').val(), $('#listrepresentatives').val(), ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("codRepresentante", relatorioPedidos.representante, relatorioPedidos.representante, ConstraintType.MUST, false);
 		
 		console.log("dataset", c1, c2, c3)
 	      
@@ -475,17 +263,23 @@ var relatorioPedidos = SuperWidget.extend({
 			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
 			return;
 		}
+
+		var values = rows["values"];
+		if (values[0].nropedidovenda == "Erro") {
+			relatorioPedidos.loading.hide();
+			return;
+		}
 		
 		var total = { };
 		var despesas = null;
-		var values = rows["values"];
 		
-		relatorioPedidos.list = values; 
+		relatorioPedidos.list = values;
+		if (perfilrepresentante) {
+			perfilrepresentante.populateCustomers(values);
+		}
 		
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
-			
-			console.log("row", row["situacao"], row["cgo"])
 			
 			var description = "";
 			if (row["cgo"] == "501") {
@@ -497,44 +291,25 @@ var relatorioPedidos = SuperWidget.extend({
 			} else {
 				description = "Outros";
 			}
-			console.log("row", row["datafaturamento"], row["datainclusao"]);
-			if (row["datafaturamento"]) {
-				var m = moment(row["datafaturamento"]);
-				description += " " + m.format("MM/YYYY");
-				
-			} else {
-				var m = moment(row["datainclusao"]);
-				description += " " + m.format("MM/YYYY");
-			}
-
-			var bg = "";
 			var situacao = "";
 			if (row["situacao"] == "F") { 
 				situacao = "Faturamento";
-				bg = "bg-olive";
 			} else if (row["situacao"] == "C") { 
 				situacao = "Cancelado";
-				bg = "bg-yellow";
 			} else if (row["situacao"] == "A") { 
 				situacao = "Em analise"; 
-				bg = "bg-aqua";
 			} else if (row["situacao"] == "D") { 
 				situacao = "Digitação"; 
-				bg = "bg-light-blue";
 			} else if (row["situacao"] == "L") { 
 				situacao = "Liberado"; 
-				bg = "bg-navy";
 			} else if (row["situacao"] == "R") { 
 				situacao = "Roteirização"; 
-				bg = "bg-fuchsia";
 			} else if (row["situacao"] == "S") { 
 				situacao = "Em separação"; 
-				bg = "bg-orange";
 			} else if (row["situacao"] == "W") { 
 				situacao = "Em transito"; 
-				bg = "bg-teal";
 			}
-			
+
 			var valorcobrar = parseFloat(row["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
 			var valortotalcomissao = parseFloat(row["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
 			var valortotalpedido = parseFloat(row["valortotalpedido"].replace(/,/g, '').replace(",", "."));
@@ -563,8 +338,7 @@ var relatorioPedidos = SuperWidget.extend({
 						"quantidade": 1,
 						"total": (row["situacao"] == "C" ? valortotalpedido : valorcobrar),
 						"comissao": valortotalcomissao,
-						"situacao": situacao,
-						"bg": bg
+						"situacao": situacao
 					}
 					total[row["situacao"]].cgo = {};
 					total[row["situacao"]].cgo[description] = {
@@ -594,83 +368,63 @@ var relatorioPedidos = SuperWidget.extend({
 			"despesas":despesas 
 		}; 
 		
-		relatorioPedidos.montaTela(total);
-		console.log(total)
-		console.log(despesas)
+		console.log('relatorioPedidos.current', relatorioPedidos.current)
+		
+		var data = [["Situação", "Valor"]];
+		var t = relatorioPedidos.current["totais"];
+		for (var key in t) {
+			var o = t[key];
+			data.push([o["situacao"], o["total"]]);
+			relatorioPedidos.pieChartData.push({ "situacao": o["situacao"], "codigo": key})
+		}
+		
+		var options = {
+			pieSliceText: 'value',
+			width: '300px',
+			height: '300px'
+        };
+		var chart = new google.visualization.PieChart(document.getElementById('pieSituacao'));
+		function selectHandler() {
+			var selectedItem = chart.getSelection()[0];
+			if (selectedItem) {
+				var o = relatorioPedidos.pieChartData[selectedItem.row];
+				relatorioPedidos.showResumo(o["codigo"]);
+				if (o["codigo"] == "F") {
+					relatorioPedidos.showGraphFaturamento();
+				} else {
+					$(".pie-faturamento").hide();
+				}
+				
+				
+			}
+	    }		
+		google.visualization.events.addListener(chart, 'select', selectHandler);
+	    chart.draw(google.visualization.arrayToDataTable(data), options);
+		
+		relatorioPedidos.showResumo("F");
+		relatorioPedidos.showGraphFaturamento();
 	},
-	montaTela: function(items) {
+	showGraphFaturamento: function() {
+		$(".pie-faturamento").show();
+		var data = [["Situação", "Valor"]];
+		var t = relatorioPedidos.current["totais"];
 		
-		var colClassLine1 = null;
-		var colClassLine2 = null;
-		var line = Object.keys(items).length;
-		if (Object.keys(items).length == 1) {
-			colClassLine1 = "col-md-12";
-		} else if (Object.keys(items).length == 2) {
-			colClassLine1 = "col-md-6";
-		} else if (Object.keys(items).length == 3) {
-			colClassLine1 = "col-md-4";
-		} else if (Object.keys(items).length == 4) {
-			colClassLine1 = "col-md-3";
-		} else if (Object.keys(items).length == 5) {
-			line = 3;
-			colClassLine1 = "col-md-4";
-			colClassLine2 = "col-md-6";
-		} else if (Object.keys(items).length == 6) {
-			line = 3;
-			colClassLine1 = "col-md-4";
-			colClassLine2 = "col-md-4";
-		} else if (Object.keys(items).length == 7) {
-			line = 4;
-			colClassLine1 = "col-md-4";
-			colClassLine2 = "col-md-3";
-		} else if (Object.keys(items).length == 8) {
-			line = 4;
-			colClassLine1 = "col-md-3";
-			colClassLine2 = "col-md-3";
+		if (t["F"]) {
+			var f = t["F"].cgo;
+			for (var key in f) {
+				var o = f[key];
+				data.push([key, o["total"]]);
+			}
+			
+			var options = {
+				pieSliceText: 'value',
+				width: '300px',
+				height: '300px'
+	        };
+			var chart = new google.visualization.PieChart(document.getElementById('pieFaturamento'));
+		    chart.draw(google.visualization.arrayToDataTable(data), options);
 		}
 		
-		console.log(colClassLine1, colClassLine2);
-		
-		var index = 0;
-		for (var key in items) {
-			var row = items[key];
-			
-			var o = {
-				"background": row["bg"],
-				"id": key,
-				"comissao": "R$ " + relatorioPedidos.mask(row["comissao"].toFixed(2)),
-				"quantidade": row["quantidade"],
-				"total": "R$ " + relatorioPedidos.mask(row["total"].toFixed(2)),
-				"tipo": row["situacao"]
-			}
-
-			var inrow = "line-1";
-			if (index < line) {
-				o["classItem"] = colClassLine1;
-			} else {
-				o["classItem"] = colClassLine2;
-				inrow = "line-2";
-			}
-			
-			console.log(index, inrow)
-			
-			var tpl = $('.tpl-detalhamento').html();
-			var data = { "item": o};
-			var html = Mustache.render(tpl, data);
-			
-			$("." + inrow).append(html);
-			
-			tpl = $('.tpl-detail-situacao').html();
-			data = { "item": o};
-			html = Mustache.render(tpl, data);
-			$(".line-detail").append(html);
-			
-			if (index == 0) {
-				relatorioPedidos.showResumo(key);
-			}
-			index++;
-		}
-		relatorioPedidos.loading.hide();
 	},
 	mask: function (valor) {
 	    valor = valor.toString().replace(/\D/g,"");

@@ -15,14 +15,10 @@ var campanhavendas = SuperWidget.extend({
 		$(".pageTitle").parent().remove();
 		
 		campanhavendas.foldercampanha = this.foldercampanha;
-		campanhavendas.grouprca = this.grouprca;
-		campanhavendas.representante = WCMAPI.userLogin;
+		campanhavendas.grouprca = perfilrepresentante.grouprca;
+		campanhavendas.current = perfilrepresentante.representante;
 		
-		if (this.isrca() == false) {
-			this.showrepresentative();
-		} else {
-			campanhavendas.getcampanha();
-		}
+		campanhavendas.getcampanha();
 		
 		$(window).onScrollEnd(function() {
 			if ($(".premiados").hasClass("fs-display-none")) {
@@ -63,51 +59,6 @@ var campanhavendas = SuperWidget.extend({
 		campanhavendas.getcampanha();
 	},
 
-	isrca: function() {
-		var c1 = DatasetFactory.createConstraint("colleagueGroupPK.colleagueId", WCMAPI.userCode, WCMAPI.userCode, ConstraintType.MUST, false);
-		var c2 = DatasetFactory.createConstraint("colleagueGroupPK.groupId", this.grouprca, this.grouprca, ConstraintType.MUST, false);
-
-		var dataset = DatasetFactory.getDataset("colleagueGroup", null, [c1, c2], null);
-		if (dataset && dataset.values && dataset.values.length > 0) { return true; }
-		
-		return false;
-	},
-	
-	showrepresentative: function() {
-		var c1 = DatasetFactory.createConstraint("grupo", this.grouprca, this.grouprca, ConstraintType.MUST, false);
-
-		var dataset = DatasetFactory.getDataset("ds_lista_usuarios_grupo", null, [c1], null);
-		if (dataset && dataset.values && dataset.values.length > 0) {
-			var list = [{ "id": WCMAPI.userLogin, "name": WCMAPI.userLogin + " - " + WCMAPI.user }];
-			var values = dataset["values"];
-			for (var i=0; i<values.length; i++) {
-				var row = values[i];
-				if (WCMAPI.userCode != row["login"]) {
-					var o = { "id": row["login"], "name": row["login"] + " - " + row["colleagueName"] }
-					list.push(o);
-				}
-			}
-
-			var tpl = $('.tpl-representante').html();
-			var data = { "items": list};
-			var html = Mustache.render(tpl, data);
-			$('#listrepresentatives').append(html);
-			
-			$('#listrepresentatives').select2({
-			    placeholder: "Selecione",
-			    allowClear: false,
-			    width: '300px'
-			})
-			
-			$(".nav-representative").removeClass("fs-display-none");
-			
-			campanhavendas.getcampanha();
-		} else {
-			campanhavendas.getcampanha();
-		}
-		
-	},
-	
 	showdetail: function (el, ev) {
 		campanhavendas.loading.show();
 		

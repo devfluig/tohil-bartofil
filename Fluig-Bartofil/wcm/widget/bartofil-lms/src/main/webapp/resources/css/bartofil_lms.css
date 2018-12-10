@@ -1,0 +1,20 @@
+.eadbox #content {
+    padding-top: 2px !important;
+}
+
+.eadbox #content .top-page {
+	background: linear-gradient(to right, #003893 0%, #4583e8 100%) !important;	
+}
+
+.card {
+    padding: 10px !important;
+    margin-right: 5px !important;
+}
+
+.course-free {
+    width: 24% !important;
+}
+
+.eadbox .search-wrapper input {
+	height: 26px !important;
+}
