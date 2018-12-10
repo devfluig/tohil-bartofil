@@ -12,5 +12,6 @@ application.mobileapp=true
 view.file=view.ftl
 edit.file=edit.ftl
 application.resource.css.1=/resources/css/bartofil_lms.css
+application.resource.css.2=/resources/css/styler.css
 application.resource.js.3=/resources/js/bartofil_lms.js
 application.resource.component.5=mustache
