@@ -5,6 +5,33 @@
 		<h2>${i18n.getTranslation('posicao.rca.campanha')}</h2>
 	</div>
 	
+	<div class="list-group">
+	    <div class="list-group-item active">
+	        <h4 class="list-group-item-heading">SUA PONTUA&Ccedil;&Atilde;O</h4>
+	        <div class="list-group-item-text">
+				<form class="form-inline" role="form">
+					<label>Ordem pr&ecirc;mio:</label>
+			    	<div class="form-group">
+			            <input type="text" class="form-control" id="ordem-premio-trimestre" readonly>
+			    	</div>
+					<label>Situa&ccedil;&atilde;o:</label>
+			    	<div class="form-group">
+			            <input type="text" class="form-control" id="situacao-trimestre" readonly >
+			    	</div>
+					<label>Data processamento:</label>
+			    	<div class="form-group">
+			            <input type="text" class="form-control" id="data-processamento-trimestre" readonly >
+			    	</div>
+					<label>Pontos:</label>
+			    	<div class="form-group">
+			            <input type="text" class="form-control" id="pontos-trimestre" readonly>
+			    	</div>
+				</form>	
+	        </div>
+	    </div>
+	</div>
+	
+	
 	<ul class="nav nav-pills clearfix" role="tablist">
 	    <li class="active" data-click-tab-parceiro data-tab="tab-colocacao"><a href="#">${i18n.getTranslation('colocacao.trimestre')}</a></li>
 	    <li data-click-tab-parceiro data-tab="tab-detalhamento"><a href="#">${i18n.getTranslation('detalhamento')}</a></li>

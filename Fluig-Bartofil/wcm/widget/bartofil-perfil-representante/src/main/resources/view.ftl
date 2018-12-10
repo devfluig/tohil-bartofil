@@ -121,9 +121,9 @@
 		<div class="col-md-3">
 			<div class="list-group">
 			    <a href="#" class="list-group-item disabled" data-click-decendio>Número de clientes atendidos:</a>
-			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 01: <b class="decendio-1"></b> clientes</a>
-			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 02: <b class="decendio-2"></b> clientes</a>
-			    <a href="#" class="list-group-item" data-click-decendio>Decêndio 03: <b class="decendio-3"></b> clientes</a>
+			    <a href="#" class="list-group-item" data-click-decendio data-id=1>Decêndio 01: <b class="decendio-1"></b> clientes</a>
+			    <a href="#" class="list-group-item" data-click-decendio data-id=2>Decêndio 02: <b class="decendio-2"></b> clientes</a>
+			    <a href="#" class="list-group-item" data-click-decendio data-id=3>Decêndio 03: <b class="decendio-3"></b> clientes</a>
 			</div>
 		</div>
 	</div>
@@ -160,7 +160,7 @@
 	</div>
 	<div class="row widget-home">
 		<div class="col-sm-6 col-sm-offset-1">
-			<button class="btn btn-primay" data-btn-por-cfa role="button">Quantidade de Itens (SKUs) dos Parceiros vendidos no mês: <b class="qtdeItensSkus"></b> itens</button>					
+			<button class="btn btn-primay" data-btn-show-skus role="button">Quantidade de Itens (SKUs) dos Parceiros vendidos no mês: <b class="qtdeItensSkus"></b> itens</button>					
     	</div>
     </div>
 	
@@ -184,24 +184,29 @@
 		</tbody>
 	</table>
 	
-	<div class="page-header widget-home">
-	    <h2>Extrato de Comiss&atilde;o Detalhado:</h2>
-	</div>
-	
-	<table class="table table-striped table-hover table-extrato-comissao widget-home">
-		<thead>
-			<tr>
-				<th>CFA/Produto</th>
-				<th>Valor Faturado</th>
-				<th>Comiss&atilde;o Recebida (R$)</th>
-				<th>Comiss&atilde;o M&eacute;dia (%)</th>
-			</tr>
-		</thead>
-		<tbody>
+    <script type="text/template" class="tpl-extrato-comissao">
+		<table class="table table-striped table-hover table-extrato-comissao widget-home">
+			<thead>
+				<tr>
+					<th>CFA/Produto</th>
+					<th>Valor Faturado</th>
+					<th>Comiss&atilde;o Recebida (R$)</th>
+					<th>Comiss&atilde;o M&eacute;dia (%)</th>
+				</tr>
+			</thead>
+			<tbody>
+		        {{#items}}
+			    	<tr data-click-cfa class="fs-cursor-pointer" data-id="{{cfa}}">
+			    		<td>{{cfa}}</td>
+			    		<td>{{valorFaturado}}</td>
+			    		<td>{{comissaoRecebida}}</td>
+			    		<td>{{percentual}}</td>
+			    	</tr>
+		        {{/items}}
+			</tbody>
+		</table>
+	</script>
 		
-		</tbody>
-	</table>
-	
     <script type="text/template" class="tpl-evolucao">
         {{#items}}
     	<tr class="{{css}}">
@@ -215,17 +220,6 @@
         {{/items}}
     </script>
 	
-    <script type="text/template" class="tpl-extrato-comissao">
-        {{#items}}
-    	<tr data-click-cfa class="fs-cursor-pointer" data-id="{{cfa}}">
-    		<td>{{cfa}}</td>
-    		<td>{{valorFaturado}}</td>
-    		<td>{{comissaoRecebida}}</td>
-    		<td>{{percentual}}</td>
-    	</tr>
-        {{/items}}
-    </script>
-    
     <script type="text/template" class="tpl-avatar">
     	<img data-update-image-profile="{{userCode}}" data-image-size="X_SMALL_PICTURE" src="{{image}}" class="fluig-style-guide thumb-profile thumb-profile-md"></img>
     </script>
@@ -239,10 +233,12 @@
 				</tr>
 			</thead>
 			<tbody>
+	        {{#items}}
 				<tr>
-					<td>MATOS ALEM ALVES DA COSTA ME - 2936</td>
-					<td>5.610,00</td>
+					<td>{{cliente}}</td>
+					<td>{{valor}}</td>
 				</tr>
+	        {{/items}}
 			</tbody>
 		</table>
 	</script>

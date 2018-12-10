@@ -212,16 +212,18 @@ var extratocampanha = SuperWidget.extend({
 		var total = 0;
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
-			var ano = row["datapedido"].substr(0,4);
-			var mes = row["datapedido"].substr(4,2);
-			var pedido = new Date();
-			if (ano && mes && ano != "" & mes != "") {
-				pedido = new Date(+(ano), +(mes) - 1, 1);
+			if (row["datapedido"]) {
+				var ano = row["datapedido"].substr(0,4);
+				var mes = row["datapedido"].substr(4,2);
+				var pedido = new Date();
+				if (ano && mes && ano != "" & mes != "") {
+					pedido = new Date(+(ano), +(mes) - 1, 1);
+				}
+				var m = moment(pedido);
+				var v = parseFloat(row["valor"].replace(/,/g, '').replace(",", "."));
+				total += v; 
+				html += '<tr><td>' + m.format("MMMM/YYYY") + '</td><td class="fs-txt-right">' + extratocampanha.mask(v.toFixed(2)) + '</td></tr>';
 			}
-			var m = moment(pedido);
-			var v = parseFloat(row["valor"].replace(/,/g, '').replace(",", "."));
-			total += v; 
-			html += '<tr><td>' + m.format("MMMM/YYYY") + '</td><td class="fs-txt-right">' + extratocampanha.mask(v.toFixed(2)) + '</td></tr>';
 		}		
 		$('#table-meses > tbody').html(html);
 		

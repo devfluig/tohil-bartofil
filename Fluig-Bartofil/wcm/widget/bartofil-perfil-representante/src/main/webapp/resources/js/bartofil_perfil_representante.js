@@ -23,8 +23,6 @@ Object.freeze(SituacaoEnum);
 
 var perfilrepresentante = SuperWidget.extend({
 	loading: FLUIGC.loading(window),
-	offset: 0,
-	limit: 30,
 	list: [],
 	instanceId: null,
 	representante: null,
@@ -32,12 +30,10 @@ var perfilrepresentante = SuperWidget.extend({
 	code: "bartofil_perfil_representante",
 	context: "/bartofil_perfil_representante",
 	current: null,
-	mydivision: "1",
-	trimestre: null,
-	equipesuperior: null,
 	valortotalpedidos: 0,
 	listSkus: [],
 	listCfas: [],
+	listDecendio: {},
 	
 	init : function() {
 		perfilrepresentante.loading.show();
@@ -73,7 +69,8 @@ var perfilrepresentante = SuperWidget.extend({
 			'click-decendio':['click_clickDecendio'],
 			'btn-close-decendio':['click_closeDecendio'],
 			'click-cfa': ['click_showExtratoDetalhe'],
-			'btn-por-cfa': ['click_showSkus'],
+			'btn-por-cfa': ['click_showCfa'],
+			'btn-show-skus': ['click_showSkus'],
 		}
 	},
 	widget: function(el, ev) {
@@ -88,6 +85,10 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".widget-parceiros-anual").hide();
 		
 		$("."+$(el).data("widget")).show();
+	},
+	
+	showCfa: function(el, ev) {
+		perfilrepresentante.getCfas();
 	},
 	
 	setupperiodo: function() {
@@ -116,7 +117,6 @@ var perfilrepresentante = SuperWidget.extend({
 		perfilrepresentante.representante = $('#listrepresentatives').val();
 		perfilrepresentante.list = [];
 		perfilrepresentante.listSkus = [];
-		perfilrepresentante.offset = 0;
 		$(".tab-detalhamento").html("");
 		perfilrepresentante.current = null;
 		perfilrepresentante.getfoto();
@@ -178,15 +178,11 @@ var perfilrepresentante = SuperWidget.extend({
 		var c2 = DatasetFactory.createConstraint("data-fim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("representante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
 		
-		console.log("dataset", c1, c2, c3, perfilrepresentante.onReadyGetPedidos)
-	      
 		DatasetFactory.getDataset('ds_situacao_consolidada', null, [c1, c2, c3], null, {"success": perfilrepresentante.onReadyGetSituacaoConsolidado});
 		
 	},
 
 	onReadyGetSituacaoConsolidado: function(rows) {
-		console.log("onReadyGetPedidos perfil", rows)
-		
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
 			perfilrepresentante.getMeta();
 			return;
@@ -242,15 +238,11 @@ var perfilrepresentante = SuperWidget.extend({
 		var c2 = DatasetFactory.createConstraint("data-fim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("representante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
 		
-		console.log("dataset", c1, c2, c3, perfilrepresentante.onReadyGetMeta)
-	      
 		DatasetFactory.getDataset('ds_meta_consolidada', null, [c1, c2, c3], null, {"success": perfilrepresentante.onReadyGetMeta});
 	},
 	
 	onReadyGetMeta: function(rows) {
 
-		console.log("onReadyGetPedidos perfil", rows)
-		
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
 			perfilrepresentante.getDecendio();
 			return;
@@ -329,15 +321,11 @@ var perfilrepresentante = SuperWidget.extend({
 		var c2 = DatasetFactory.createConstraint("data-fim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("representante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
 		
-		console.log("dataset", c1, c2, c3, perfilrepresentante.onReadyGetPedidos)
-	      
 		DatasetFactory.getDataset('ds_decendio_consolidada', null, [c1, c2, c3], null, {"success": perfilrepresentante.onReadyGetDecendio});
 	},
 	
 	onReadyGetDecendio: function(rows) {
 
-		console.log("onReadyGetPedidos perfil", rows)
-		
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
 			perfilrepresentante.loading.hide();
 			return;
@@ -361,15 +349,11 @@ var perfilrepresentante = SuperWidget.extend({
 		
 		var c1 = DatasetFactory.createConstraint("codRepresentante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
 		
-		console.log("dataset", c1)
-	      
 		DatasetFactory.getDataset('ds_evolucao_consolidada', null, [c1], null, {"success": perfilrepresentante.onReadyGetEvolucao});
 	},
 	
 	onReadyGetEvolucao: function(rows) {
 
-		console.log("onReadyGetEvolucao perfil", rows)
-		
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
 			perfilrepresentante.loading.hide();
 			return;
@@ -393,7 +377,6 @@ var perfilrepresentante = SuperWidget.extend({
 			var valorpremio = (row["valorpremio"] == null ? 0 : parseFloat(row["valorpremio"]));
 			var valorcomissao = (row["valortotalcomissao"] == null ? 0 : parseFloat(row["valortotalcomissao"]));
 			var valortotal = (row["valortotalatendido"] == null ? 0 : parseFloat(row["valortotalatendido"]));
-			console.log(m);
 			var o = {
 				"mes": m.format("MMM/YYYY"),
 				"anomes": row["anomes"],
@@ -429,7 +412,6 @@ var perfilrepresentante = SuperWidget.extend({
 		var tpl = $('.tpl-evolucao').html();
 		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
-		console.log(list, html)
 		$('.table-evolucao > tbody').append(html);
 		
 		perfilrepresentante.getSkus();
@@ -447,8 +429,6 @@ var perfilrepresentante = SuperWidget.extend({
 		var c2 = DatasetFactory.createConstraint("datainclusaofim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("codRepresentante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
 		
-		console.log("dataset", c1, c2, c3, perfilrepresentante.onReadyGetPedidos)
-	      
 		DatasetFactory.getDataset('ds_skus_consolidada', null, [c1, c2, c3], null, {"success": perfilrepresentante.onReadyGetSkus});
 		
 	},
@@ -462,12 +442,10 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".qtdeItensSkus").html(values.length);
 		perfilrepresentante.listSkus = values;
 		
-		perfilrepresentante.getCfas();
+		perfilrepresentante.loading.hide();
 		
 	},
 	getCfas: function() {
-		
-		$('.table-extrato-comissao > tbody').html("");
 		
 		var mes = $("#periodo :selected").data("month");
 		var ano = $("#periodo :selected").data("year");
@@ -479,8 +457,6 @@ var perfilrepresentante = SuperWidget.extend({
 		var c2 = DatasetFactory.createConstraint("datainclusaofim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("codRepresentante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
 		
-		console.log("dataset", c1, c2, c3, perfilrepresentante.onReadyGetPedidos)
-	      
 		DatasetFactory.getDataset('ds_pedido_cfa', null, [c1, c2, c3], null, {"success": perfilrepresentante.onReadyGetCfas});
 		
 	},
@@ -535,16 +511,25 @@ var perfilrepresentante = SuperWidget.extend({
 		var tpl = $('.tpl-extrato-comissao').html();
 		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
-		console.log(list, html)
-		$('.table-extrato-comissao > tbody').append(html);
 		
-		perfilrepresentante.loading.hide();
+		FLUIGC.modal({
+		    title:  "Extrato de Comissao Detalhado",
+		    content: html,
+		    id: 'fluig-modal',
+		    size: 'large',
+		    actions: [{
+		        'label': 'Fechar',
+		        'autoClose': true
+		    }]
+		}, function(err, data) {
+			console.log(err, data)
+		});
+		
 	},
 	savePreferences: function(el, ev) {
 		var args = {
 			"grouprca": $('input[id="grouprca"]', this.DOM).val()
 		};
-		console.log(args);
 		
 		WCMSpaceAPI.PageService.UPDATEPREFERENCES({
 		    async: true,
@@ -559,11 +544,8 @@ var perfilrepresentante = SuperWidget.extend({
 	
 	changePeriodo: function(el ,ev) {
 		perfilrepresentante.loading.show();
-		perfilrepresentante.trimestre = $(el).val();
 		perfilrepresentante.list = [];
-		perfilrepresentante.offset = 0;
-		perfilrepresentante.limit = parseInt($("#paginacao").val());
-		perfilrepresentante.getfullranking();		
+		perfilrepresentante.getSituacaoConsolidado();		
 	},
 	
 	isrca: function() {
@@ -655,7 +637,6 @@ var perfilrepresentante = SuperWidget.extend({
 		var tpl = $('.tpl-evolucao').html();
 		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
-		console.log(list, html)
 		$('.table-evolucao > tbody').append(html);
 		
 		perfilrepresentante.showExtratoDetalhado();
@@ -678,7 +659,6 @@ var perfilrepresentante = SuperWidget.extend({
 		var tpl = $('.tpl-extrato-comissao').html();
 		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
-		console.log(list, html)
 		$('.table-extrato-comissao > tbody').append(html);
 	},
 	
@@ -706,23 +686,11 @@ var perfilrepresentante = SuperWidget.extend({
 		var params = { "values": list };
 		
 		WCMAPI.convertFtlAsync(perfilrepresentante.code, 'detalhe.ftl', { "params": params },
-				function (data) {
-				   FLUIGC.modal({
-					    title: 'CFA - ' + $(el).data("id"),
-					    content: data,
-					    id: 'fluig-modal',
-					    size: 'full',
-					    actions: [{
-					        'label': 'Fechar',
-					        'autoClose': true
-					    }]
-					}, function(err, data) {
-						console.log(err, data)
-					});
-				   perfilrepresentante.loading.hide();
-			   },
-			   function(err) { }
-		  );		
+			function (data) {
+				$(el).after("<tr><td colspan='4'>" + data + "</td></tr>");
+				perfilrepresentante.loading.hide();
+			}, function(err) { }
+		);		
 		
 	},
 	
@@ -760,23 +728,29 @@ var perfilrepresentante = SuperWidget.extend({
 		
 	},
 	
-	changepaginacao: function(el, ev) {
-		perfilrepresentante.loading.show();
-		perfilrepresentante.offset = 0;
-		perfilrepresentante.limit = parseInt($(el).val());
-		perfilrepresentante.showranking(true);		
-	},
-	
-	changeordenacao: function(el, ev) {
-		perfilrepresentante.loading.show();
-		perfilrepresentante.offset = 0;
-		perfilrepresentante.limit = parseInt($(el).val());
-		perfilrepresentante.showranking(true);		
-	},
-	
 	clickDecendio: function(el, ev) {
+		
+		var list = [];
+		var decendio = perfilrepresentante.listDecendio[$(el).data("id")];
+		for (var key in decendio) {
+			var o = decendio[key];
+			list.push({ "cliente": key, "valor":  o })
+		}
+		
+		list.sort(function (a,b) {
+			if (parseFloat(a.valor) < parseFloat(b.valor)) return 1;
+			if (parseFloat(a.valor) > parseFloat(b.valor)) return -1;
+		    return 0;			
+		}); 
+		
+		for (var i=0; i<list.length; i++) {
+			var o = list[i];
+			o["valor"] = perfilrepresentante.mask(parseFloat(o["valor"]).toFixed(2))
+			list[i] = o;
+		}
+		
 		var tpl = $('.tpl-decendio').html();
-		var data = { "items": []};
+		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
 
 		FLUIGC.modal({
@@ -832,308 +806,6 @@ var perfilrepresentante = SuperWidget.extend({
 		
 	},
 	
-	
-	listcampanha: function(el, ev) {
-		perfilrepresentante.loading.show();
-		perfilrepresentante.representante = $('#listrepresentatives').val();
-		$('.tab-detalhamento').html("");
-		perfilrepresentante.list = [];
-		perfilrepresentante.offset = 0;
-		perfilrepresentante.limit = parseInt($("#paginacao").val());
-		perfilrepresentante.getranking();
-	},
-	
-	getranking: function() {
-		var c1 = DatasetFactory.createConstraint("representante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
-		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
-		var c3 = DatasetFactory.createConstraint("limit", "1", "1", ConstraintType.MUST, false);
-
-		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3], null, {"success": perfilrepresentante.onreadygetranking} );
-		
-	},
-	
-	onreadygetranking: function(rows) {
-		if (!rows || !rows["values"] || rows["values"].length == 0) {
-			perfilrepresentante.loading.hide();
-			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking!');	    			
-			return;
-		}
-		
-		var values = rows["values"];
-		if (values[0].apelido == "erro") {
-			perfilrepresentante.loading.hide();
-			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking!');	    			
-			return;
-		}
-		
-		var row = values[0];
-		
-		if (row["nrorepresentante"] == perfilrepresentante.representante) {
-			perfilrepresentante.current = row;
-			
-			var v = "";
-			try {
-				v = parseFloat(row["vlrpremio"]);
-				rowclass = "success";
-				if (isNaN(v)) {
-					v = row["vlrpremio"];
-				} else if (v > 0) {
-					v = perfilrepresentante.mask(v.toFixed(2));
-					v = "R$ " + v;
-				} else {
-					v = "";
-				}
-			} catch (e) {
-				v = row["vlrpremio"];
-			}
-			
-			$("#codrca").val(row["nrorepresentante"]);
-			$("#gerencia").val(row["gerencia"]);
-			$("#totalpontos").val(row["pontos"]);
-			$("#nomerca").val(row["apelido"]);
-			$("#equipe").val(row["descequipe"]);
-			$("#colocacao").val(row["ordem"]);
-			$("#divisao").val(row["divisao"]);
-			$("#premio").val(v);
-			
-			$(".data-proces").html(row["dataprocessamento"]);
-			
-			perfilrepresentante.mydivision = row["divisao"];
-			perfilrepresentante.equipesuperior = row["nroequipesuperior"];
-			
-			perfilrepresentante.getdetalhamentos();
-			perfilrepresentante.getfoto();
-			perfilrepresentante.getfullranking();
-			
-		} else {
-			$("#codrca").val("");
-			$("#gerencia").val("");
-			$("#totalpontos").val("");
-			$("#nomerca").val("");
-			$("#equipe").val("");
-			$("#colocacao").val("");
-			$("#divisao").val("");
-			$("#premio").val("");
-			perfilrepresentante.current = null;
-			perfilrepresentante.mydivision = null;
-			perfilrepresentante.equipesuperior = null;
-			
-			$('#table-ranking > tbody').html("");
-			$(".tab-detalhamento").html("");
-			
-			var tpl = $('.tpl-avatar').html();
-			var data = { "userCode": WCMAPI.userCode, "image": perfilrepresentante.context + "/resources/images/no-img.png" };
-			var html = Mustache.render(tpl, data);
-			$('.user-avatar').html(html);
-			
-			$(".data-proces").html("");
-			perfilrepresentante.loading.hide();
-			
-		}
-		
-		
-	},
-	
-	getfullranking: function() {
-		
-		var today = new Date();
-		var periodo = today.getFullYear() + "0" + perfilrepresentante.trimestre;
-
-		var c1 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
-		var c2 = DatasetFactory.createConstraint("limit", "9999", "9999", ConstraintType.MUST, false);
-		var c3 = DatasetFactory.createConstraint("divisao", perfilrepresentante.mydivision, perfilrepresentante.mydivision, ConstraintType.MUST, false);
-		var c4 = DatasetFactory.createConstraint("periodo", periodo, periodo, ConstraintType.MUST, false);
-		var c5 = DatasetFactory.createConstraint("equipesuperior", perfilrepresentante.equipesuperior, perfilrepresentante.equipesuperior, ConstraintType.MUST, false);
-
-		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3, c4, c5], null, {"success": perfilrepresentante.onreadygetfullranking} );
-		
-	},
-	
-	onreadygetfullranking: function(rows) {
-		if (!rows || !rows["values"] || rows["values"].length == 0) {
-			perfilrepresentante.loading.hide();
-			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking geral!');	    			
-			return;
-		}
-		var values = rows["values"];
-		if (values[0].tipapuracao == "erro") {
-			perfilrepresentante.loading.hide();
-			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking geral!');	    			
-			return;
-		}
-		
-		var htmlrank = "";
-		for (var i = 0; i<values.length; i++) {
-			var row = values[i];
-			
-			var premiado = "";
-			var v = "";
-			try {
-				v = parseFloat(row["vlrpremio"]);
-				rowclass = "success";
-				if (isNaN(v)) {
-					v = row["vlrpremio"];
-				} else if (v > 0) {
-					premiado = "success";
-					v = perfilrepresentante.mask(v.toFixed(2));
-					v = "R$ " + v;
-				} else {
-					v = "";
-				}
-			} catch (e) {
-				v = row["vlrpremio"];
-			}
-			
-			var o = {
-				"codigo": row["nrorepresentante"],
-				"nome": row["apelido"],
-				"pontos": row["pontos"],
-				"ordem": row["ordem"],
-				"premio": v,
-				"equipe": row["descequipe"],
-				"trimestre": row["trimestre"],
-				"divisao": row["divisao"],
-				"premiado": premiado
-				
-			}
-			
-			perfilrepresentante.list.push(o);
-		}
-		
-		perfilrepresentante.showranking(true);
-		
-	},
-	
-	showranking: function(clean) {
-		var htmlrank = "";
-		
-		if (clean) {
-			$('#table-ranking > tbody').html("");
-			perfilrepresentante.offset = 0;
-			perfilrepresentante.limit = parseInt($("#paginacao").val());
-		}
-
-		var filter = perfilrepresentante.list;
-		var search = $("#busca").val(); 
-		if (search && search != "") {
-			filter = perfilrepresentante.list.filter(function(item) {
-				return item["nome"].toLowerCase().indexOf(search) != -1 || item["codigo"].toLowerCase() == search || item["equipe"].toLowerCase().indexOf(search) != -1;
-			})
-		}
-		
-		filter.sort(function compare(a, b) {
-			
-			var c1 = a[$("#ordenar").val()];
-			var c2 = b[$("#ordenar").val()];
-			var type = $("#ordenar :selected").data("type");
-			if (type == "date") {
-				 if (c1.isAfter(c2)) return 1;
-				 if (c1.isBefore(c2)) return -1;
-			     return 0;				
-			} else if (type == "integer") {
-				return +(c1) - +(c2);
-			} else {
-				if (c1 > c2) return 1;
-				if (c1 < c2) return -1;
-				return 0;
-			}
-		});
-		
-		var mylist = [];
-		
-		for (var i = perfilrepresentante.offset; i<perfilrepresentante.limit; i++) {
-			var o = filter[i];
-			if (o && +(o["trimestre"]) == +($("#trimestre").val()) && o["divisao"] == perfilrepresentante.mydivision) {
-				mylist.push(o);
-			}
-		}
-		
-		
-		var tpl = $('.tpl-item-ranking').html();
-		var data = { "items": mylist };
-		var html = Mustache.render(tpl, data);
-		$('#table-ranking > tbody').append(html);
-
-		perfilrepresentante.loading.hide();
-	},
-	
-	getdetalhamentos: function() {
-		
-		FLUIGC.loading(".tab-detalhamento").show();
-		
-		var c1 = DatasetFactory.createConstraint("representante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
-		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
-		var c3 = DatasetFactory.createConstraint("limit", "999", "999", ConstraintType.MUST, false);
-
-		DatasetFactory.getDataset("ds_campanha_parceiros_detalhe", null, [c1, c2, c3], null, {"success": perfilrepresentante.onreadygetdetalhamentos} );
-		
-	},
-	
-	onreadygetdetalhamentos: function(rows) {
-		if (!rows || !rows["values"] || rows["values"].length == 0) {
-			FLUIGC.loading(".tab-detalhamento").hide();
-			$(".tab-detalhamento").html('<p>Campanhas de Parceiros 100% não possui detalhamento!</p>');	    			
-			return;
-		}
-		var values = rows["values"];
-		if (values[0].tipapuracao == "erro") {
-			FLUIGC.loading(".tab-detalhamento").hide();
-			$(".tab-detalhamento").html('<p>Campanhas de Parceiros 100% não possui detalhamento!</p>');	    			
-			return;
-		}
-		
-		var items = {};
-		for (var i=0; i<values.length; i++) {
-			var row = values[i];
-			
-			var o = items[row["quesito"]];
-			if (o) {
-				o["pontos"] += +(row["pontos"]);
-				o["items"].push({ 
-					"datainicio": row["datainicio"],
-					"datafinal": row["datafinal"],
-					"pontos": +(row["pontos"]),
-					"apurado": +(row["apurado"]) 
-				});
-			} else {
-				var id = FLUIGC.utilities.randomUUID();
-				items[row["quesito"]] = {
-					"id": id,
-					"hashid": "#" + id,
-					"quesito": row["quesito"],
-					"pontos": +(row["pontos"]),
-					"items": [{ 
-						"datainicio": row["datainicio"],
-					    "datafinal": row["datafinal"],
-						"pontos": +(row["pontos"]),
-						"apurado": +(row["apurado"]) 
-					}]
-				}
-			}
-		}
-		
-		console.log(items);
-		
-		for (var key in items) {
-			var o = items[key];
-			var tpl = $('.tpl-detalhamento').html();
-			
-			var classbadge = "badge-default";
-			if (o["pontos"] > 0) {
-				classbadge = "badge-success";
-			} else if (o["pontos"] < 0) {
-				classbadge = "badge-danger";
-			}
-			
-			var data = { "items": o["items"], "quesito": o["quesito"], "id": o["id"], "hashid": o["hashid"], "total": o["pontos"], "classbadge": classbadge };
-			var html = Mustache.render(tpl, data);
-			$('.tab-detalhamento').append(html);
-		}
-		
-		FLUIGC.loading(".tab-detalhamento").hide();
-		
-	},
-	
 	mask: function (valor) {
 	    valor = valor.toString().replace(/\D/g,"");
 	    valor = valor.toString().replace(/(\d)(\d{8})$/,"$1.$2");
@@ -1141,5 +813,36 @@ var perfilrepresentante = SuperWidget.extend({
 	    valor = valor.toString().replace(/(\d)(\d{2})$/,"$1,$2");
 	    return valor                    
 	},
+	
+	populateCustomers: function(list) {
+		var decendio = {
+			"1": {},
+			"2": {},
+			"3": {}
+		}
+		
+		for (var i=0; i<list.length; i++) {
+			var row = list[i];
+			var valortotalpedido = parseFloat(row["valortotalpedido"].replace(/,/g, '').replace(",", "."));
+			var m = moment(row["datainclusao"]);
+
+			var index = "0";
+			if (m.date() < 11) {
+				index = "1";
+			} else if (m.date() < 21) {
+				index = "2";
+			} else {
+				index = "3";
+			}
+			
+			if (decendio[index][row["nomecliente"]]) {
+				decendio[index][row["nomecliente"]] += valortotalpedido;
+			} else {
+				decendio[index][row["nomecliente"]] = valortotalpedido;
+			}
+		}
+		
+		perfilrepresentante.listDecendio = decendio; 
+	}
 	
 });

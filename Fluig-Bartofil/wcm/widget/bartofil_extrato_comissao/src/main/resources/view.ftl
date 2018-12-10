@@ -5,6 +5,18 @@
 		<h2>${i18n.getTranslation('extrato.comissao')}</h2>
 	</div>
 
+	<form class="form-inline" role="form">
+    	<div class="radio fs-md-space">
+	    	<label>
+	    		<input type="radio" name="visualizacao" id="visualizacaodetalhado" value="detalhado" data-click-detalhado checked>Detalhado
+	    	</label>
+	    	<label>
+	    		<input type="radio" name="visualizacao" id="visualizacaoresumido" value="resumido" data-click-resumido>Resumido
+	    	</label>
+		</div>
+		<button type="button" class="btn btn-default fs-float-right" data-click-print><span class="fluigicon fluigicon-print fluigicon-sm"></span>&nbsp;Imprimir</button>
+	</form>
+	
 	<div class="panel-group" id="accordion">
 	    <div class="panel panel-info detalhado">
 	        <div class="panel-heading">

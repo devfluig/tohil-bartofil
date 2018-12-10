@@ -165,6 +165,11 @@ var campanhaparceiros = SuperWidget.extend({
 		
 		var row = values[0];
 		
+		$("#ordem-premio-trimestre").val(row["ordem"]);
+		$("#situacao-trimestre").val(row["vlrpremio"]);
+		$("#data-processamento-trimestre").val(row["dataprocessamento"]);
+		$("#pontos-trimestre").val(row["pontos"]);
+		
 		if (row["nrorepresentante"] == campanhaparceiros.representante) {
 			campanhaparceiros.current = row;
 			

@@ -273,7 +273,10 @@ var relatorioPedidos = SuperWidget.extend({
 		var total = { };
 		var despesas = null;
 		
-		relatorioPedidos.list = values; 
+		relatorioPedidos.list = values;
+		if (perfilrepresentante) {
+			perfilrepresentante.populateCustomers(values);
+		}
 		
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
