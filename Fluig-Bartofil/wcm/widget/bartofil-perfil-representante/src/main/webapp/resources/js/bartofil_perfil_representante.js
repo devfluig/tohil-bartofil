@@ -374,9 +374,9 @@ var perfilrepresentante = SuperWidget.extend({
 			var row = values[i];
 			
 			var m = moment(row["anomes"].substring(4, 6) + "/01/" + row["anomes"].substring(0, 4));
-			var valorpremio = (row["valorpremio"] == null ? 0 : parseFloat(row["valorpremio"]));
-			var valorcomissao = (row["valortotalcomissao"] == null ? 0 : parseFloat(row["valortotalcomissao"]));
-			var valortotal = (row["valortotalatendido"] == null ? 0 : parseFloat(row["valortotalatendido"]));
+			var valorpremio = (row["valorpremio"] == null || row["valorpremio"] == "" ? 0 : parseFloat(row["valorpremio"]));
+			var valorcomissao = (row["valortotalcomissao"] == null || row["valortotalcomissao"] == "" ? 0 : parseFloat(row["valortotalcomissao"]));
+			var valortotal = (row["valortotalatendido"] == null || row["valortotalatendido"] == "" ? 0 : parseFloat(row["valortotalatendido"]));
 			var o = {
 				"mes": m.format("MMM/YYYY"),
 				"anomes": row["anomes"],
@@ -663,23 +663,42 @@ var perfilrepresentante = SuperWidget.extend({
 	},
 	
 	showExtratoDetalhe: function (el, ev) {
+		
 		perfilrepresentante.loading.show();
 		
-		var list = [];
-		for (var i=0; i<perfilrepresentante.listCfas.length; i++) {
-			var row = perfilrepresentante.listCfas[i];
+		var mes = $("#periodo :selected").data("month");
+		var ano = $("#periodo :selected").data("year");
+		
+		var startOfMonth = moment(ano + "-" + mes + "-01").startOf('month').format('YYYY-MM-DD');
+		var endOfMonth   = moment(ano + "-" + mes + "-01").endOf('month').format('YYYY-MM-DD');
+		
+		var c1 = DatasetFactory.createConstraint("dataInclusaoInicio", startOfMonth, startOfMonth, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("datainclusaofim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("codRepresentante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
+		var c4 = DatasetFactory.createConstraint("cfa", $(el).data("id"), $(el).data("id"), ConstraintType.MUST, false);
+		
+		DatasetFactory.getDataset('ds_pedido_cfa', null, [c1, c2, c3, c4], null, {"success": perfilrepresentante.onReadyGetCfasDetail});
+		
+	},
+	onReadyGetCfasDetail: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			perfilrepresentante.loading.hide();
+			return;
+		}
+
+		var values = rows["values"];
+		for (var i=0; i<values.length; i++) {
+			var row = values[i];
 			
-			if (row["cfa"] == $(el).data("id")) {
-				var valortotalcomissao = parseFloat(row["valortotalcomissao"]);
-				var valortotal = parseFloat(row["valortotal"]);
-				var o = {
-					"produto": row["codproduto"] + " - " + row["descproduto"],
-					"valorFaturado": perfilrepresentante.mask(valortotal.toFixed(2)),
-					"comissaoRecebida": perfilrepresentante.mask(valortotalcomissao.toFixed(2)),
-					"comissaoMedia": perfilrepresentante.mask(((valortotalcomissao / valortotal) * 100).toFixed(2))
-				}
-				list.push(o);
+			var valortotalcomissao = parseFloat(row["valortotalcomissao"]);
+			var valortotal = parseFloat(row["valortotal"]);
+			var o = {
+				"produto": row["codproduto"] + " - " + row["descproduto"],
+				"valorFaturado": perfilrepresentante.mask(valortotal.toFixed(2)),
+				"comissaoRecebida": perfilrepresentante.mask(valortotalcomissao.toFixed(2)),
+				"comissaoMedia": perfilrepresentante.mask(((valortotalcomissao / valortotal) * 100).toFixed(2))
 			}
+			list.push(o);
 			
 		}
 		

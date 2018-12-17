@@ -73,11 +73,11 @@
    	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed tab-colocacao">
    		<thead>
    			<tr class="primary">
-   				<th class="fs-txt-center">${i18n.getTranslation('codigo')}</th>
-   				<th class="fs-txt-center">${i18n.getTranslation('pontos')}</th>
-   				<th class="fs-txt-center">${i18n.getTranslation('ordem')}</th>
-   				<th>${i18n.getTranslation('premio')}</th>
-   				<th class="fs-txt-center">${i18n.getTranslation('equipe')}</th>
+   				<th class="fs-txt-left">${i18n.getTranslation('codigo')}</th>
+   				<th class="fs-txt-left">${i18n.getTranslation('pontos')}</th>
+   				<th class="fs-txt-left">${i18n.getTranslation('ordem')}</th>
+   				<th class="fs-txt-right">${i18n.getTranslation('premio')}</th>
+   				<th class="fs-txt-left">${i18n.getTranslation('equipe')}</th>
    			</tr>
    		</thead>
    		<tbody>
@@ -86,11 +86,11 @@
    	<script type="text/template" class="tpl-item-ranking">
     	{{#items}}
  			<tr class="{{premiado}}">
- 				<td class="fs-txt-center">{{codigo}}</td>
- 				<td class="fs-txt-center">{{pontos}}</td>
- 				<td class="fs-txt-center">{{ordem}}</td>
- 				<td>{{premio}}</td>
- 				<td class="fs-txt-center">{{equipe}}</td>
+ 				<td class="fs-txt-left">{{codigo}}</td>
+ 				<td class="fs-txt-left">{{pontos}}</td>
+ 				<td class="fs-txt-left">{{ordem}}</td>
+ 				<td class="fs-txt-right">{{{premio}}}</td>
+ 				<td class="fs-txt-left">{{equipe}}</td>
  			</tr>
        	{{/items}}
    	</script>
@@ -114,10 +114,10 @@
 						   	<table class="table table-striped with-border table-hover table-condensed">
 						   		<thead>
 						   			<tr class="primary">
-						   				<th class="fs-txt-center">${i18n.getTranslation('inicio')}</th>
-						   				<th class="fs-txt-center">${i18n.getTranslation('final')}</th>
-						   				<th class="fs-txt-center">${i18n.getTranslation('apurado')}</th>
-						   				<th class="fs-txt-center">${i18n.getTranslation('pontos')}</th>
+						   				<th class="fs-txt-left">${i18n.getTranslation('inicio')}</th>
+						   				<th class="fs-txt-left">${i18n.getTranslation('final')}</th>
+						   				<th class="fs-txt-left">${i18n.getTranslation('apurado')}</th>
+						   				<th class="fs-txt-left">${i18n.getTranslation('pontos')}</th>
 						   			</tr>
 						   		</thead>
 						   		<tbody>

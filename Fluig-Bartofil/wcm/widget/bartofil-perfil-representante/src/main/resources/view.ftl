@@ -171,12 +171,12 @@
 	<table class="table table-striped table-hover table-evolucao widget-home">
 		<thead>
 			<tr>
-				<th class="fs-txt-center">M&ecirc;s</th>
+				<th class="fs-txt-left">M&ecirc;s</th>
 				<th class="fs-txt-right">Valor Faturado</th>
 				<th class="fs-txt-right">Comiss&atilde;o Recebida</th>
 				<th class="fs-txt-right">Pr&ecirc;mios Recebidos (em dinheiro)</th>
 				<th class="fs-txt-right">Valor Recebido</th>
-				<th class="fs-txt-right">%</th>
+				<th class="fs-txt-left">%</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -189,8 +189,8 @@
 			<thead>
 				<tr>
 					<th>CFA/Produto</th>
-					<th>Valor Faturado</th>
-					<th>Comiss&atilde;o Recebida (R$)</th>
+					<th class="fs-txt-right">Valor Faturado</th>
+					<th class="fs-txt-right">Comiss&atilde;o Recebida (R$)</th>
 					<th>Comiss&atilde;o M&eacute;dia (%)</th>
 				</tr>
 			</thead>
@@ -198,8 +198,8 @@
 		        {{#items}}
 			    	<tr data-click-cfa class="fs-cursor-pointer" data-id="{{cfa}}">
 			    		<td>{{cfa}}</td>
-			    		<td>{{valorFaturado}}</td>
-			    		<td>{{comissaoRecebida}}</td>
+			    		<td class="fs-txt-right">{{valorFaturado}}</td>
+			    		<td class="fs-txt-right">{{comissaoRecebida}}</td>
 			    		<td>{{percentual}}</td>
 			    	</tr>
 		        {{/items}}
@@ -210,12 +210,12 @@
     <script type="text/template" class="tpl-evolucao">
         {{#items}}
     	<tr class="{{css}}">
-    		<td class="fs-txt-center">{{mes}}</td>
+    		<td class="fs-txt-left">{{mes}}</td>
     		<td class="fs-txt-right">{{valorFaturado}}</td>
     		<td class="fs-txt-right">{{comissaoRecebida}}</td>
     		<td class="fs-txt-right">{{premiosRecebidos}}</td>
     		<td class="fs-txt-right">{{valorTotal}}</td>
-    		<td class="fs-txt-right">{{percentual}}</td>
+    		<td class="fs-txt-left">{{percentual}}</td>
     	</tr>
         {{/items}}
     </script>
@@ -236,7 +236,7 @@
 	        {{#items}}
 				<tr>
 					<td>{{cliente}}</td>
-					<td>{{valor}}</td>
+					<td class="fs-txt-right">{{valor}}</td>
 				</tr>
 	        {{/items}}
 			</tbody>

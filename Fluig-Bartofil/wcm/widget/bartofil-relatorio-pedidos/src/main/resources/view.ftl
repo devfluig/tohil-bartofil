@@ -2,13 +2,13 @@
 	<script type="text/template" class="template_datatable">
 	    <tr>
 	        <td>{{nropedidovenda}}</td>
-	        <td class="fs-txt-center">{{datainclusaof}}</td>
-	        <td class="fs-txt-center">{{valor}}</td>
-	        <td class="fs-txt-center">{{comissao}}</td>
-	        <td class="fs-txt-center">{{codcliente}}</td>
+	        <td class="fs-txt-left">{{datainclusaof}}</td>
+	        <td class="fs-txt-right">{{valor}}</td>
+	        <td class="fs-txt-right">{{comissao}}</td>
+	        <td class="fs-txt-left">{{codcliente}}</td>
 	        <td>{{nomecliente}}</td>
-	        <td class="fs-txt-center">{{descorigempedido}}</td>
-	        <td class="fs-txt-center">{{situacao}}</td>
+	        <td class="fs-txt-left">{{descorigempedido}}</td>
+	        <td class="fs-txt-left">{{situacao}}</td>
 	    </tr>
 	</script>
 	

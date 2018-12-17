@@ -62,14 +62,14 @@
 				    	<table id="table-myranking" class="table table-striped with-border table-hover table-condensed">
 				    		<thead>
 				    			<tr class="primary">
-				    				<th class="fs-txt-center">${i18n.getTranslation('situacao')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('gp')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('pos')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('rca')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('apurado')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('premiacao')}</th>
-				    				<th>${i18n.getTranslation('equipe')}</th>
-				    				<th>#</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('situacao')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('gp')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('pos')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('rca')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('apurado')}</th>
+				    				<th class="fs-txt-right">${i18n.getTranslation('premiacao')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('equipe')}</th>
+				    				<th class="fs-txt-left">#</th>
 				    			</tr>
 				    		</thead>
 				    		<tbody>
@@ -81,13 +81,13 @@
 				    	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed">
 				    		<thead>
 				    			<tr class="primary">
-				    				<th class="fs-txt-center">${i18n.getTranslation('situacao')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('gp')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('pos')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('rca')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('apurado')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('premiacao')}</th>
-				    				<th>${i18n.getTranslation('equipe')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('situacao')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('gp')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('pos')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('rca')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('apurado')}</th>
+				    				<th class="fs-txt-right">${i18n.getTranslation('premiacao')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('equipe')}</th>
 				    			</tr>
 				    		</thead>
 				    		<tbody>
