@@ -74,17 +74,21 @@ var perfilrepresentante = SuperWidget.extend({
 		}
 	},
 	widget: function(el, ev) {
-		$(".btn-info").removeClass("active");
-		$(el).addClass("active");
-		
-		$(".widget-home").hide();
-		$(".widget-extrato").hide();
-		$(".widget-pedidos").hide();
-		$(".widget-campanha").hide();
-		$(".widget-parceiros").hide();
-		$(".widget-parceiros-anual").hide();
-		
-		$("."+$(el).data("widget")).show();
+		if ($(el).data("widget") == "universidade") {
+			window.open("https://app.nutror.com/login", "_blank");
+		} else {
+			$(".btn-info").removeClass("active");
+			$(el).addClass("active");
+			
+			$(".widget-home").hide();
+			$(".widget-extrato").hide();
+			$(".widget-pedidos").hide();
+			$(".widget-campanha").hide();
+			$(".widget-parceiros").hide();
+			$(".widget-parceiros-anual").hide();
+
+			$("."+$(el).data("widget")).show();
+		}
 	},
 	
 	showCfa: function(el, ev) {
@@ -275,17 +279,19 @@ var perfilrepresentante = SuperWidget.extend({
 				
 				var data = google.visualization.arrayToDataTable([
 					['Label', 'Value'],
-			        ['Meta', parseFloat(percentual.toFixed(2))]
+			        ['Potencial', parseFloat(percentual.toFixed(2))]
 			    ]);
 				
 				var chart = new google.visualization.Gauge(document.getElementById('chartGauge'));
 		        chart.draw(data, options);
+		        
+		        if (meta < 0) { faltante = 0; }
 
-		        $(".valor-potencial").html(perfilrepresentante.mask(meta.toFixed(2)));
-		        $(".valor-vendido").html(perfilrepresentante.mask(perfilrepresentante.valortotalpedidos.toFixed(2)));
+		        $(".valor-potencial").html("R$ " + perfilrepresentante.mask(meta.toFixed(2)));
+		        $(".valor-vendido").html("R$ " + perfilrepresentante.mask(perfilrepresentante.valortotalpedidos.toFixed(2)));
 		        $(".percentual-potencial").html(perfilrepresentante.mask(percentual.toFixed(2)) + "%");
-		        $(".valor-faltante").html(perfilrepresentante.mask("R$ " + faltante.toFixed(2)));
-		        $(".valor-dia").html(perfilrepresentante.mask("R$ " + valordia.toFixed(2)));
+		        $(".valor-faltante").html("R$ " + perfilrepresentante.mask(faltante.toFixed(2)));
+		        $(".valor-dia").html("R$ " + perfilrepresentante.mask(valordia.toFixed(2)));
 			} else {
 		        $(".valor-potencial").html("");
 		        $(".valor-vendido").html("");
@@ -721,6 +727,12 @@ var perfilrepresentante = SuperWidget.extend({
 			var row = perfilrepresentante.listSkus[i];
 			data.push({"produto": row["descproduto"], "valorFaturado": perfilrepresentante.mask(parseFloat(row["valortotal"]).toFixed(2))})
 		}
+		
+		data.sort(function (a,b) {
+			if (a.produto < b.produto) return 1;
+			if (a.produto > b.produto) return -1;
+		    return 0;			
+		});
 		
 		var params = {
 			"values": data

@@ -96,6 +96,7 @@
 	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros-anual role="button">Campanha Anual<br>Parceiros 100%</a>
 	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-campanha role="button">Demais Concursos e<br>Campanha de Vendas</a>
 	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-pedidos role="button">Meus pedidos</a>
+	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=universidade role="button">Universidade BCR</a>
 	   		</div>
    		</div>
 	</div>
@@ -108,11 +109,11 @@
 		<div class="col-sm-4"><div id="chartPie" style="width: 500px; height: 300px;"></div></div>
 		<div class="col-sm-4">
 			<div id="chartGauge" style="margin-left: 38px;"></div>
-			<div class="legend-chart-gauge col-sm-6">
+			<div class="legend-chart-gauge col-sm-8">
 				<ul class="list-group">
-				    <li class="list-group-item list-group-item-info list-group-item-custom"><b class="valor-potencial"></b> Potencial de Venda</li>
-				    <li class="list-group-item list-group-item-info list-group-item-custom"><b class="valor-vendido"></b> Valor Vendido</li>
-				    <li class="list-group-item list-group-item-info list-group-item-custom"><b class="percentual-potencial"></b>  potencial alcançado</li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom">Potencial de Venda <b class="valor-potencial"></b></li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom">Valor Vendido <b class="valor-vendido"></b></li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom">Potencial alcançado <b class="percentual-potencial"></b></li>
 				    <li class="list-group-item list-group-item-info list-group-item-custom">Falta <b class="valor-faltante"></b></li>
 				    <li class="list-group-item list-group-item-info list-group-item-custom">Venda/dia necessária: <b class="valor-dia"></b></li>
 				</ul>
@@ -121,9 +122,9 @@
 		<div class="col-md-3">
 			<div class="list-group">
 			    <a href="#" class="list-group-item disabled" data-click-decendio>Número de clientes atendidos:</a>
-			    <a href="#" class="list-group-item" data-click-decendio data-id=1>Decêndio 01: <b class="decendio-1"></b> clientes</a>
-			    <a href="#" class="list-group-item" data-click-decendio data-id=2>Decêndio 02: <b class="decendio-2"></b> clientes</a>
-			    <a href="#" class="list-group-item" data-click-decendio data-id=3>Decêndio 03: <b class="decendio-3"></b> clientes</a>
+			    <a href="#" class="list-group-item" data-click-decendio data-id=1>1&ordm; Decêndio: <b class="decendio-1"></b> clientes</a>
+			    <a href="#" class="list-group-item" data-click-decendio data-id=2>2&ordm; Decêndio: <b class="decendio-2"></b> clientes</a>
+			    <a href="#" class="list-group-item" data-click-decendio data-id=3>3&ordm; Decêndio: <b class="decendio-3"></b> clientes</a>
 			</div>
 		</div>
 	</div>

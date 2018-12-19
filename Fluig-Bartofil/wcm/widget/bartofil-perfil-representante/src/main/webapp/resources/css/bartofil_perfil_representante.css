@@ -21,3 +21,8 @@
 .fluig-style-guide .popover {
 	max-width: 400px !important;
 }
+
+.fluig-style-guide.thumb-profile {
+    width: 200px !important;
+    height: 200px !important;
+}

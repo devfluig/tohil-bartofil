@@ -165,10 +165,16 @@ var campanhaparceiros = SuperWidget.extend({
 		
 		var row = values[0];
 		
-		$("#ordem-premio-trimestre").val(row["ordem"]);
-		$("#situacao-trimestre").val(row["vlrpremio"]);
-		$("#data-processamento-trimestre").val(row["dataprocessamento"]);
-		$("#pontos-trimestre").val(row["pontos"]);
+		var data = {
+			"ordem": row["ordem"],
+			"situacao": row["vlrpremio"],
+			"data": row["dataprocessamento"],
+			"pontos": row["pontos"],
+		}
+		
+		var tpl = $('.tpl-my-ranking').html();
+		var html = Mustache.render(tpl, data);
+		$('.list-group-item-text').html(html);
 		
 		if (row["nrorepresentante"] == campanhaparceiros.representante) {
 			campanhaparceiros.current = row;
@@ -234,7 +240,7 @@ var campanhaparceiros = SuperWidget.extend({
 				if (isNaN(v)) {
 					v = row["vlrpremio"];
 				} else if (v > 0) {
-					premiado = "success";
+					premiado = "success <i class='fluigicon fluigicon-moderator icon-xl'></i>";
 					v = campanhaparceiros.mask(v.toFixed(2));
 					v = "R$ " + v;
 				} else {
