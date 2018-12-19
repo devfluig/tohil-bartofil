@@ -19,7 +19,7 @@
 	<div class="row">
 		<div class="col-md-5 col-md-offset-1">
 			<div class="panel panel-info">
-		    	<div class="panel-heading">SITUAÇÂO</div>
+		    	<div class="panel-heading">SITUA&Ccedil;&Atilde;O</div>
 		    	<div class="panel-body">
 					<div class="col-md-10 col-sm-offset-1">
 						<div id="pieSituacao"></div>

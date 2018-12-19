@@ -79,7 +79,7 @@ var relatorioPedidos = SuperWidget.extend({
 				type = type.split("-")[0]; 
 			}
 			var o = relatorioPedidos["current"].totais[type];
-			if (!o && Object.keys(relatorioPedidos["current"].totais).length > 0) {
+			if (!o && type != "ALL" && Object.keys(relatorioPedidos["current"].totais).length > 0) {
 				o = relatorioPedidos["current"].totais[Object.keys(relatorioPedidos["current"].totais)[0]];
 				type = Object.keys(relatorioPedidos["current"].totais)[0];
 			}
@@ -107,10 +107,10 @@ var relatorioPedidos = SuperWidget.extend({
 					validCgo = true;
 				}
 				
-				if (validCgo && item["situacao"] == type && item["naturezaoperacao"] == "V") {
+				if (validCgo && (item["situacao"] == type || type == "ALL") && item["naturezaoperacao"] == "V") {
 					origem[item["descorigempedido"]] = (origem[item["descorigempedido"]] ? origem[item["descorigempedido"]] + valortotalacobrar : valortotalacobrar)
 				}
-				if (validCgo && item["situacao"] == type) {
+				if (validCgo && (item["situacao"] == type || type == "ALL")) {
 					var m = moment(item["datainclusao"]);
 					console.log("moment", item["datainclusao"], m)
 					item["datainclusaof"] = m.format("DD/MM/YYYY");
@@ -384,6 +384,7 @@ var relatorioPedidos = SuperWidget.extend({
 			height: '300px'
         };
 		var chart = new google.visualization.PieChart(document.getElementById('pieSituacao'));
+
 		function selectHandler() {
 			var selectedItem = chart.getSelection()[0];
 			if (selectedItem) {
@@ -397,11 +398,21 @@ var relatorioPedidos = SuperWidget.extend({
 				
 				
 			}
-	    }		
+	    }
+		function mouseHandlerPointer() {
+		   document.getElementById('pieSituacao').style.cursor = 'pointer';
+		 }  
+
+		function mouseHandlerDefault() {
+		   document.getElementById('pieSituacao').style.cursor = 'default';
+		 }		
 		google.visualization.events.addListener(chart, 'select', selectHandler);
+		google.visualization.events.addListener(chart, 'onmouseover', mouseHandlerPointer);                 
+		google.visualization.events.addListener(chart, 'onmouseout', mouseHandlerDefault);
+		
 	    chart.draw(google.visualization.arrayToDataTable(data), options);
 		
-		relatorioPedidos.showResumo("F");
+		relatorioPedidos.showResumo("ALL");
 		relatorioPedidos.showGraphFaturamento();
 	},
 	showGraphFaturamento: function() {
