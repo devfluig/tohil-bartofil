@@ -72,7 +72,7 @@
    	<script type="text/template" class="tpl-item-campanha-anual">
     	{{#items}}
  			<tr class="{{premiado}}">
- 				<td class="fs-txt-left">{{codigo}}</td>
+ 				<td class="fs-txt-left">{{{codigo}}}</td>
  				<td class="fs-txt-left">{{pontos}}</td>
  				<td class="fs-txt-left">{{ordem}}</td>
  				<td class="fs-txt-right">{{{premio}}}</td>

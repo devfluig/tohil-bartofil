@@ -159,6 +159,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 			
 			var premiado = "";
 			var v = "Sem premia&ccedil;&atilde;o";
+			var codigo = row["codparticipante"];
 			try {
 				v = parseFloat(row["vlrpremio"]);
 				rowclass = "success";
@@ -167,6 +168,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 				} else if (v > 0) {
 					premiado = "success";
 					v = campanhaparceirosanual.mask(v.toFixed(2));
+					codigo += "&nbsp;<span class='fluigicon fluigicon-certificate fluigicon-sm'></span>";
 					v = "R$ " + v;
 				} else {
 					v = "Sem premia&ccedil;&atilde;o";
@@ -175,10 +177,15 @@ var campanhaparceirosanual = SuperWidget.extend({
 				v = "Sem premia&ccedil;&atilde;o";
 			}
 			
+			if (row["codparticipante"] == campanhaparceiros.representante) {
+				premiado = "info";
+			}
+			
+			
 			if (row["codgrupo"] == campanhaparceirosanual.codgrupo) {
 				if (v == "") v = "Sem premia&ccedil;&atilde;o";
 				var o = {
-					"codigo": row["codparticipante"],
+					"codigo": codigo,
 					"pontos": row["pontos"],
 					"ordem": row["ordempremio"],
 					"premio": v,

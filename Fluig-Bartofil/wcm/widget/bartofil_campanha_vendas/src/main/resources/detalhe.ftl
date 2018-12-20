@@ -1,7 +1,7 @@
 <table class="table table-striped with-border table-hover table-condensed">
 	<thead>
   		<tr class="primary">
-  			<th class="fs-txt-left">Seq Pessoa</th>
+  			<th class="fs-txt-left">C&oacute;d. Cliente</th>
   			<th class="fs-txt-left">Tipo</th>
   			<th class="fs-txt-left">Ped Devolu&ccedil;&atilde;o</th>
   			<th class="fs-txt-left">Ped Venda 90</th>
