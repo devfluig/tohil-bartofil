@@ -63,10 +63,10 @@
 				    		<thead>
 				    			<tr class="primary">
 				    				<th class="fs-txt-left">${i18n.getTranslation('situacao')}</th>
-				    				<th class="fs-txt-left">Grupo</th>
-				    				<th class="fs-txt-left">Posi&ccedil;&atilde;o</th>
-				    				<th class="fs-txt-left">${i18n.getTranslation('rca')}</th>
-				    				<th class="fs-txt-left">Pontos</th>
+				    				<th class="fs-txt-right">Grupo</th>
+				    				<th class="fs-txt-right">Posi&ccedil;&atilde;o</th>
+				    				<th class="fs-txt-right">${i18n.getTranslation('rca')}</th>
+				    				<th class="fs-txt-right">Pontos</th>
 				    				<th class="fs-txt-right">${i18n.getTranslation('premiacao')}</th>
 				    				<th class="fs-txt-left">${i18n.getTranslation('equipe')}</th>
 				    				<th class="fs-txt-left">Detalhes</th>
@@ -82,10 +82,10 @@
 				    		<thead>
 				    			<tr class="primary">
 				    				<th class="fs-txt-left">${i18n.getTranslation('situacao')}</th>
-				    				<th class="fs-txt-left">Grupo</th>
-				    				<th class="fs-txt-left">Posi&ccedil;&atilde;o</th>
-				    				<th class="fs-txt-left">${i18n.getTranslation('rca')}</th>
-				    				<th class="fs-txt-left">Pontos</th>
+				    				<th class="fs-txt-right">Grupo</th>
+				    				<th class="fs-txt-right">Posi&ccedil;&atilde;o</th>
+				    				<th class="fs-txt-right">${i18n.getTranslation('rca')}</th>
+				    				<th class="fs-txt-right">Pontos</th>
 				    				<th class="fs-txt-right">${i18n.getTranslation('premiacao')}</th>
 				    				<th class="fs-txt-left">${i18n.getTranslation('equipe')}</th>
 				    			</tr>
@@ -98,9 +98,9 @@
 					    	{{#items}}
 					 			<tr class="{{premiado}}">
 					 				<td class="fs-txt-left">{{{situacao}}}</td>
-					 				<td class="fs-txt-left">{{grupo}}</td>
-					 				<td class="fs-txt-left">{{posicao}}</td>
-					 				<td class="fs-txt-left">{{{rca}}}</td>
+					 				<td class="fs-txt-right">{{grupo}}</td>
+					 				<td class="fs-txt-right">{{posicao}}</td>
+					 				<td class="fs-txt-right">{{{rca}}}</td>
 					 				<td class="fs-txt-right">{{{pontos}}}</td>
 					 				<td class="fs-txt-right">{{{premio}}}</td>
 					 				<td class="fs-txt-left">{{equipe}}</td>

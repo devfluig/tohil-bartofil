@@ -31,11 +31,11 @@
 		            		<thead class="detalhado">
 		            			<tr>
 		            				<th>${i18n.getTranslation('data.lancto')}</th>
-		            				<th>${i18n.getTranslation('evt')}</th>
-		            				<th>${i18n.getTranslation('carga')}</th>
-		            				<th>${i18n.getTranslation('nota.fiscal')}</th>
-		            				<th class="text-uppercase">${i18n.getTranslation('pedido')}</th>
-		            				<th class="fs-txt-left">${i18n.getTranslation('parc')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('evt')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('carga')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('nota.fiscal')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('pedido')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('parc')}</th>
 		            				<th>${i18n.getTranslation('historico')}</th>
 		            				<th class="fs-txt-right">${i18n.getTranslation('valor')}</th>
 		            				<th class="fs-txt-left">${i18n.getTranslation('d.c')}</th>

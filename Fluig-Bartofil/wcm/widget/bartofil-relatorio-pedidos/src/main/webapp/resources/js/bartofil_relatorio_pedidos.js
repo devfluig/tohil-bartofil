@@ -124,7 +124,7 @@ var relatorioPedidos = SuperWidget.extend({
 			}
 			
 		} else {
-			$(".titleResumo").html("DEVOLU&Ccedil;&Otildes;ES");
+			$(".titleResumo").html("");
 			for (var i=0; i<relatorioPedidos.list.length; i++) {
 				var item = relatorioPedidos.list[i];
 				
@@ -160,11 +160,11 @@ var relatorioPedidos = SuperWidget.extend({
 			dataRequest: dataRequest,
 			renderContent: ".template_datatable",
 		    header: [
-		        {'title': 'PEDIDO'},
+		        {'title': 'PEDIDO', "size": "fs-txt-right"},
 		        {'title': 'DATA'},
-		        {'title': 'VALOR'},
-		        {'title': 'COMISSÃO'},
-		        {'title': 'CLIENTE'},
+		        {'title': 'VALOR', "size": "fs-txt-right"},
+		        {'title': 'COMISSÃO', "size": "fs-txt-right"},
+		        {'title': 'CLIENTE', "size": "fs-txt-right"},
 		        {'title': 'NOME CLIENTE'},
 		        {'title': 'ORIGEM'},
 		        {'title': 'SIT.'}
@@ -374,14 +374,23 @@ var relatorioPedidos = SuperWidget.extend({
 		var t = relatorioPedidos.current["totais"];
 		for (var key in t) {
 			var o = t[key];
-			data.push([o["situacao"], o["total"]]);
+			data.push([o["situacao"] + " R$ " + relatorioPedidos.mask(o["total"].toFixed(2)), o["total"]]);
 			relatorioPedidos.pieChartData.push({ "situacao": o["situacao"], "codigo": key})
 		}
 		
+		var d = relatorioPedidos.current["despesas"];
+		if (d) {
+			data.push(["Devoluções R$ " + relatorioPedidos.mask(d["total"].toFixed(2)), d["total"]]);
+			relatorioPedidos.pieChartData.push({ "situacao": "Devoluções", "codigo": "ND"})
+		}
+		
 		var options = {
-			pieSliceText: 'value',
-			width: '300px',
-			height: '300px'
+			'width': '300px',
+			'height': '300px',
+			"sliceVisibilityThreshold": 0,
+			'tooltip' : {
+				'trigger': 'none'
+			}
         };
 		var chart = new google.visualization.PieChart(document.getElementById('pieSituacao'));
 
@@ -424,13 +433,14 @@ var relatorioPedidos = SuperWidget.extend({
 			var f = t["F"].cgo;
 			for (var key in f) {
 				var o = f[key];
-				data.push([key, o["total"]]);
+				data.push([key + " R$ " + relatorioPedidos.mask(o["total"].toFixed(2)), o["total"]]);
 			}
 			
 			var options = {
 				pieSliceText: 'value',
 				width: '300px',
-				height: '300px'
+				height: '300px',
+				sliceVisibilityThreshold: 0
 	        };
 			var chart = new google.visualization.PieChart(document.getElementById('pieFaturamento'));
 		    chart.draw(google.visualization.arrayToDataTable(data), options);

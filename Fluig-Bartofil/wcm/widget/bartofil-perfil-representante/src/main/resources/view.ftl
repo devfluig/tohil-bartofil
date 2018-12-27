@@ -88,17 +88,15 @@
 			    </div>						
 			</form>
    		</div>
-   		<div class="row">
-   			<div class="col-md-10 col-md-offset-1">
-	   			<a href="#" class="btn btn-info btn-lg button-home active" data-click-widget data-widget=widget-home role="button">HOME</a>
-				<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-extrato role="button">Extrato de Comiss&atilde;o</a>
-	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros role="button">Campanha Trimestral<br>Parceiros 100%</a>
-	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros-anual role="button">Campanha Anual<br>Parceiros 100%</a>
-	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-campanha role="button">Demais Concursos e<br>Campanha de Vendas</a>
-	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-pedidos role="button">Meus pedidos</a>
-	   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=universidade role="button">Universidade BCR</a>
-	   		</div>
-   		</div>
+   		<p>
+   			<a href="#" class="btn btn-info btn-lg button-home active" data-click-widget data-widget=widget-home role="button">HOME</a>
+			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-extrato role="button">Extrato de Comiss&atilde;o</a>
+   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros role="button">Campanha Trimestral<br>Parceiros 100%</a>
+  			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros-anual role="button">Campanha Anual<br>Parceiros 100%</a>
+   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-campanha role="button">Demais Concursos e<br>Campanha de Vendas</a>
+   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-pedidos role="button">Meus pedidos</a>
+   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=universidade role="button">Universidade BCR</a>
+   		</p>
 	</div>
 	
 	<div class="page-header widget-home">
@@ -108,7 +106,7 @@
 	<div class="row widget-home">
 		<div class="col-sm-4"><div id="chartPie" style="width: 500px; height: 300px;"></div></div>
 		<div class="col-sm-4">
-			<div id="chartGauge" style="margin-left: 38px;"></div>
+			<div id="chartGauge" style="margin-left: 82px;"></div>
 			<div class="legend-chart-gauge col-sm-8">
 				<ul class="list-group">
 				    <li class="list-group-item list-group-item-info list-group-item-custom">Potencial de Venda <b class="valor-potencial"></b></li>
@@ -133,32 +131,31 @@
 	    <h2>COMISS&Atilde;O</h2>
 	</div>
 	
-	<div class="row widget-home">
-		<form class="form-horizontal" role="form">
-			<div class="form-group">
-				<label class="col-sm-3 control-label">Comissão sobre venda faturada:</label>
-				<div class="col-sm-2">
-					<input type="email" class="form-control" id="comissaoVendaFaturada" disabled>
-		    	</div>
+	<form class="form-horizontal widget-home" role="form">
+		<div class="form-group">
+			<label class="col-sm-3 control-label">Comissão sobre venda faturada:</label>
+			<div class="col-sm-2">
+				<input type="text" class="form-control fs-txt-right" id="comissaoVendaFaturada" disabled>
 	    	</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label">Comissão sobre venda a faturar:</label>
-				<div class="col-sm-2">
-					<input type="email" class="form-control" id="comissaoVendaAFatura" disabled>
-		    	</div>
-		    	<p class="help-block">(Em análise + Liberado + Em separação)</p>
+    	</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">Comissão sobre venda a faturar:</label>
+			<div class="col-sm-2">
+				<input type="text" class="form-control fs-txt-right" id="comissaoVendaAFatura" disabled>
 	    	</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label">TOTAL:</label>
-				<div class="col-sm-2">
-					<input type="email" class="form-control" id="totalComissao" disabled>
-		    	</div>
-				<div class="col-sm-2">
-					<button class="btn btn-primay" data-btn-por-cfa role="button">Por CFA</button>					
-		    	</div>
+	    	<p class="help-block">(Em análise + Liberado + Em separação)</p>
+    	</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label">TOTAL:</label>
+			<div class="col-sm-2">
+				<input type="text" class="form-control fs-txt-right"  id="totalComissao" disabled>
 	    	</div>
-	    </form>
-	</div>
+			<div class="col-sm-2">
+				<button class="btn btn-primay" data-btn-por-cfa role="button">Por CFA</button>					
+	    	</div>
+    	</div>
+    </form>
+    
 	<div class="row widget-home">
 		<div class="col-sm-6 col-sm-offset-1">
 			<button class="btn btn-primay" data-btn-show-skus role="button">Quantidade de Itens (SKUs) dos Parceiros vendidos no mês: <b class="qtdeItensSkus"></b> itens</button>					
@@ -177,7 +174,7 @@
 				<th class="fs-txt-right">Comiss&atilde;o Recebida</th>
 				<th class="fs-txt-right">Pr&ecirc;mios Recebidos (em dinheiro)</th>
 				<th class="fs-txt-right">Valor Recebido</th>
-				<th class="fs-txt-left">%</th>
+				<th class="fs-txt-right">%</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -192,16 +189,16 @@
 					<th>CFA/Produto</th>
 					<th class="fs-txt-right">Valor Faturado</th>
 					<th class="fs-txt-right">Comiss&atilde;o Recebida (R$)</th>
-					<th>Comiss&atilde;o M&eacute;dia (%)</th>
+					<th class="fs-txt-right">Comiss&atilde;o M&eacute;dia (%)</th>
 				</tr>
 			</thead>
 			<tbody>
 		        {{#items}}
 			    	<tr data-click-cfa class="fs-cursor-pointer" data-id="{{cfa}}">
 			    		<td>{{cfa}}</td>
-			    		<td class="fs-txt-right">{{valorFaturado}}</td>
-			    		<td class="fs-txt-right">{{comissaoRecebida}}</td>
-			    		<td>{{percentual}}</td>
+			    		<td class="fs-txt-right">R$ {{valorFaturado}}</td>
+			    		<td class="fs-txt-right">R$ {{comissaoRecebida}}</td>
+			    		<td class="fs-txt-right">{{percentual}}%</td>
 			    	</tr>
 		        {{/items}}
 			</tbody>
@@ -212,11 +209,11 @@
         {{#items}}
     	<tr class="{{css}}">
     		<td class="fs-txt-left">{{mes}}</td>
-    		<td class="fs-txt-right">{{valorFaturado}}</td>
-    		<td class="fs-txt-right">{{comissaoRecebida}}</td>
-    		<td class="fs-txt-right">{{premiosRecebidos}}</td>
-    		<td class="fs-txt-right">{{valorTotal}}</td>
-    		<td class="fs-txt-left">{{percentual}}</td>
+    		<td class="fs-txt-right">R$ {{valorFaturado}}</td>
+    		<td class="fs-txt-right">R$ {{comissaoRecebida}}</td>
+    		<td class="fs-txt-right">R$ {{premiosRecebidos}}</td>
+    		<td class="fs-txt-right">R$ {{valorTotal}}</td>
+    		<td class="fs-txt-right">{{percentual}}%</td>
     	</tr>
         {{/items}}
     </script>
@@ -237,7 +234,7 @@
 	        {{#items}}
 				<tr>
 					<td>{{cliente}}</td>
-					<td class="fs-txt-right">{{valor}}</td>
+					<td class="fs-txt-right">R$ {{valor}}</td>
 				</tr>
 	        {{/items}}
 			</tbody>

@@ -1,11 +1,11 @@
 <div id="relatorioPedidos_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide widget-pedidos" data-params="relatorioPedidos.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}' })">
 	<script type="text/template" class="template_datatable">
 	    <tr>
-	        <td>{{nropedidovenda}}</td>
+	        <td class="fs-txt-right">{{nropedidovenda}}</td>
 	        <td class="fs-txt-left">{{datainclusaof}}</td>
 	        <td class="fs-txt-right">{{valor}}</td>
 	        <td class="fs-txt-right">{{comissao}}</td>
-	        <td class="fs-txt-left">{{codcliente}}</td>
+	        <td class="fs-txt-right">{{codcliente}}</td>
 	        <td>{{nomecliente}}</td>
 	        <td class="fs-txt-left">{{descorigempedido}}</td>
 	        <td class="fs-txt-left">{{situacao}}</td>
@@ -21,7 +21,7 @@
 			<div class="panel panel-info">
 		    	<div class="panel-heading">SITUA&Ccedil;&Atilde;O</div>
 		    	<div class="panel-body">
-					<div class="col-md-10 col-sm-offset-1">
+					<div class="col-md-11 col-sm-offset-1">
 						<div id="pieSituacao"></div>
 					</div>
 		    	</div>

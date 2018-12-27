@@ -352,7 +352,7 @@ var campanhavendas = SuperWidget.extend({
 			p = row["pontos"];
 		}
 		
-		var htmlmyrank = "<tr data-click-detail class='fs-cursor-pointer " + (row["situacao"].toLowerCase() == "premiado" ? "success" : "") + "'><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td><td><span class='fluigicon fluigicon-th'></span></td></tr>";
+		var htmlmyrank = "<tr data-click-detail class='fs-cursor-pointer " + (row["situacao"].toLowerCase() == "premiado" ? "success" : "") + "'><td class='fs-txt-left'>" + row["situacao"] + "</td><td class='fs-txt-right'>" + row["codgrupo"] + "</td><td class='fs-txt-right'>" + row["ordempremio"] + "</td><td class='fs-txt-right'>" + row["codparticipante"] + "</td><td class='fs-txt-right'>" + p + "</td><td class='fs-txt-right'>" + v + "</td><td>" + row["descequipe"] + "</td><td><span class='fluigicon fluigicon-th'></span></td></tr>";
 		$('#table-myranking > tbody').html(htmlmyrank);
 		
 		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);

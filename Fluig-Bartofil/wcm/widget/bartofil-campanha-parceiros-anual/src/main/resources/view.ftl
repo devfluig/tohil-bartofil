@@ -59,9 +59,9 @@
    	<table id="table-campanha-anual" class="table table-striped with-border table-hover table-condensed tab-campannha-anual">
    		<thead>
    			<tr class="primary">
-   				<th class="fs-txt-left">C&oacute;digo</th>
-   				<th class="fs-txt-left">Pontos</th>
-   				<th class="fs-txt-left">Ordem</th>
+   				<th class="fs-txt-right">C&oacute;digo</th>
+   				<th class="fs-txt-right">Pontos</th>
+   				<th class="fs-txt-right">Ordem</th>
    				<th class="fs-txt-right">Pr&ecirc;mio</th>
    				<th class="fs-txt-left">Equipe</th>
    			</tr>
@@ -72,9 +72,9 @@
    	<script type="text/template" class="tpl-item-campanha-anual">
     	{{#items}}
  			<tr class="{{premiado}}">
- 				<td class="fs-txt-left">{{{codigo}}}</td>
- 				<td class="fs-txt-left">{{pontos}}</td>
- 				<td class="fs-txt-left">{{ordem}}</td>
+ 				<td class="fs-txt-right">{{{codigo}}}</td>
+ 				<td class="fs-txt-right">{{pontos}}</td>
+ 				<td class="fs-txt-right">{{ordem}}</td>
  				<td class="fs-txt-right">{{{premio}}}</td>
  				<td class="fs-txt-left">{{equipe}}</td>
  			</tr>
@@ -86,8 +86,8 @@
  			<tr>
  				<td class="fs-txt-left">{{datainicio}}</td>
  				<td class="fs-txt-left">{{datafinal}}</td>
- 				<td class="fs-txt-left">{{apurado}}</td>
- 				<td class="fs-txt-left">{{pontos}}</td>
+ 				<td class="fs-txt-right">{{apurado}}</td>
+ 				<td class="fs-txt-right">{{pontos}}</td>
  			</tr>
        	{{/items}}
 	</script>

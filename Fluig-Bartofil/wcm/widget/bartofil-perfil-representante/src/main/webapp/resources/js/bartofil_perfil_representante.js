@@ -200,7 +200,9 @@ var perfilrepresentante = SuperWidget.extend({
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
 			var o = [SituacaoEnum.properties[row["situacao"]].name, parseFloat(row["valortotalgeral"])];
-			data.push(o);
+			if (parseFloat(row["valortotalgeral"]) > 0) {
+				data.push(o);
+			}
 			if (row["situacao"] == "F") {
 				comissaoFaturada += parseFloat(row["valortotalcomissaogeral"]);
 			} else if (row["situacao"] == "C") {
@@ -222,7 +224,8 @@ var perfilrepresentante = SuperWidget.extend({
 		var options = {
 			pieSliceText: 'value',
 			width: '300px',
-			height: '300px'
+			height: '300px',
+			sliceVisibilityThreshold: 0
         };
 		var chart = new google.visualization.PieChart(document.getElementById('chartPie'));
 	    chart.draw(google.visualization.arrayToDataTable(data), options);		

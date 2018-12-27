@@ -18,11 +18,11 @@
 		<form class="form-inline" role="form">
 			<label>Ordem pr&ecirc;mio:</label>
 	    	<div class="form-group">
-	            <input type="text" class="form-control" id="ordem-premio-trimestre" readonly value="{{ordem}}">
+	            <input type="text" class="form-control fs-txt-right" id="ordem-premio-trimestre" readonly value="{{ordem}}">
 	    	</div>
 			<label>Situa&ccedil;&atilde;o:</label>
 	    	<div class="form-group">
-	            <input type="text" class="form-control" id="situacao-trimestre" readonly value="{{{situacao}}}" >
+	            <input type="text" class="form-control fs-txt-right" id="situacao-trimestre" readonly value="{{{situacao}}}" >
 	    	</div>
 			<label>Data processamento:</label>
 	    	<div class="form-group">
@@ -30,7 +30,7 @@
 	    	</div>
 			<label>Pontos:</label>
 	    	<div class="form-group">
-	            <input type="text" class="form-control" id="pontos-trimestre" readonly value="{{pontos}}">
+	            <input type="text" class="form-control fs-txt-right" id="pontos-trimestre" readonly value="{{pontos}}">
 	    	</div>
 		</form>
 	</script>	
@@ -76,9 +76,9 @@
    	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed tab-colocacao">
    		<thead>
    			<tr class="primary">
-   				<th class="fs-txt-left">${i18n.getTranslation('codigo')}</th>
-   				<th class="fs-txt-left">${i18n.getTranslation('pontos')}</th>
-   				<th class="fs-txt-left">${i18n.getTranslation('ordem')}</th>
+   				<th class="fs-txt-right">${i18n.getTranslation('codigo')}</th>
+   				<th class="fs-txt-right">${i18n.getTranslation('pontos')}</th>
+   				<th class="fs-txt-right">${i18n.getTranslation('ordem')}</th>
    				<th class="fs-txt-right">${i18n.getTranslation('premio')}</th>
    				<th class="fs-txt-left">${i18n.getTranslation('equipe')}</th>
    			</tr>
@@ -89,9 +89,9 @@
    	<script type="text/template" class="tpl-item-ranking">
     	{{#items}}
  			<tr class="{{premiado}}">
- 				<td class="fs-txt-left">{{{codigo}}}</td>
- 				<td class="fs-txt-left">{{pontos}}</td>
- 				<td class="fs-txt-left">{{{ordem}}}</td>
+ 				<td class="fs-txt-right">{{{codigo}}}</td>
+ 				<td class="fs-txt-right">{{pontos}}</td>
+ 				<td class="fs-txt-right">{{{ordem}}}</td>
  				<td class="fs-txt-right">{{{premio}}}</td>
  				<td class="fs-txt-left">{{equipe}}</td>
  			</tr>
