@@ -369,7 +369,7 @@ var relatorioPedidos = SuperWidget.extend({
 		}; 
 		
 		console.log('relatorioPedidos.current', relatorioPedidos.current)
-		
+		relatorioPedidos.pieChartData = [];
 		var data = [["Situação", "Valor"]];
 		var t = relatorioPedidos.current["totais"];
 		for (var key in t) {
@@ -491,6 +491,26 @@ var relatorioPedidos = SuperWidget.extend({
 		if (relatorioPedidos.listConditions != null && relatorioPedidos.listItems != null) {
 			relatorioPedidos.sortInt(relatorioPedidos.listConditions, "nroparcela");
 			relatorioPedidos.sortInt(relatorioPedidos.listItems, "seqitem");
+			
+			for (var i=0; i<relatorioPedidos.listConditions.length; i++) {
+				var row = relatorioPedidos.listConditions[i];
+				var valorparcela = parseFloat(row["valorparcela"].replace(/,/g, '').replace(",", "."));
+				row["valorparcela"] = relatorioPedidos.mask(valorparcela.toFixed(2))
+				relatorioPedidos.listConditions[i] = row;
+			}
+			
+			for (var i=0; i<relatorioPedidos.listItems.length; i++) {
+				var row = relatorioPedidos.listItems[i];
+				var valorpedido = parseFloat(row["valorpedido"].replace(/,/g, '').replace(",", "."));
+				var valoratendido = parseFloat(row["valoratendido"].replace(/,/g, '').replace(",", "."));
+				var valortotalcomissao = parseFloat(row["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+				var valortotalacobrar = parseFloat(row["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
+				row["valorpedido"] = relatorioPedidos.mask(valorpedido.toFixed(2));
+				row["valoratendido"] = relatorioPedidos.mask(valoratendido.toFixed(2));
+				row["valortotalcomissao"] = relatorioPedidos.mask(valortotalcomissao.toFixed(2));
+				row["valortotalacobrar"] = relatorioPedidos.mask(valortotalacobrar.toFixed(2));
+				relatorioPedidos.listItems[i] = row;
+			}
 			
 			var params = { 
 				"condicoes": relatorioPedidos.listConditions, 

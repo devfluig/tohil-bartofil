@@ -9,7 +9,7 @@
 		<#list params['values'] as row>
 			<tr> 
 	  			<td class="fs-txt-left">${row.produto}</td>
-	  			<td class="fs-txt-right">${row.valorFaturado}</td>
+	  			<td class="fs-txt-right">R$ ${row.valorFaturado}</td>
 	  		</tr>
 		</#list>
   	</tbody>
