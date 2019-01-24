@@ -12,7 +12,7 @@
 			    		<select class="form-control" id="periodo" data-change-periodo>
 						    <script type="text/template" class="tpl-continuous-scroll-periodo">
 						        {{#items}}
-					    			<option data-month="{{mes}}" data-year="{{ano}}">{{periodo}}</option>
+					    			<option class="{{class}}" data-month="{{mes}}" data-year="{{ano}}">{{periodo}}</option>
 						        {{/items}}
 						    </script>
 			    		</select>

@@ -10,6 +10,7 @@
 		<div name="formatBar" id="formatBar"></div>
 		<div id="edicaoPagina" class="clearfix">
 	<#else>
+		<@wcm.header />
 		<div id="visualizacaoPagina" class="clearfix">
 	</#if>
 			<div id="layout_home" class="super-widget wcm-widget-class fluig-style-guide" data-params="layout.instance()">

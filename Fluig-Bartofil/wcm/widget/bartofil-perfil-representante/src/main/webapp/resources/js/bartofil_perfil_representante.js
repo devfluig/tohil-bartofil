@@ -36,27 +36,28 @@ var perfilrepresentante = SuperWidget.extend({
 	listDecendio: {},
 	
 	init : function() {
-		perfilrepresentante.loading.show();
-		perfilrepresentante.grouprca = this.grouprca;
-		perfilrepresentante.representante = WCMAPI.userLogin;
-		
-		google.charts.load('current', {'packages':['corechart']});
-		google.charts.load('current', {'packages':['gauge']});
-		
-		if (this.isrca() == false) {
-			this.showrepresentative();
-		} else {
-			this.setupperiodo();
-			this.getfoto();
+		if (this.isEditMode == false) {
+			perfilrepresentante.loading.show();
+			perfilrepresentante.grouprca = this.grouprca;
+			perfilrepresentante.representante = WCMAPI.userLogin;
+			
+			google.charts.load('current', {'packages':['corechart']});
+			google.charts.load('current', {'packages':['gauge']});
+			
+			if (this.isrca() == false) {
+				this.showrepresentative();
+			} else {
+				this.setupperiodo();
+				this.getfoto();
+			}
+			
+			$(".widget-parceiros").hide();
+			$(".widget-extrato").hide();
+			$(".widget-pedidos").hide();
+			$(".widget-campanha").hide();
+			$(".widget-parceiros-anual").hide();
+			$(".wcm-header").hide();
 		}
-		
-		$(".widget-parceiros").hide();
-		$(".widget-extrato").hide();
-		$(".widget-pedidos").hide();
-		$(".widget-campanha").hide();
-		$(".widget-parceiros-anual").hide();
-		$(".wcm-header").hide();
-		
 	},
 
 	bindings : {
@@ -102,8 +103,8 @@ var perfilrepresentante = SuperWidget.extend({
 		
 		var m = moment().locale(locale);
 		var list = []; 
-		for (var i=0; i<2; i++) {
-			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MMMM") + "/" + m.format("YYYY") };
+		for (var i=0; i<6; i++) {
+			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MMMM") + "/" + m.format("YYYY"), "class": (i<2 ? "" : "widget-extrato") };
 			list.push(o);
 			m.subtract(1, 'months');
 		}
@@ -113,6 +114,7 @@ var perfilrepresentante = SuperWidget.extend({
 		var html = Mustache.render(tpl, data);
 		$('#periodo').append(html);
 		
+		$(".widget-extrato").hide();
 		
 	},
 	
@@ -189,6 +191,13 @@ var perfilrepresentante = SuperWidget.extend({
 	onReadyGetSituacaoConsolidado: function(rows) {
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
 			perfilrepresentante.getMeta();
+			perfilrepresentante.loading.hide();
+			return;
+		}
+		var values = rows["values"];
+		if (values[0].situacao == "erro" || values[0].situacao == "undefined") {
+			WCMC.messageError('Representante não encontrado!');	    			
+			perfilrepresentante.loading.hide();
 			return;
 		}
 		
@@ -522,6 +531,7 @@ var perfilrepresentante = SuperWidget.extend({
 		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
 		
+		$(".modal").remove();
 		FLUIGC.modal({
 		    title:  "Extrato de Comissao Detalhado",
 		    content: html,
@@ -742,6 +752,7 @@ var perfilrepresentante = SuperWidget.extend({
 			"values": data
 		};
 		
+		$(".modal").remove();
 		WCMAPI.convertFtlAsync(perfilrepresentante.code, 'skus.ftl', { "params": params },
 				function (data) {
 				   FLUIGC.modal({
@@ -788,6 +799,7 @@ var perfilrepresentante = SuperWidget.extend({
 		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
 
+		$(".modal").remove();
 		FLUIGC.modal({
 		    title:  $(el).text(),
 		    content: html,

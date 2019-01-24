@@ -81,7 +81,8 @@ var campanhavendas = SuperWidget.extend({
 		console.log("onreadyshowdetail")
 		
 		var params = { "values": rows.values }
-		
+
+		$(".modal").remove();
 		WCMAPI.convertFtlAsync(campanhavendas.code, 'detalhe.ftl', { "params": params },
 				function (data) {
 				   FLUIGC.modal({
@@ -277,7 +278,7 @@ var campanhavendas = SuperWidget.extend({
 			}
 
 			var premiado = "";
-			if (row["situacao"].toLowerCase() == "premiado") {
+			if (row["situacao"] && row["situacao"].toLowerCase() == "premiado") {
 				premiado = 'success';
 				codigo += "&nbsp;<span class='fluigicon fluigicon-certificate fluigicon-sm'></span>";
 			} 
@@ -352,7 +353,9 @@ var campanhavendas = SuperWidget.extend({
 			p = row["pontos"];
 		}
 		
-		var htmlmyrank = "<tr data-click-detail class='fs-cursor-pointer " + (row["situacao"].toLowerCase() == "premiado" ? "success" : "") + "'><td class='fs-txt-left'>" + row["situacao"] + "</td><td class='fs-txt-right'>" + row["codgrupo"] + "</td><td class='fs-txt-right'>" + row["ordempremio"] + "</td><td class='fs-txt-right'>" + row["codparticipante"] + "</td><td class='fs-txt-right'>" + p + "</td><td class='fs-txt-right'>" + v + "</td><td>" + row["descequipe"] + "</td><td><span class='fluigicon fluigicon-th'></span></td></tr>";
+		var situacao = (row["situacao"] ? row["situacao"] : "");
+		
+		var htmlmyrank = "<tr data-click-detail class='fs-cursor-pointer " + (situacao.toLowerCase() == "premiado" ? "success" : "") + "'><td class='fs-txt-left'>" + situacao + "</td><td class='fs-txt-right'>" + row["codgrupo"] + "</td><td class='fs-txt-right'>" + row["ordempremio"] + "</td><td class='fs-txt-right'>" + row["codparticipante"] + "</td><td class='fs-txt-right'>" + p + "</td><td class='fs-txt-right'>" + v + "</td><td>" + row["descequipe"] + "</td><td><span class='fluigicon fluigicon-th'></span></td></tr>";
 		$('#table-myranking > tbody').html(htmlmyrank);
 		
 		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);

@@ -33,26 +33,11 @@ var campanhaparceiros = SuperWidget.extend({
 		campanhaparceiros.representante = perfilrepresentante.representante;
 		campanhaparceiros.grouprca = perfilrepresentante.grouprca;
 		
+		var list = []; 
 		var today = moment(new Date());
-		var trimestre = 0;
-		if (today.date() < 17) {
-			if (today.month() == 0) {
-				trimestre = 4;
-			} else {
-				trimestre = today.quarter() - 1;
-			}
-		} else {
-			trimestre = today.quarter();
-		}
-		
+		trimestre = "0" + today.quarter();
+		$('#trimestre').append(trimestre);
 		campanhaparceiros.trimestre = trimestre;
-		$("#trimestre").val(trimestre);
-		
-		$("#trimestre option").each(function() {
-		    if ($(this).val() > trimestre) {
-		    	$(this).hide();
-		    }
-		});		
 		
 		this.getranking();
 		
@@ -65,6 +50,7 @@ var campanhaparceiros = SuperWidget.extend({
 			'change-paginacao-parceiro': ['change_changepaginacao'],
 			"change-representante": ['change_changerepresentante'],
 			'change-ordenar-parceiro': ['change_changeordenacao'],
+			'change-periodo': ['change_changePeriodo'],
 			'save-preferences-parceiro': ['click_savePreferences'],
 			'click-tab-parceiro': ['click_showtab'],
 			'change-trimestre-parceiro': ['change_changetrimestre'],
@@ -81,6 +67,19 @@ var campanhaparceiros = SuperWidget.extend({
 		campanhaparceiros.limit = parseInt($("#paginacao").val());
 		campanhaparceiros.getranking();
 		
+	},
+	
+	changePeriodo: function(el ,ev) {
+		campanhaparceiros.loading.show();
+		campanhaparceiros.representante = perfilrepresentante.representante;
+		campanhaparceiros.list = [];
+		campanhaparceiros.offset = 0;
+		$(".tab-detalhamento").html("");
+		campanhaparceiros.current = null;
+		campanhaparceiros.trimestre = $("#trimestre").val();
+		campanhaparceiros.limit = parseInt($("#paginacao").val());
+		campanhaparceiros.getfullranking();		
+		campanhaparceiros.getdetalhamentos();
 	},
 	
 	savePreferences: function(el, ev) {
@@ -107,6 +106,7 @@ var campanhaparceiros = SuperWidget.extend({
 		campanhaparceiros.offset = 0;
 		campanhaparceiros.limit = parseInt($("#paginacao").val());
 		campanhaparceiros.getfullranking();		
+		campanhaparceiros.getdetalhamentos();		
 	},
 	showtab: function(el, ev) {
 		$(el).parent().find("li").removeClass("active")
@@ -151,15 +151,19 @@ var campanhaparceiros = SuperWidget.extend({
 	
 	onreadygetranking: function(rows) {
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			$('#table-ranking > tbody').html("");
+			$(".tab-detalhamento").html("");
+			
 			campanhaparceiros.loading.hide();
-			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking!');	    			
 			return;
 		}
 		
 		var values = rows["values"];
 		if (values[0].apelido == "erro") {
+			$('#table-ranking > tbody').html("");
+			$(".tab-detalhamento").html("");
+			
 			campanhaparceiros.loading.hide();
-			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking!');	    			
 			return;
 		}
 		
@@ -202,13 +206,13 @@ var campanhaparceiros = SuperWidget.extend({
 	
 	getfullranking: function() {
 		
-		var today = new Date();
-		var periodo = today.getFullYear() + "0" + campanhaparceiros.trimestre;
-
 		var c1 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("limit", "9999", "9999", ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("divisao", campanhaparceiros.mydivision, campanhaparceiros.mydivision, ConstraintType.MUST, false);
-		var c4 = DatasetFactory.createConstraint("periodo", periodo, periodo, ConstraintType.MUST, false);
+		
+		var ano = $("#periodo :selected").data("year");
+		
+		var c4 = DatasetFactory.createConstraint("periodo", ano + campanhaparceiros.trimestre, ano + campanhaparceiros.trimestre, ConstraintType.MUST, false);
 		var c5 = DatasetFactory.createConstraint("equipesuperior", campanhaparceiros.equipesuperior, campanhaparceiros.equipesuperior, ConstraintType.MUST, false);
 
 		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3, c4, c5], null, {"success": campanhaparceiros.onreadygetfullranking} );
@@ -217,14 +221,18 @@ var campanhaparceiros = SuperWidget.extend({
 	
 	onreadygetfullranking: function(rows) {
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			$('#table-ranking > tbody').html("");
+			$(".tab-detalhamento").html("");
+			
 			campanhaparceiros.loading.hide();
-			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking geral!');	    			
 			return;
 		}
 		var values = rows["values"];
 		if (values[0].tipapuracao == "erro") {
+			$('#table-ranking > tbody').html("");
+			$(".tab-detalhamento").html("");
+			
 			campanhaparceiros.loading.hide();
-			WCMC.messageError('Campanhas de Parceiros 100% não possui ranking geral!');	    			
 			return;
 		}
 		
@@ -320,7 +328,6 @@ var campanhaparceiros = SuperWidget.extend({
 			}
 		}
 		
-		
 		var tpl = $('.tpl-item-ranking').html();
 		var data = { "items": mylist };
 		var html = Mustache.render(tpl, data);
@@ -336,8 +343,10 @@ var campanhaparceiros = SuperWidget.extend({
 		var c1 = DatasetFactory.createConstraint("representante", campanhaparceiros.representante, campanhaparceiros.representante, ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("limit", "999", "999", ConstraintType.MUST, false);
+		var ano = $("#periodo :selected").data("year");
+		var c4 = DatasetFactory.createConstraint("periodo", ano + campanhaparceiros.trimestre, ano + campanhaparceiros.trimestre, ConstraintType.MUST, false);
 
-		DatasetFactory.getDataset("ds_campanha_parceiros_detalhe", null, [c1, c2, c3], null, {"success": campanhaparceiros.onreadygetdetalhamentos} );
+		DatasetFactory.getDataset("ds_campanha_parceiros_detalhe", null, [c1, c2, c3, c4], null, {"success": campanhaparceiros.onreadygetdetalhamentos} );
 		
 	},
 	

@@ -65,10 +65,10 @@
 		<label class="fs-text-uppercase">${i18n.getTranslation('trimestre')}:</label>
     	<div class="form-group">
     		<select class="form-control" id="trimestre" data-change-trimestre-parceiro>
-    			<option value="1">1</option>
-    			<option value="2">2</option>
-    			<option value="3">3</option>
-    			<option value="4">4</option>
+    			<option value="01">1</option>
+    			<option value="02">2</option>
+    			<option value="03">3</option>
+    			<option value="04">4</option>
     		</select>
     	</div>
 	</form>

@@ -54,7 +54,7 @@ function createDataset(fields, constraints, sortFields) {
         var clientService = fluigAPI.getAuthorizeClientService();
         var data = {
                 companyId : getValue("WKCompany") + '',
-                serviceCode : 'servico_api_pedido_venda',
+                serviceCode : 'RCA',
                 //endpoint : '/v1/pedidovenda?codrepresentante='+codRepresentante+'&datainclusaoinicio='+dataInclusaoInicio+'&datainclusaofim='+datainclusaofim+'&sessionid='+sessionid+'&limit='+limit+'&naturezaoperacao='+naturezaoperacao+'&order=nropedidovenda&fields=nropedidovenda,situacao,origem,cgo,codcliente,motcancelamento,valortotalpedido,nomecliente,datainclusao,valortotalacobrar,valortotalcomissao,descparcelamento,metavlrvenda,naturezaoperacao,descorigempedido,diasuteisrestantes',
                 endpoint : '/v1/pedidovenda?codrepresentante='+codRepresentante+'&datainclusaoinicio='+dataInclusaoInicio+'&datainclusaofim='+datainclusaofim+'&sessionid='+sessionid+'&limit='+limit+'&naturezaoperacao='+naturezaoperacao+'&order=nropedidovenda',
                 method : 'get',

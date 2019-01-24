@@ -10,6 +10,7 @@ function createDataset(fields, constraints, sortFields) {
 	var limit = 999;
 	var offset = 0;
 	var representante = "12252";
+	var periodo = "201901";
 	if (constraints != null) {
 		for (var c in constraints){
 			if (constraints[c].getFieldName() == "limit") {
@@ -18,6 +19,8 @@ function createDataset(fields, constraints, sortFields) {
 				offset = +(constraints[c].getInitialValue()); 
 			} else if (constraints[c].getFieldName() == "representante") {
 				representante = constraints[c].getInitialValue(); 
+			} else if (constraints[c].getFieldName() == "periodo") {
+				periodo = constraints[c].getInitialValue(); 
 			}
 		}
 	}
@@ -30,7 +33,7 @@ function createDataset(fields, constraints, sortFields) {
         var data = {
             companyId : getValue("WKCompany") + '',
             serviceCode : 'RCA',
-            endpoint : "/v1/parceiro/" + representante + "/detalhe?sessionid=123abc&offset=" + offset + "&limit=" + limit,
+            endpoint : "/v1/parceiro/" + representante + "/detalhe?sessionid=123abc&offset=" + offset + "&limit=" + limit + "&periodo=" + periodo,
             method : 'get',     
             timeoutService: '1000',
 	        options : {

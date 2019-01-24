@@ -203,6 +203,7 @@ var relatorioPedidos = SuperWidget.extend({
 		relatorioPedidos.dataTable.on('fluig.datatable.onselectrow', function(data) { 
 			console.log(data);
 			data.stopPropagation();
+			$(".modal").remove();
 			var row = relatorioPedidos.dataTable.getData()[data.selectedIndex[0]];
 			console.log("row", row)
 			relatorioPedidos.onClickPedido(row["nropedidovenda"]);
@@ -260,7 +261,6 @@ var relatorioPedidos = SuperWidget.extend({
 		console.log("dataset", rows)
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
 			relatorioPedidos.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
 			return;
 		}
 
