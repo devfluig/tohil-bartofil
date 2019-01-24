@@ -120,7 +120,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 		var m = moment(row["dtaprocessamento"])
 		
 		$("#ordem-premio-anual").val(row["ordempremio"]);
-		$("#situacao-anual").val(row["sitpremiado"]);
+		$("#situacao-anual").val((row["sitpremiado"] == "" ? "Sem premia&ccedil;&atilde;o" : row["sitpremiado"]));
 		$("#data-processamento-anual").val(m.format("DD/MM/YYYY"));
 		$("#status-anual").val(row["status"]);
 		
@@ -158,7 +158,8 @@ var campanhaparceirosanual = SuperWidget.extend({
 			var row = values[i];
 			
 			var premiado = "";
-			var v = "";
+			var v = "Sem premia&ccedil;&atilde;o";
+			var codigo = row["codparticipante"];
 			try {
 				v = parseFloat(row["vlrpremio"]);
 				rowclass = "success";
@@ -167,17 +168,24 @@ var campanhaparceirosanual = SuperWidget.extend({
 				} else if (v > 0) {
 					premiado = "success";
 					v = campanhaparceirosanual.mask(v.toFixed(2));
+					codigo += "&nbsp;<span class='fluigicon fluigicon-certificate fluigicon-sm'></span>";
 					v = "R$ " + v;
 				} else {
-					v = "";
+					v = "Sem premia&ccedil;&atilde;o";
 				}
 			} catch (e) {
-				v = row["vlrpremio"];
+				v = "Sem premia&ccedil;&atilde;o";
 			}
 			
+			if (row["codparticipante"] == campanhaparceiros.representante) {
+				premiado = "info";
+			}
+			
+			
 			if (row["codgrupo"] == campanhaparceirosanual.codgrupo) {
+				if (v == "") v = "Sem premia&ccedil;&atilde;o";
 				var o = {
-					"codigo": row["codparticipante"],
+					"codigo": codigo,
 					"pontos": row["pontos"],
 					"ordem": row["ordempremio"],
 					"premio": v,

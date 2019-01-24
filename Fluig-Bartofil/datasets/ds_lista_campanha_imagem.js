@@ -6,7 +6,7 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("prioridade");
 	dataset.addColumn("campanha");
 	
-	var pasta = 267;
+	var pasta = 12;
 	var empresa = 1;
 	if (constraints != null) {
 		for (var c in constraints){

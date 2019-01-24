@@ -81,7 +81,8 @@ var campanhavendas = SuperWidget.extend({
 		console.log("onreadyshowdetail")
 		
 		var params = { "values": rows.values }
-		
+
+		$(".modal").remove();
 		WCMAPI.convertFtlAsync(campanhavendas.code, 'detalhe.ftl', { "params": params },
 				function (data) {
 				   FLUIGC.modal({
@@ -190,7 +191,7 @@ var campanhavendas = SuperWidget.extend({
 		console.log($(el).data("id"));
 		
 		$('#table-myranking > tbody').html("");
-		$('#table-ranking > tbody').html("");
+		$('#table-ranking-vendas > tbody').html("");
 		$(".prev-image").hide();
 		$(".next-image").hide();
 		
@@ -245,11 +246,13 @@ var campanhavendas = SuperWidget.extend({
 			return;
 		}
 		
-		var htmlrank = "";
+		var items = [];
+		
 		for (var i = 0; i<values.length; i++) {
 			var row = values[i];
 			
 			var v = "";
+			var codigo = row["codparticipante"];
 			try {
 				v = parseFloat(row["vlrpremio"]);
 				if (v > 0) {
@@ -273,13 +276,37 @@ var campanhavendas = SuperWidget.extend({
 			} catch (e) {
 				p = row["pontos"];
 			}
+
+			var premiado = "";
+			if (row["situacao"] && row["situacao"].toLowerCase() == "premiado") {
+				premiado = 'success';
+				codigo += "&nbsp;<span class='fluigicon fluigicon-certificate fluigicon-sm'></span>";
+			} 
+			if (campanhavendas.representante == row["codparticipante"]) {
+				premiado = "info";
+			}
 			
-			htmlrank += "<tr " + (row["situacao"].toLowerCase() == "premiado" ? "class='success'" : "") + "><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td></tr>";
+			var o = {
+				"premiado": premiado,
+				"situacao": row["situacao"],
+				"grupo": row["codgrupo"],
+				"posicao": row["ordempremio"],
+				"rca": codigo,
+				"pontos": p,
+				"premio": v,
+				"equipe": row["descequipe"] 
+			}
+			
+			items.push(o);
 			
 			console.log(row);
 		}
 		
-		$('#table-ranking > tbody').html(htmlrank);
+		var tpl = $('.tpl-item-ranking-vendas').html();
+		var data = { "items": items };
+		var html = Mustache.render(tpl, data);
+		
+		$('#table-ranking-vendas > tbody').html(html);
 		
 		campanhavendas.loading.hide();
 		
@@ -326,7 +353,9 @@ var campanhavendas = SuperWidget.extend({
 			p = row["pontos"];
 		}
 		
-		var htmlmyrank = "<tr data-click-detail class='fs-cursor-pointer " + (row["situacao"].toLowerCase() == "premiado" ? "success" : "") + "'><td class='fs-txt-center'>" + row["situacao"] + "</td><td class='fs-txt-center'>" + row["codgrupo"] + "</td><td class='fs-txt-center'>" + row["ordempremio"] + "</td><td class='fs-txt-center'>" + row["codparticipante"] + "</td><td class='fs-txt-center'>" + p + "</td><td class='fs-txt-center'>" + v + "</td><td>" + row["descequipe"] + "</td><td><span class='fluigicon fluigicon-th'></span></td></tr>";
+		var situacao = (row["situacao"] ? row["situacao"] : "");
+		
+		var htmlmyrank = "<tr data-click-detail class='fs-cursor-pointer " + (situacao.toLowerCase() == "premiado" ? "success" : "") + "'><td class='fs-txt-left'>" + situacao + "</td><td class='fs-txt-right'>" + row["codgrupo"] + "</td><td class='fs-txt-right'>" + row["ordempremio"] + "</td><td class='fs-txt-right'>" + row["codparticipante"] + "</td><td class='fs-txt-right'>" + p + "</td><td class='fs-txt-right'>" + v + "</td><td>" + row["descequipe"] + "</td><td><span class='fluigicon fluigicon-th'></span></td></tr>";
 		$('#table-myranking > tbody').html(htmlmyrank);
 		
 		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);

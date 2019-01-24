@@ -20,3 +20,4 @@ slot.SlotMessagingNotify=socialmessagingnotify
 application.icon=icon.png
 application.resource.css.1=/resources/css/layout.css
 application.resource.js.2=/resources/js/layout.js
+application.mobileapp=true

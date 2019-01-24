@@ -10,6 +10,7 @@
 		<div name="formatBar" id="formatBar"></div>
 		<div id="edicaoPagina" class="clearfix">
 	<#else>
+		<@wcm.header />
 		<div id="visualizacaoPagina" class="clearfix">
 	</#if>
 			<div id="layout_home" class="super-widget wcm-widget-class fluig-style-guide" data-params="layout.instance()">
@@ -18,8 +19,11 @@
 						<div class="col-sm-2">
 							<img src="http://www.bartofil.com.br/site/empresas/bartofil/images/Logo_Bartofil.png" width="200px" alt="" title="">
 						</div>
-						<div class="col-sm-10">
+						<div class="col-sm-9">
 							 <h1>PORTAL DO REPRESENTANTE</h1>
+						</div>
+						<div class="col-sm-1">
+							<a href="/portal/p/api/servlet/logout.do" data-logoff class="btn btn-danger" role="button" style="margin-top: 15px"><span class="fluigicon fluigicon-logout"></span></a>
 						</div>
 					</div>
 				</div>

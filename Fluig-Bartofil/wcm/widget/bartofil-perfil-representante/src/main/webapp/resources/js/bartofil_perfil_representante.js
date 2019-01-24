@@ -36,27 +36,28 @@ var perfilrepresentante = SuperWidget.extend({
 	listDecendio: {},
 	
 	init : function() {
-		perfilrepresentante.loading.show();
-		perfilrepresentante.grouprca = this.grouprca;
-		perfilrepresentante.representante = WCMAPI.userLogin;
-		
-		google.charts.load('current', {'packages':['corechart']});
-		google.charts.load('current', {'packages':['gauge']});
-		
-		if (this.isrca() == false) {
-			this.showrepresentative();
-		} else {
-			this.setupperiodo();
-			this.getfoto();
+		if (this.isEditMode == false) {
+			perfilrepresentante.loading.show();
+			perfilrepresentante.grouprca = this.grouprca;
+			perfilrepresentante.representante = WCMAPI.userLogin;
+			
+			google.charts.load('current', {'packages':['corechart']});
+			google.charts.load('current', {'packages':['gauge']});
+			
+			if (this.isrca() == false) {
+				this.showrepresentative();
+			} else {
+				this.setupperiodo();
+				this.getfoto();
+			}
+			
+			$(".widget-parceiros").hide();
+			$(".widget-extrato").hide();
+			$(".widget-pedidos").hide();
+			$(".widget-campanha").hide();
+			$(".widget-parceiros-anual").hide();
+			$(".wcm-header").hide();
 		}
-		
-		$(".widget-parceiros").hide();
-		$(".widget-extrato").hide();
-		$(".widget-pedidos").hide();
-		$(".widget-campanha").hide();
-		$(".widget-parceiros-anual").hide();
-		$(".wcm-header").hide();
-		
 	},
 
 	bindings : {
@@ -74,17 +75,21 @@ var perfilrepresentante = SuperWidget.extend({
 		}
 	},
 	widget: function(el, ev) {
-		$(".btn-info").removeClass("active");
-		$(el).addClass("active");
-		
-		$(".widget-home").hide();
-		$(".widget-extrato").hide();
-		$(".widget-pedidos").hide();
-		$(".widget-campanha").hide();
-		$(".widget-parceiros").hide();
-		$(".widget-parceiros-anual").hide();
-		
-		$("."+$(el).data("widget")).show();
+		if ($(el).data("widget") == "universidade") {
+			window.open("https://app.nutror.com/login", "_blank");
+		} else {
+			$(".btn-info").removeClass("active");
+			$(el).addClass("active");
+			
+			$(".widget-home").hide();
+			$(".widget-extrato").hide();
+			$(".widget-pedidos").hide();
+			$(".widget-campanha").hide();
+			$(".widget-parceiros").hide();
+			$(".widget-parceiros-anual").hide();
+
+			$("."+$(el).data("widget")).show();
+		}
 	},
 	
 	showCfa: function(el, ev) {
@@ -98,8 +103,8 @@ var perfilrepresentante = SuperWidget.extend({
 		
 		var m = moment().locale(locale);
 		var list = []; 
-		for (var i=0; i<2; i++) {
-			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MMMM") + "/" + m.format("YYYY") };
+		for (var i=0; i<6; i++) {
+			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MMMM") + "/" + m.format("YYYY"), "class": (i<2 ? "" : "widget-extrato") };
 			list.push(o);
 			m.subtract(1, 'months');
 		}
@@ -109,6 +114,7 @@ var perfilrepresentante = SuperWidget.extend({
 		var html = Mustache.render(tpl, data);
 		$('#periodo').append(html);
 		
+		$(".widget-extrato").hide();
 		
 	},
 	
@@ -185,6 +191,13 @@ var perfilrepresentante = SuperWidget.extend({
 	onReadyGetSituacaoConsolidado: function(rows) {
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
 			perfilrepresentante.getMeta();
+			perfilrepresentante.loading.hide();
+			return;
+		}
+		var values = rows["values"];
+		if (values[0].situacao == "erro" || values[0].situacao == "undefined") {
+			WCMC.messageError('Representante não encontrado!');	    			
+			perfilrepresentante.loading.hide();
 			return;
 		}
 		
@@ -196,7 +209,9 @@ var perfilrepresentante = SuperWidget.extend({
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
 			var o = [SituacaoEnum.properties[row["situacao"]].name, parseFloat(row["valortotalgeral"])];
-			data.push(o);
+			if (parseFloat(row["valortotalgeral"]) > 0) {
+				data.push(o);
+			}
 			if (row["situacao"] == "F") {
 				comissaoFaturada += parseFloat(row["valortotalcomissaogeral"]);
 			} else if (row["situacao"] == "C") {
@@ -218,7 +233,8 @@ var perfilrepresentante = SuperWidget.extend({
 		var options = {
 			pieSliceText: 'value',
 			width: '300px',
-			height: '300px'
+			height: '300px',
+			sliceVisibilityThreshold: 0
         };
 		var chart = new google.visualization.PieChart(document.getElementById('chartPie'));
 	    chart.draw(google.visualization.arrayToDataTable(data), options);		
@@ -262,6 +278,7 @@ var perfilrepresentante = SuperWidget.extend({
 			if (meta > 0) {
 				var percentual = (perfilrepresentante.valortotalpedidos / meta) * 100;
 				var faltante = meta - perfilrepresentante.valortotalpedidos;
+				if (faltante < 0) faltante = 0;
 				var valordia = faltante / dias 
 				
 				var options = {
@@ -275,17 +292,19 @@ var perfilrepresentante = SuperWidget.extend({
 				
 				var data = google.visualization.arrayToDataTable([
 					['Label', 'Value'],
-			        ['Meta', parseFloat(percentual.toFixed(2))]
+			        ['Potencial', parseFloat(percentual.toFixed(2))]
 			    ]);
 				
 				var chart = new google.visualization.Gauge(document.getElementById('chartGauge'));
 		        chart.draw(data, options);
+		        
+		        if (meta < 0) { faltante = 0; }
 
-		        $(".valor-potencial").html(perfilrepresentante.mask(meta.toFixed(2)));
-		        $(".valor-vendido").html(perfilrepresentante.mask(perfilrepresentante.valortotalpedidos.toFixed(2)));
+		        $(".valor-potencial").html("R$ " + perfilrepresentante.mask(meta.toFixed(2)));
+		        $(".valor-vendido").html("R$ " + perfilrepresentante.mask(perfilrepresentante.valortotalpedidos.toFixed(2)));
 		        $(".percentual-potencial").html(perfilrepresentante.mask(percentual.toFixed(2)) + "%");
-		        $(".valor-faltante").html(perfilrepresentante.mask("R$ " + faltante.toFixed(2)));
-		        $(".valor-dia").html(perfilrepresentante.mask("R$ " + valordia.toFixed(2)));
+		        $(".valor-faltante").html("R$ " + perfilrepresentante.mask(faltante.toFixed(2)));
+		        $(".valor-dia").html("R$ " + perfilrepresentante.mask(valordia.toFixed(2)));
 			} else {
 		        $(".valor-potencial").html("");
 		        $(".valor-vendido").html("");
@@ -374,9 +393,9 @@ var perfilrepresentante = SuperWidget.extend({
 			var row = values[i];
 			
 			var m = moment(row["anomes"].substring(4, 6) + "/01/" + row["anomes"].substring(0, 4));
-			var valorpremio = (row["valorpremio"] == null ? 0 : parseFloat(row["valorpremio"]));
-			var valorcomissao = (row["valortotalcomissao"] == null ? 0 : parseFloat(row["valortotalcomissao"]));
-			var valortotal = (row["valortotalatendido"] == null ? 0 : parseFloat(row["valortotalatendido"]));
+			var valorpremio = (row["valorpremio"] == null || row["valorpremio"] == "" ? 0 : parseFloat(row["valorpremio"]));
+			var valorcomissao = (row["valortotalcomissao"] == null || row["valortotalcomissao"] == "" ? 0 : parseFloat(row["valortotalcomissao"]));
+			var valortotal = (row["valortotalatendido"] == null || row["valortotalatendido"] == "" ? 0 : parseFloat(row["valortotalatendido"]));
 			var o = {
 				"mes": m.format("MMM/YYYY"),
 				"anomes": row["anomes"],
@@ -512,6 +531,7 @@ var perfilrepresentante = SuperWidget.extend({
 		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
 		
+		$(".modal").remove();
 		FLUIGC.modal({
 		    title:  "Extrato de Comissao Detalhado",
 		    content: html,
@@ -663,23 +683,42 @@ var perfilrepresentante = SuperWidget.extend({
 	},
 	
 	showExtratoDetalhe: function (el, ev) {
+		
 		perfilrepresentante.loading.show();
 		
-		var list = [];
-		for (var i=0; i<perfilrepresentante.listCfas.length; i++) {
-			var row = perfilrepresentante.listCfas[i];
+		var mes = $("#periodo :selected").data("month");
+		var ano = $("#periodo :selected").data("year");
+		
+		var startOfMonth = moment(ano + "-" + mes + "-01").startOf('month').format('YYYY-MM-DD');
+		var endOfMonth   = moment(ano + "-" + mes + "-01").endOf('month').format('YYYY-MM-DD');
+		
+		var c1 = DatasetFactory.createConstraint("dataInclusaoInicio", startOfMonth, startOfMonth, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("datainclusaofim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("codRepresentante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
+		var c4 = DatasetFactory.createConstraint("cfa", $(el).data("id"), $(el).data("id"), ConstraintType.MUST, false);
+		
+		DatasetFactory.getDataset('ds_pedido_cfa', null, [c1, c2, c3, c4], null, {"success": perfilrepresentante.onReadyGetCfasDetail});
+		
+	},
+	onReadyGetCfasDetail: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			perfilrepresentante.loading.hide();
+			return;
+		}
+
+		var values = rows["values"];
+		for (var i=0; i<values.length; i++) {
+			var row = values[i];
 			
-			if (row["cfa"] == $(el).data("id")) {
-				var valortotalcomissao = parseFloat(row["valortotalcomissao"]);
-				var valortotal = parseFloat(row["valortotal"]);
-				var o = {
-					"produto": row["codproduto"] + " - " + row["descproduto"],
-					"valorFaturado": perfilrepresentante.mask(valortotal.toFixed(2)),
-					"comissaoRecebida": perfilrepresentante.mask(valortotalcomissao.toFixed(2)),
-					"comissaoMedia": perfilrepresentante.mask(((valortotalcomissao / valortotal) * 100).toFixed(2))
-				}
-				list.push(o);
+			var valortotalcomissao = parseFloat(row["valortotalcomissao"]);
+			var valortotal = parseFloat(row["valortotal"]);
+			var o = {
+				"produto": row["codproduto"] + " - " + row["descproduto"],
+				"valorFaturado": perfilrepresentante.mask(valortotal.toFixed(2)),
+				"comissaoRecebida": perfilrepresentante.mask(valortotalcomissao.toFixed(2)),
+				"comissaoMedia": perfilrepresentante.mask(((valortotalcomissao / valortotal) * 100).toFixed(2))
 			}
+			list.push(o);
 			
 		}
 		
@@ -703,10 +742,17 @@ var perfilrepresentante = SuperWidget.extend({
 			data.push({"produto": row["descproduto"], "valorFaturado": perfilrepresentante.mask(parseFloat(row["valortotal"]).toFixed(2))})
 		}
 		
+		data.sort(function (a,b) {
+			if (a.produto < b.produto) return 1;
+			if (a.produto > b.produto) return -1;
+		    return 0;			
+		});
+		
 		var params = {
 			"values": data
 		};
 		
+		$(".modal").remove();
 		WCMAPI.convertFtlAsync(perfilrepresentante.code, 'skus.ftl', { "params": params },
 				function (data) {
 				   FLUIGC.modal({
@@ -753,6 +799,7 @@ var perfilrepresentante = SuperWidget.extend({
 		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
 
+		$(".modal").remove();
 		FLUIGC.modal({
 		    title:  $(el).text(),
 		    content: html,

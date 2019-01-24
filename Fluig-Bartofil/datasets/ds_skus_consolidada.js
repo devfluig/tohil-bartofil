@@ -28,7 +28,7 @@ function createDataset(fields, constraints, sortFields) {
         var data = {
             companyId : getValue("WKCompany") + '',
             serviceCode : 'RCA',
-            endpoint : "/v1/representante/" + representante + "/skuparceiro?datainicio=" + datainicio + "&datafim=" + datafim + "&sessionid=123abc&resume=S&fields=codproduto,descproduto",
+            endpoint : "/v1/representante/" + representante + "/skuparceiro?datainicio=" + datainicio + "&datafim=" + datafim + "&sessionid=123abc&resume=S&fields=codproduto,descproduto&limit=99999",
             method : 'get',     
             timeoutService: '1000',
 	        options : {

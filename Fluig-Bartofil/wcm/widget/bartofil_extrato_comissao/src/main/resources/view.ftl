@@ -31,14 +31,14 @@
 		            		<thead class="detalhado">
 		            			<tr>
 		            				<th>${i18n.getTranslation('data.lancto')}</th>
-		            				<th>${i18n.getTranslation('evt')}</th>
-		            				<th>${i18n.getTranslation('carga')}</th>
-		            				<th>${i18n.getTranslation('nota.fiscal')}</th>
-		            				<th class="text-uppercase">${i18n.getTranslation('pedido')}</th>
-		            				<th class="fs-txt-center">${i18n.getTranslation('parc')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('evt')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('carga')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('nota.fiscal')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('pedido')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('parc')}</th>
 		            				<th>${i18n.getTranslation('historico')}</th>
-		            				<th>${i18n.getTranslation('valor')}</th>
-		            				<th class="fs-txt-center">${i18n.getTranslation('d.c')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('valor')}</th>
+		            				<th class="fs-txt-left">${i18n.getTranslation('d.c')}</th>
 		            			</tr>
 		            		</thead>
 		            		<tbody>
@@ -62,8 +62,8 @@
 		            	<table id="table-meses" class="table table-striped table-hover table-condensed">
 		            		<thead>
 		            			<tr>
-		            				<th class="fs-txt-center">${i18n.getTranslation('data.entrada.pedido')}</th>
-		            				<th class="fs-txt-center">${i18n.getTranslation('valor')}</th>
+		            				<th class="fs-txt-left">${i18n.getTranslation('data.entrada.pedido')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('valor')}</th>
 		            			</tr>
 		            		</thead>
 		            		<tbody></tbody>
@@ -85,10 +85,10 @@
 		            	<table id="table-eventos" class="table table-striped table-hover table-condensed">
 		            		<thead>
 		            			<tr>
-		            				<th class="fs-txt-center">${i18n.getTranslation('codigo')}</th>
-		            				<th class="fs-txt-center no-mobile">${i18n.getTranslation('descricao')}</th>
-		            				<th class="fs-txt-center">${i18n.getTranslation('valor.debito')}</th>
-		            				<th class="fs-txt-center">${i18n.getTranslation('valor.credito')}</th>
+		            				<th class="fs-txt-left">${i18n.getTranslation('codigo')}</th>
+		            				<th class="fs-txt-left no-mobile">${i18n.getTranslation('descricao')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('valor.debito')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('valor.credito')}</th>
 		            			</tr>
 		            		</thead>
 		            		<tbody>

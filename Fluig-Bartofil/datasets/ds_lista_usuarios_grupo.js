@@ -4,7 +4,7 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("login");
 	dataset.addColumn("colleagueName");
 	
-	var grupo = "RCA-Representante";
+	var grupo = "RCA";
 	if (constraints != null) {
 		for (var c in constraints){
 			if (constraints[c].getFieldName() == "grupo"){

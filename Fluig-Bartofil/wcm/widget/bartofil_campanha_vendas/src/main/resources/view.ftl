@@ -62,37 +62,52 @@
 				    	<table id="table-myranking" class="table table-striped with-border table-hover table-condensed">
 				    		<thead>
 				    			<tr class="primary">
-				    				<th class="fs-txt-center">${i18n.getTranslation('situacao')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('gp')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('pos')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('rca')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('apurado')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('premiacao')}</th>
-				    				<th>${i18n.getTranslation('equipe')}</th>
-				    				<th>#</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('situacao')}</th>
+				    				<th class="fs-txt-right">Grupo</th>
+				    				<th class="fs-txt-right">Posi&ccedil;&atilde;o</th>
+				    				<th class="fs-txt-right">${i18n.getTranslation('rca')}</th>
+				    				<th class="fs-txt-right">Pontos</th>
+				    				<th class="fs-txt-right">${i18n.getTranslation('premiacao')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('equipe')}</th>
+				    				<th class="fs-txt-left">Detalhes</th>
 				    			</tr>
 				    		</thead>
 				    		<tbody>
 				    		</tbody>
 				    	</table>
 						<ul class="list-group">
-						    <li class="list-group-item list-group-item-warning">Ranking Geral</li>
+						    <li class="list-group-item list-group-item-warning">Ranking dos Premiados</li>
 						</ul>	    		
-				    	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed">
+				    	<table id="table-ranking-vendas" class="table table-striped with-border table-hover table-condensed">
 				    		<thead>
 				    			<tr class="primary">
-				    				<th class="fs-txt-center">${i18n.getTranslation('situacao')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('gp')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('pos')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('rca')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('apurado')}</th>
-				    				<th class="fs-txt-center">${i18n.getTranslation('premiacao')}</th>
-				    				<th>${i18n.getTranslation('equipe')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('situacao')}</th>
+				    				<th class="fs-txt-right">Grupo</th>
+				    				<th class="fs-txt-right">Posi&ccedil;&atilde;o</th>
+				    				<th class="fs-txt-right">${i18n.getTranslation('rca')}</th>
+				    				<th class="fs-txt-right">Pontos</th>
+				    				<th class="fs-txt-right">${i18n.getTranslation('premiacao')}</th>
+				    				<th class="fs-txt-left">${i18n.getTranslation('equipe')}</th>
 				    			</tr>
 				    		</thead>
 				    		<tbody>
 				    		</tbody>
 				    	</table>
+				    	
+					   	<script type="text/template" class="tpl-item-ranking-vendas">
+					    	{{#items}}
+					 			<tr class="{{premiado}}">
+					 				<td class="fs-txt-left">{{{situacao}}}</td>
+					 				<td class="fs-txt-right">{{grupo}}</td>
+					 				<td class="fs-txt-right">{{posicao}}</td>
+					 				<td class="fs-txt-right">{{{rca}}}</td>
+					 				<td class="fs-txt-right">{{{pontos}}}</td>
+					 				<td class="fs-txt-right">{{{premio}}}</td>
+					 				<td class="fs-txt-left">{{equipe}}</td>
+					 			</tr>
+					       	{{/items}}
+					   	</script>
+				    	
 		    		</div>
 		    		<div class="col-md-5 col-sm-3 list-imagens-detail">
 			            <a href="#" data-image-prev><span class="fluigicon fluigicon-chevron-left fluigicon-md prev-image"></span></a>

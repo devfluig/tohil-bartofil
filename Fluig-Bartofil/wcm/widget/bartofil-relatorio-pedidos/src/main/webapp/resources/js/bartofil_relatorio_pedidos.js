@@ -79,7 +79,7 @@ var relatorioPedidos = SuperWidget.extend({
 				type = type.split("-")[0]; 
 			}
 			var o = relatorioPedidos["current"].totais[type];
-			if (!o && Object.keys(relatorioPedidos["current"].totais).length > 0) {
+			if (!o && type != "ALL" && Object.keys(relatorioPedidos["current"].totais).length > 0) {
 				o = relatorioPedidos["current"].totais[Object.keys(relatorioPedidos["current"].totais)[0]];
 				type = Object.keys(relatorioPedidos["current"].totais)[0];
 			}
@@ -107,10 +107,10 @@ var relatorioPedidos = SuperWidget.extend({
 					validCgo = true;
 				}
 				
-				if (validCgo && item["situacao"] == type && item["naturezaoperacao"] == "V") {
+				if (validCgo && (item["situacao"] == type || type == "ALL") && item["naturezaoperacao"] == "V") {
 					origem[item["descorigempedido"]] = (origem[item["descorigempedido"]] ? origem[item["descorigempedido"]] + valortotalacobrar : valortotalacobrar)
 				}
-				if (validCgo && item["situacao"] == type) {
+				if (validCgo && (item["situacao"] == type || type == "ALL")) {
 					var m = moment(item["datainclusao"]);
 					console.log("moment", item["datainclusao"], m)
 					item["datainclusaof"] = m.format("DD/MM/YYYY");
@@ -124,7 +124,7 @@ var relatorioPedidos = SuperWidget.extend({
 			}
 			
 		} else {
-			$(".titleResumo").html("DEVOLU&Ccedil;&Otildes;ES");
+			$(".titleResumo").html("");
 			for (var i=0; i<relatorioPedidos.list.length; i++) {
 				var item = relatorioPedidos.list[i];
 				
@@ -160,11 +160,11 @@ var relatorioPedidos = SuperWidget.extend({
 			dataRequest: dataRequest,
 			renderContent: ".template_datatable",
 		    header: [
-		        {'title': 'PEDIDO'},
+		        {'title': 'PEDIDO', "size": "fs-txt-right"},
 		        {'title': 'DATA'},
-		        {'title': 'VALOR'},
-		        {'title': 'COMISSÃO'},
-		        {'title': 'CLIENTE'},
+		        {'title': 'VALOR', "size": "fs-txt-right"},
+		        {'title': 'COMISSÃO', "size": "fs-txt-right"},
+		        {'title': 'CLIENTE', "size": "fs-txt-right"},
 		        {'title': 'NOME CLIENTE'},
 		        {'title': 'ORIGEM'},
 		        {'title': 'SIT.'}
@@ -203,6 +203,7 @@ var relatorioPedidos = SuperWidget.extend({
 		relatorioPedidos.dataTable.on('fluig.datatable.onselectrow', function(data) { 
 			console.log(data);
 			data.stopPropagation();
+			$(".modal").remove();
 			var row = relatorioPedidos.dataTable.getData()[data.selectedIndex[0]];
 			console.log("row", row)
 			relatorioPedidos.onClickPedido(row["nropedidovenda"]);
@@ -260,7 +261,6 @@ var relatorioPedidos = SuperWidget.extend({
 		console.log("dataset", rows)
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
 			relatorioPedidos.loading.hide();
-			WCMC.messageError('${i18n.getTranslation("representante.nao.comissoes")}');	    			
 			return;
 		}
 
@@ -369,21 +369,31 @@ var relatorioPedidos = SuperWidget.extend({
 		}; 
 		
 		console.log('relatorioPedidos.current', relatorioPedidos.current)
-		
+		relatorioPedidos.pieChartData = [];
 		var data = [["Situação", "Valor"]];
 		var t = relatorioPedidos.current["totais"];
 		for (var key in t) {
 			var o = t[key];
-			data.push([o["situacao"], o["total"]]);
+			data.push([o["situacao"] + " R$ " + relatorioPedidos.mask(o["total"].toFixed(2)), o["total"]]);
 			relatorioPedidos.pieChartData.push({ "situacao": o["situacao"], "codigo": key})
 		}
 		
+		var d = relatorioPedidos.current["despesas"];
+		if (d) {
+			data.push(["Devoluções R$ " + relatorioPedidos.mask(d["total"].toFixed(2)), d["total"]]);
+			relatorioPedidos.pieChartData.push({ "situacao": "Devoluções", "codigo": "ND"})
+		}
+		
 		var options = {
-			pieSliceText: 'value',
-			width: '300px',
-			height: '300px'
+			'width': '300px',
+			'height': '300px',
+			"sliceVisibilityThreshold": 0,
+			'tooltip' : {
+				'trigger': 'none'
+			}
         };
 		var chart = new google.visualization.PieChart(document.getElementById('pieSituacao'));
+
 		function selectHandler() {
 			var selectedItem = chart.getSelection()[0];
 			if (selectedItem) {
@@ -397,11 +407,21 @@ var relatorioPedidos = SuperWidget.extend({
 				
 				
 			}
-	    }		
+	    }
+		function mouseHandlerPointer() {
+		   document.getElementById('pieSituacao').style.cursor = 'pointer';
+		 }  
+
+		function mouseHandlerDefault() {
+		   document.getElementById('pieSituacao').style.cursor = 'default';
+		 }		
 		google.visualization.events.addListener(chart, 'select', selectHandler);
+		google.visualization.events.addListener(chart, 'onmouseover', mouseHandlerPointer);                 
+		google.visualization.events.addListener(chart, 'onmouseout', mouseHandlerDefault);
+		
 	    chart.draw(google.visualization.arrayToDataTable(data), options);
 		
-		relatorioPedidos.showResumo("F");
+		relatorioPedidos.showResumo("ALL");
 		relatorioPedidos.showGraphFaturamento();
 	},
 	showGraphFaturamento: function() {
@@ -413,13 +433,14 @@ var relatorioPedidos = SuperWidget.extend({
 			var f = t["F"].cgo;
 			for (var key in f) {
 				var o = f[key];
-				data.push([key, o["total"]]);
+				data.push([key + " R$ " + relatorioPedidos.mask(o["total"].toFixed(2)), o["total"]]);
 			}
 			
 			var options = {
 				pieSliceText: 'value',
 				width: '300px',
-				height: '300px'
+				height: '300px',
+				sliceVisibilityThreshold: 0
 	        };
 			var chart = new google.visualization.PieChart(document.getElementById('pieFaturamento'));
 		    chart.draw(google.visualization.arrayToDataTable(data), options);
@@ -470,6 +491,26 @@ var relatorioPedidos = SuperWidget.extend({
 		if (relatorioPedidos.listConditions != null && relatorioPedidos.listItems != null) {
 			relatorioPedidos.sortInt(relatorioPedidos.listConditions, "nroparcela");
 			relatorioPedidos.sortInt(relatorioPedidos.listItems, "seqitem");
+			
+			for (var i=0; i<relatorioPedidos.listConditions.length; i++) {
+				var row = relatorioPedidos.listConditions[i];
+				var valorparcela = parseFloat(row["valorparcela"].replace(/,/g, '').replace(",", "."));
+				row["valorparcela"] = relatorioPedidos.mask(valorparcela.toFixed(2))
+				relatorioPedidos.listConditions[i] = row;
+			}
+			
+			for (var i=0; i<relatorioPedidos.listItems.length; i++) {
+				var row = relatorioPedidos.listItems[i];
+				var valorpedido = parseFloat(row["valorpedido"].replace(/,/g, '').replace(",", "."));
+				var valoratendido = parseFloat(row["valoratendido"].replace(/,/g, '').replace(",", "."));
+				var valortotalcomissao = parseFloat(row["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+				var valortotalacobrar = parseFloat(row["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
+				row["valorpedido"] = relatorioPedidos.mask(valorpedido.toFixed(2));
+				row["valoratendido"] = relatorioPedidos.mask(valoratendido.toFixed(2));
+				row["valortotalcomissao"] = relatorioPedidos.mask(valortotalcomissao.toFixed(2));
+				row["valortotalacobrar"] = relatorioPedidos.mask(valortotalacobrar.toFixed(2));
+				relatorioPedidos.listItems[i] = row;
+			}
 			
 			var params = { 
 				"condicoes": relatorioPedidos.listConditions, 
