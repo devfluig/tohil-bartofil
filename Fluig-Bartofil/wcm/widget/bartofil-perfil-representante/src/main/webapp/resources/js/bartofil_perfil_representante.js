@@ -75,21 +75,17 @@ var perfilrepresentante = SuperWidget.extend({
 		}
 	},
 	widget: function(el, ev) {
-		if ($(el).data("widget") == "universidade") {
-			window.open("https://app.nutror.com/login", "_blank");
-		} else {
-			$(".btn-info").removeClass("active");
-			$(el).addClass("active");
-			
-			$(".widget-home").hide();
-			$(".widget-extrato").hide();
-			$(".widget-pedidos").hide();
-			$(".widget-campanha").hide();
-			$(".widget-parceiros").hide();
-			$(".widget-parceiros-anual").hide();
+		$(".btn-info").removeClass("active");
+		$(el).addClass("active");
+		
+		$(".widget-home").hide();
+		$(".widget-extrato").hide();
+		$(".widget-pedidos").hide();
+		$(".widget-campanha").hide();
+		$(".widget-parceiros").hide();
+		$(".widget-parceiros-anual").hide();
 
-			$("."+$(el).data("widget")).show();
-		}
+		$("."+$(el).data("widget")).show();
 	},
 	
 	showCfa: function(el, ev) {
@@ -287,7 +283,7 @@ var perfilrepresentante = SuperWidget.extend({
 		          	yellowFrom: 100, yellowTo: 130,
 		          	greenFrom: 130, greenTo: 300,
 		          	minorTicks: 10,
-		          	max: 300
+		          	max: 200
 		        };
 				
 				var data = google.visualization.arrayToDataTable([
@@ -295,8 +291,12 @@ var perfilrepresentante = SuperWidget.extend({
 			        ['Potencial', parseFloat(percentual.toFixed(2))]
 			    ]);
 				
+		        var formatter = new google.visualization.NumberFormat({suffix: '%',pattern:'#'});
+				formatter.format(data,1);
+				
 				var chart = new google.visualization.Gauge(document.getElementById('chartGauge'));
 		        chart.draw(data, options);
+		        
 		        
 		        if (meta < 0) { faltante = 0; }
 
@@ -739,12 +739,12 @@ var perfilrepresentante = SuperWidget.extend({
 		var data = [];
 		for (var i=0; i<perfilrepresentante.listSkus.length; i++) {
 			var row = perfilrepresentante.listSkus[i];
-			data.push({"produto": row["descproduto"], "valorFaturado": perfilrepresentante.mask(parseFloat(row["valortotal"]).toFixed(2))})
+			data.push({"produto": row["descproduto"], "valorFaturado": perfilrepresentante.mask(parseFloat(row["valortotal"]).toFixed(2)), "valortotal": row["valortotal"]})
 		}
 		
 		data.sort(function (a,b) {
-			if (a.produto < b.produto) return 1;
-			if (a.produto > b.produto) return -1;
+			if (a.valortotal < b.valortotal) return 1;
+			if (a.valortotal > b.valortotal) return -1;
 		    return 0;			
 		});
 		

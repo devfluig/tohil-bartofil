@@ -95,7 +95,7 @@
   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros-anual role="button">Campanha Anual<br>Parceiros 100%</a>
    			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-campanha role="button">Demais Concursos e<br>Campanha de Vendas</a>
    			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-pedidos role="button">Meus pedidos</a>
-   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=universidade role="button">Universidade BCR</a>
+   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=universidade role="button" disabled="disabled">Universidade BCR <br>(Em desenvolvimento)</a>
    		</p>
 	</div>
 	
