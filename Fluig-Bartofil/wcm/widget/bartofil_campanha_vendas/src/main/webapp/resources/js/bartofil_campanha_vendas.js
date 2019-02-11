@@ -38,7 +38,7 @@ var campanhavendas = SuperWidget.extend({
 		local : {},
 		global : {
 			"click-campanha": ['click_clickcampanha'],
-			'save-preferences': ['click_savePreferences'],
+			'save-preferences-camp': ['click_savePreferences'],
 			"click-fechar": ['click_clickfechar'],
 			"image-prev": ['click_clickprevimage'],
 			"image-next": ['click_clicknextimage'],

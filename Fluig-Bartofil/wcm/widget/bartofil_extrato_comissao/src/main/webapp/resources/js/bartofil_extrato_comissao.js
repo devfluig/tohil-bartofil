@@ -27,7 +27,6 @@ var extratocampanha = SuperWidget.extend({
 			"click-resumido": ['click_showresumido'],
 			"change-periodo": ['change_getcomissoes'],
 			"click-print": ['click_print'],
-			'save-preferences': ['click_savePreferences'],
 			"change-representante": ['change_listcomissoes']
 		}
 	},

@@ -27,6 +27,7 @@ var perfilrepresentante = SuperWidget.extend({
 	instanceId: null,
 	representante: null,
 	grouprca: null,
+	groupadmin: null,
 	code: "bartofil_perfil_representante",
 	context: "/bartofil_perfil_representante",
 	current: null,
@@ -39,16 +40,20 @@ var perfilrepresentante = SuperWidget.extend({
 		if (this.isEditMode == false) {
 			perfilrepresentante.loading.show();
 			perfilrepresentante.grouprca = this.grouprca;
+			perfilrepresentante.groupadmin = this.groupadmin;
 			perfilrepresentante.representante = WCMAPI.userLogin;
 			
 			google.charts.load('current', {'packages':['corechart']});
 			google.charts.load('current', {'packages':['gauge']});
 			
-			if (this.isrca() == false) {
+			if (this.isadmin() == true) {
 				this.showrepresentative();
-			} else {
+			} else if (this.isrca() == true) {
 				this.setupperiodo();
 				this.getfoto();
+			} else {
+				WCMC.messageError('Você não é um representante e não tem acesso de administrador ao portal, favor acessar o Fluig no endereço ' + WCMAPI.serverURL + '/portal/p/1/ecmnavigation');	    			
+				$(".widget-perfil").remove();
 			}
 			
 			$(".widget-parceiros").hide();
@@ -75,6 +80,9 @@ var perfilrepresentante = SuperWidget.extend({
 		}
 	},
 	widget: function(el, ev) {
+		
+		if ($(el).data("widget") == "universidade") return false;
+		
 		$(".btn-info").removeClass("active");
 		$(el).addClass("active");
 		
@@ -281,7 +289,7 @@ var perfilrepresentante = SuperWidget.extend({
 					width: 400, height: 220,
 		          	redFrom: 0, redTo: 100,
 		          	yellowFrom: 100, yellowTo: 130,
-		          	greenFrom: 130, greenTo: 300,
+		          	greenFrom: 130, greenTo: 200,
 		          	minorTicks: 10,
 		          	max: 200
 		        };
@@ -548,12 +556,16 @@ var perfilrepresentante = SuperWidget.extend({
 	},
 	savePreferences: function(el, ev) {
 		var args = {
-			"grouprca": $('input[id="grouprca"]', this.DOM).val()
+			"grouprca": $('input[id="grouprca"]', this.DOM).val(),
+			"groupadmin": $('input[id="groupadmin"]', this.DOM).val(),
 		};
+		
+		console.log('args', args)
 		
 		WCMSpaceAPI.PageService.UPDATEPREFERENCES({
 		    async: true,
 		    success: function (data) {
+		    	console.log('data', data)
 				WCMC.messageInfo('Preferencias salvas com sucesso!');	    			
 		    },
 		    fail: function (xhr, message, errorData) {
@@ -566,6 +578,22 @@ var perfilrepresentante = SuperWidget.extend({
 		perfilrepresentante.loading.show();
 		perfilrepresentante.list = [];
 		perfilrepresentante.getSituacaoConsolidado();		
+	},
+	
+	isadmin: function() {
+		var c1 = DatasetFactory.createConstraint("grupo", this.groupadmin, this.groupadmin, ConstraintType.MUST, false);
+
+		var dataset = DatasetFactory.getDataset("ds_admin_rca", null, [c1], null);
+		if (dataset && dataset.values && dataset.values.length > 0) {
+			for (var i=0; i< dataset.values.length; i++) {
+				var row = dataset.values[i];
+				if (row["login"] == WCMAPI.userLogin) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	},
 	
 	isrca: function() {
@@ -739,7 +767,7 @@ var perfilrepresentante = SuperWidget.extend({
 		var data = [];
 		for (var i=0; i<perfilrepresentante.listSkus.length; i++) {
 			var row = perfilrepresentante.listSkus[i];
-			data.push({"produto": row["descproduto"], "valorFaturado": perfilrepresentante.mask(parseFloat(row["valortotal"]).toFixed(2)), "valortotal": row["valortotal"]})
+			data.push({"produto": row["descproduto"], "valorFaturado": perfilrepresentante.mask(parseFloat(row["valortotal"]).toFixed(2)), "valortotal": +(row["valortotal"])})
 		}
 		
 		data.sort(function (a,b) {

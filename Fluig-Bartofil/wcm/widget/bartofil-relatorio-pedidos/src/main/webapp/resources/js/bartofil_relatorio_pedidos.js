@@ -30,7 +30,6 @@ var relatorioPedidos = SuperWidget.extend({
 		local : {},
 		global : {
 			"change-periodo": ['change_listpedidos'],
-			'save-preferences': ['click_savePreferences'],
 			"change-representante": ['change_listpedidos'],
 			'click-item': ['click_clickItem'],
 			'click-home': ['click_clickHome']

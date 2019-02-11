@@ -9,7 +9,7 @@ var campanhaparceiros = SuperWidget.extend({
 	grouprca: null,
 	context: "/bartofil_campanha_parceiros",
 	current: null,
-	mydivision: "1",
+	mygroup: "1",
 	trimestre: null,
 	equipesuperior: null,
 	
@@ -183,7 +183,7 @@ var campanhaparceiros = SuperWidget.extend({
 		if (row["nrorepresentante"] == campanhaparceiros.representante) {
 			campanhaparceiros.current = row;
 			
-			campanhaparceiros.mydivision = row["divisao"];
+			campanhaparceiros.mygroup = row["grupo"];
 			campanhaparceiros.equipesuperior = row["nroequipesuperior"];
 			
 			campanhaparceiros.getdetalhamentos();
@@ -191,7 +191,7 @@ var campanhaparceiros = SuperWidget.extend({
 			
 		} else {
 			campanhaparceiros.current = null;
-			campanhaparceiros.mydivision = null;
+			campanhaparceiros.mygroup = null;
 			campanhaparceiros.equipesuperior = null;
 			
 			$('#table-ranking > tbody').html("");
@@ -208,7 +208,7 @@ var campanhaparceiros = SuperWidget.extend({
 		
 		var c1 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("limit", "9999", "9999", ConstraintType.MUST, false);
-		var c3 = DatasetFactory.createConstraint("divisao", campanhaparceiros.mydivision, campanhaparceiros.mydivision, ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("grupo", campanhaparceiros.mygroup, campanhaparceiros.mygroup, ConstraintType.MUST, false);
 		
 		var ano = $("#periodo :selected").data("year");
 		
@@ -272,7 +272,7 @@ var campanhaparceiros = SuperWidget.extend({
 				"premio": v,
 				"equipe": row["descequipe"],
 				"trimestre": row["trimestre"],
-				"divisao": row["divisao"],
+				"grupo": row["grupo"],
 				"premiado": premiado
 				
 			}
@@ -323,7 +323,7 @@ var campanhaparceiros = SuperWidget.extend({
 		
 		for (var i = campanhaparceiros.offset; i<campanhaparceiros.limit; i++) {
 			var o = filter[i];
-			if (o && +(o["trimestre"]) == +($("#trimestre").val()) && o["divisao"] == campanhaparceiros.mydivision) {
+			if (o && +(o["trimestre"]) == +($("#trimestre").val()) && o["grupo"] == campanhaparceiros.mygroup) {
 				mylist.push(o);
 			}
 		}

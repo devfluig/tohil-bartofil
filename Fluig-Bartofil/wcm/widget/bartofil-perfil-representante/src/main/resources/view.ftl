@@ -1,5 +1,5 @@
 <div id="perfil_representante_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide widget-perfil"
-	data-params="perfilrepresentante.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}'})">
+	data-params="perfilrepresentante.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}', groupadmin: '${groupadmin!''}'})">
 
    	<div class="row">
    		<div class="col-md-1 col-sm-1 user-avatar"></div>
