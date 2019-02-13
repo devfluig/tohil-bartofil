@@ -2,9 +2,9 @@
 	data-params="perfilrepresentante.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}', groupadmin: '${groupadmin!''}'})">
 
    	<div class="row">
-   		<div class="col-md-1 col-sm-1 user-avatar"></div>
+   		<div class="col-md-2 col-sm-1 user-avatar"></div>
    		
-   		<div class="col-md-11 col-sm-11">
+   		<div class="col-md-10 col-sm-11">
 			<form class="form-horizontal" role="form">
 				<div class="form-group custom-form-group">
 					<label class="col-sm-2 control-label">Periodo:</label>
@@ -42,12 +42,8 @@
 			    </div>			
 				<div class="form-group custom-form-group">
 					<label class="col-sm-2 control-label">Nome:</label>
-					<div class="col-sm-3">
+					<div class="col-sm-6">
 						<p class="form-control-static nome"></p>
-					</div>
-					<label class="col-sm-3 control-label">Grupo Parceiros 100%:</label>
-					<div class="col-sm-2">
-						<p class="form-control-static grupo-parceiros"></p>
 					</div>
 			    </div>						
 				<div class="form-group custom-form-group">
@@ -88,13 +84,14 @@
 			    </div>						
 			</form>
    		</div>
-   		<p>
+   		<p  class="col-md-12 col-sm-12">
    			<a href="#" class="btn btn-info btn-lg button-home active" data-click-widget data-widget=widget-home role="button">HOME</a>
 			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-extrato role="button">Extrato de Comiss&atilde;o</a>
    			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros role="button">Campanha Trimestral<br>Parceiros 100%</a>
   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros-anual role="button">Campanha Anual<br>Parceiros 100%</a>
    			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-campanha role="button">Demais Concursos e<br>Campanha de Vendas</a>
    			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-pedidos role="button">Meus pedidos</a>
+   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-promocoes role="button">Promo&ccedil;&otilde;es</a>
    			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=universidade role="button" disabled="disabled">Universidade BCR <br>(Em desenvolvimento)</a>
    		</p>
 	</div>

@@ -78,8 +78,7 @@ var campanhaparceiros = SuperWidget.extend({
 		campanhaparceiros.current = null;
 		campanhaparceiros.trimestre = $("#trimestre").val();
 		campanhaparceiros.limit = parseInt($("#paginacao").val());
-		campanhaparceiros.getfullranking();		
-		campanhaparceiros.getdetalhamentos();
+		campanhaparceiros.getranking();
 	},
 	
 	savePreferences: function(el, ev) {
@@ -144,8 +143,10 @@ var campanhaparceiros = SuperWidget.extend({
 		var c1 = DatasetFactory.createConstraint("representante", campanhaparceiros.representante, campanhaparceiros.representante, ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("limit", "1", "1", ConstraintType.MUST, false);
+		var ano = $("#periodo :selected").data("year");
+		var c4 = DatasetFactory.createConstraint("periodo", ano  + campanhaparceiros.trimestre, ano + campanhaparceiros.trimestre, ConstraintType.MUST, false);
 
-		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3], null, {"success": campanhaparceiros.onreadygetranking} );
+		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3, c4], null, {"success": campanhaparceiros.onreadygetranking} );
 		
 	},
 	
@@ -174,6 +175,7 @@ var campanhaparceiros = SuperWidget.extend({
 			"situacao": row["vlrpremio"],
 			"data": row["dataprocessamento"],
 			"pontos": row["pontos"],
+			"grupo": row["descgrupo"]
 		}
 		
 		var tpl = $('.tpl-my-ranking').html();
@@ -373,8 +375,10 @@ var campanhaparceiros = SuperWidget.extend({
 				o["items"].push({ 
 					"datainicio": row["datainicio"],
 					"datafinal": row["datafinal"],
+					"pontosapurados": +(row["pontosapurados"]),
 					"pontos": +(row["pontos"]),
-					"apurado": +(row["apurado"]) 
+					"cobranca": row["cobranca"] + "%",
+					"detalhe": row["detalhe"] 
 				});
 			} else {
 				var id = FLUIGC.utilities.randomUUID();
@@ -387,7 +391,9 @@ var campanhaparceiros = SuperWidget.extend({
 						"datainicio": row["datainicio"],
 					    "datafinal": row["datafinal"],
 						"pontos": +(row["pontos"]),
-						"apurado": +(row["apurado"]) 
+						"cobranca": row["cobranca"] + "%",
+						"detalhe": row["detalhe"], 
+						"pontosapurados": +(row["pontosapurados"]) 
 					}]
 				}
 			}

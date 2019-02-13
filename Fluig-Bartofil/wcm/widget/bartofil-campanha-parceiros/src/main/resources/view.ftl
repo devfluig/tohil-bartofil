@@ -32,6 +32,10 @@
 	    	<div class="form-group">
 	            <input type="text" class="form-control fs-txt-right" id="pontos-trimestre" readonly value="{{pontos}}">
 	    	</div>
+			<label>Grupo:</label>
+	    	<div class="form-group">
+	            <input type="text" class="form-control" id="grupo-trimestre" readonly value="{{grupo}}" >
+	    	</div>
 		</form>
 	</script>	
 	
@@ -113,23 +117,27 @@
 	        <div id="{{id}}" class="panel-collapse collapse">
 	            <div class="panel-body">
 	            	<div class="row"> 
-	            		 <div class="col-md-4 col-md-offset-8">
+	            		 <div class="col-md-12">
 						   	<table class="table table-striped with-border table-hover table-condensed">
 						   		<thead>
 						   			<tr class="primary">
-						   				<th class="fs-txt-left">${i18n.getTranslation('inicio')}</th>
-						   				<th class="fs-txt-left">${i18n.getTranslation('final')}</th>
-						   				<th class="fs-txt-left">${i18n.getTranslation('apurado')}</th>
-						   				<th class="fs-txt-left">${i18n.getTranslation('pontos')}</th>
+						   				<th class="fs-txt-left">Inicio</th>
+						   				<th class="fs-txt-left">Final</th>
+						   				<th class="fs-txt-right">Pontos Apurados</th>
+						   				<th class="fs-txt-right">Cobran&ccedil;a</th>
+						   				<th class="fs-txt-right">Pontos</th>
+						   				<th class="fs-txt-left">Detalhe</th>
 						   			</tr>
 						   		</thead>
 						   		<tbody>
 							    	{{#items}}
 							 			<tr>
-							 				<td class="fs-txt-center">{{datainicio}}</td>
-							 				<td class="fs-txt-center">{{datafinal}}</td>
-							 				<td class="fs-txt-center">{{apurado}}</td>
-							 				<td class="fs-txt-center">{{pontos}}</td>
+							 				<td class="fs-txt-left">{{datainicio}}</td>
+							 				<td class="fs-txt-left">{{datafinal}}</td>
+							 				<td class="fs-txt-right">{{pontosapurados}}</td>
+							 				<td class="fs-txt-right">{{cobranca}}</td>
+							 				<td class="fs-txt-right">{{pontos}}</td>
+							 				<td class="fs-txt-left">{{detalhe}}</td>
 							 			</tr>
 							       	{{/items}}
 						   		</tbody>

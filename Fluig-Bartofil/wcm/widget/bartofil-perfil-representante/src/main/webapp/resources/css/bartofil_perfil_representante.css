@@ -23,8 +23,8 @@
 }
 
 .fluig-style-guide.thumb-profile {
-    width: 200px !important;
-    height: 200px !important;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .fluig-style-guide .btn-lg {

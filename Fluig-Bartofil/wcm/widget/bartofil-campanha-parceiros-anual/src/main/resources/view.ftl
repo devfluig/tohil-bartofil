@@ -8,7 +8,7 @@
 	<div class="list-group">
 	    <div class="list-group-item active">
 	        <h4 class="list-group-item-heading">SUA PONTUA&Ccedil;&Atilde;O</h4>
-	        <div class="list-group-item-text">
+	        <div>
 				<form class="form-inline" role="form">
 					<label>Ordem pr&ecirc;mio:</label>
 			    	<div class="form-group">
@@ -22,7 +22,7 @@
 			    	<div class="form-group">
 			            <input type="text" class="form-control" id="data-processamento-anual" readonly >
 			    	</div>
-					<label>Status:</label>
+					<label>Pontos:</label>
 			    	<div class="form-group">
 			            <input type="text" class="form-control" id="status-anual" readonly>
 			    	</div>

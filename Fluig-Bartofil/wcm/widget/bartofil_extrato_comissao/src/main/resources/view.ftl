@@ -17,11 +17,11 @@
 		<button type="button" class="btn btn-default fs-float-right" data-click-print><span class="fluigicon fluigicon-print fluigicon-sm"></span>&nbsp;Imprimir</button>
 	</form>
 	
-	<div class="panel-group" id="accordion">
+	<div class="panel-group" id="accordionextrato">
 	    <div class="panel panel-info detalhado">
 	        <div class="panel-heading">
 	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">${i18n.getTranslation('extrato.comissao.representante.detalhado')}</a>
+	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordionextrato">${i18n.getTranslation('extrato.comissao.representante.detalhado')}</a>
 	            </h4>
 	        </div>
 	        <div id="collapseThree" class="panel-collapse collapse in">
@@ -53,7 +53,7 @@
 	    <div class="panel panel-info">
 	        <div class="panel-heading">
 	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">${i18n.getTranslation('extrato.comissao.representante.mes')}&nbsp;<span class="title-periodo"></span></a>
+	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordionextrato">${i18n.getTranslation('extrato.comissao.representante.mes')}&nbsp;<span class="title-periodo"></span></a>
 	            </h4>
 	        </div>
 	        <div id="collapseOne" class="panel-collapse collapse in">
@@ -76,7 +76,7 @@
 	    <div class="panel panel-info">
 	        <div class="panel-heading">
 	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordion">${i18n.getTranslation('extrato.comissao.representante.resumo')}</a>
+	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordionextrato">${i18n.getTranslation('extrato.comissao.representante.resumo')}</a>
 	            </h4>
 	        </div>
 	        <div id="collapseOne" class="panel-collapse collapse in">

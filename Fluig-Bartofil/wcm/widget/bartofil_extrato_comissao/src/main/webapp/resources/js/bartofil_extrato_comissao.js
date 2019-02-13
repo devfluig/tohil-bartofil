@@ -118,9 +118,10 @@ var extratocampanha = SuperWidget.extend({
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
 			var dl = moment(row["datalancamento"]);
-			html += "<tr class='" + (row["debcredito"] == "D" ? 'danger' : 'success') + "'><td>" + (dl.isValid() ? dl.format("DD/MM/YYYY") : "") + "</td><td class='fs-txt-right'>" + row["codevento"] + "</td><td class='fs-txt-right'>" + row["nrocarga"] + "</td><td class='fs-txt-right'>" + row["nrodocumento"] + "</td><td class='fs-txt-right'>" + row["nropedidovenda"] + "</td><td class='fs-txt-right'>" + row["nroparcela"] + "</td><td>" + row["historico"] + "</td><td class='fs-txt-right'>" + row["valor"] + "</td><td class='fs-txt-left'>" + row["debcredito"] + "</td></tr>";
-		
 			var v = parseFloat(row["valor"].replace(/,/g, '').replace(",", "."));
+						
+			html += "<tr class='" + (row["debcredito"] == "D" ? 'danger' : 'success') + "'><td>" + (dl.isValid() ? dl.format("DD/MM/YYYY") : "") + "</td><td class='fs-txt-right'>" + row["codevento"] + "</td><td class='fs-txt-right'>" + row["nrocarga"] + "</td><td class='fs-txt-right'>" + row["nrodocumento"] + "</td><td class='fs-txt-right'>" + row["nropedidovenda"] + "</td><td class='fs-txt-right'>" + row["nroparcela"] + "</td><td>" + row["historico"] + "</td><td class='fs-txt-right'>" + extratocampanha.mask(v.toFixed(2)) + "</td><td class='fs-txt-left'>" + row["debcredito"] + "</td></tr>";
+		
 			if (!totais[row["debcredito"]]) {
 				totais[row["debcredito"]] = { "qtde": 1, "valor": v };
 			} else {

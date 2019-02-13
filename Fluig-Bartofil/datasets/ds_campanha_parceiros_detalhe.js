@@ -2,10 +2,12 @@ function createDataset(fields, constraints, sortFields) {
 	
 	var dataset = DatasetBuilder.newDataset();
 	dataset.addColumn("datainicio");
-	dataset.addColumn("apurado");
 	dataset.addColumn("pontos");
 	dataset.addColumn("datafinal");
 	dataset.addColumn("quesito");
+	dataset.addColumn("cobranca");
+	dataset.addColumn("detalhe");
+	dataset.addColumn("pontosapurados");
 	
 	var limit = 999;
 	var offset = 0;
@@ -52,14 +54,15 @@ function createDataset(fields, constraints, sortFields) {
             	var dados = list[i];
             	
         	    dataset.addRow(new Array(dados["datainicio"],
-							    		 dados["apurado"],
 							    		 dados["pontos"],
 							    		 dados["datafinal"],
-							    		 dados["quesito"]));
+							    		 dados["quesito"],
+							    		 dados["cobranca"],
+							    		 dados["detalhe"],
+							    		 dados["pontosapurados"]));
         	    log.info("offset:" + offset + ":" + i + ":" + limit);
             }
-
-            
+           
         }
     } catch(err) {
     	log.info(err.message)

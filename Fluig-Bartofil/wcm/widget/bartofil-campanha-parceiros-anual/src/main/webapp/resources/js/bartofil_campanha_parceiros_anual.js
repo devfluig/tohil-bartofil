@@ -7,18 +7,26 @@ var campanhaparceirosanual = SuperWidget.extend({
 	representante: null,
 	context: "/bartofil_campanha_parceiros_anual",
 	current: null,
+	mygroup: "1",
+	trimestre: null,
+	equipesuperior: null,
 	codcampanha: null,
-	tipapuracao: null,
-	codgrupo: null,
 	init : function() {
 		$(".pageTitle").parent().remove();
 		
-		$(window).onScrollEnd(function() {
-			if ($(".tab-detalhamento-anual").hasClass("fs-display-none")) {
-				campanhaparceirosanual.loading.show();
-				campanhaparceirosanual.offset = campanhaparceirosanual.limit;
-				campanhaparceirosanual.limit = campanhaparceirosanual.limit + 30;
-				campanhaparceirosanual.showranking(false);	
+		$(window).on("scroll", function() {
+			console.log((window.innerHeight + window.scrollY) >= document.body.offsetHeight);
+			var scrollHeight = $(document).height();
+			var scrollPosition = $(window).height() + $(window).scrollTop();
+			if ((scrollHeight - scrollPosition) / scrollHeight === 0) {
+			    // when scroll to bottom of the page
+			} else {
+				if ($(".tab-detalhamento-anual").hasClass("fs-display-none")) {
+					campanhaparceirosanual.loading.show();
+					campanhaparceirosanual.offset = campanhaparceirosanual.limit;
+					campanhaparceirosanual.limit = campanhaparceirosanual.limit + 30;
+					campanhaparceirosanual.showranking(false);	
+				}
 			}
 		});
 		
@@ -97,7 +105,11 @@ var campanhaparceirosanual = SuperWidget.extend({
 	
 	getranking: function() {
 		var c1 = DatasetFactory.createConstraint("representante", campanhaparceirosanual.representante, campanhaparceirosanual.representante, ConstraintType.MUST, false);
-		DatasetFactory.getDataset("ds_campanha_parceiros_anual", null, [c1], null, {"success": campanhaparceirosanual.onreadygetranking} );
+		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("limit", "1", "1", ConstraintType.MUST, false);
+		var ano = $("#periodo :selected").data("year");
+		var c4 = DatasetFactory.createConstraint("periodo", ano + "99", ano + "99", ConstraintType.MUST, false);
+		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3, c4], null, {"success": campanhaparceirosanual.onreadygetranking} );
 	},
 	
 	onreadygetranking: function(rows) {
@@ -119,27 +131,29 @@ var campanhaparceirosanual = SuperWidget.extend({
 		var row = values[0];
 		var m = moment(row["dtaprocessamento"])
 		
-		$("#ordem-premio-anual").val(row["ordempremio"]);
-		$("#situacao-anual").val((row["sitpremiado"] == "" ? "Sem premia&ccedil;&atilde;o" : row["sitpremiado"]));
+		$("#ordem-premio-anual").val(row["ordem"]);
+		$("#situacao-anual").val(row["vlrpremio"]);
 		$("#data-processamento-anual").val(m.format("DD/MM/YYYY"));
-		$("#status-anual").val(row["status"]);
+		$("#status-anual").val(row["pontos"]);
 		
 		campanhaparceirosanual.current = row;
-		campanhaparceirosanual.codcampanha = row["codcampanha"];
-		campanhaparceirosanual.tipapuracao = row["tipapuracao"];
-		campanhaparceirosanual.codgrupo = row["codgrupo"];
-		
+		campanhaparceirosanual.mygroup = row["grupo"];
+		campanhaparceirosanual.equipesuperior = row["nroequipesuperior"];
+
 		campanhaparceirosanual.getfullranking();
 		
 	},
 	
 	getfullranking: function() {
 		
-		var c1 = DatasetFactory.createConstraint("codcampanha", campanhaparceirosanual.codcampanha, campanhaparceirosanual.codcampanha, ConstraintType.MUST, false);
-		var c2 = DatasetFactory.createConstraint("tipapuracao", campanhaparceirosanual.tipapuracao, campanhaparceirosanual.tipapuracao, ConstraintType.MUST, false);
-		var c3 = DatasetFactory.createConstraint("representante", campanhaparceirosanual.representante, campanhaparceirosanual.representante, ConstraintType.MUST, false);
+		var c1 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("limit", "9999", "9999", ConstraintType.MUST, false);
+		var ano = $("#periodo :selected").data("year");
+		var c3 = DatasetFactory.createConstraint("periodo", ano + "99", ano + "99", ConstraintType.MUST, false);
+		var c4 = DatasetFactory.createConstraint("grupo", campanhaparceirosanual.mygroup, campanhaparceirosanual.mygroup, ConstraintType.MUST, false);
+		var c5 = DatasetFactory.createConstraint("equipesuperior", campanhaparceirosanual.equipesuperior, campanhaparceirosanual.equipesuperior, ConstraintType.MUST, false);
 
-		DatasetFactory.getDataset("ds_campanha_parceiros_anual_detalhe", null, [c1, c2, c3], null, {"success": campanhaparceirosanual.onreadygetfullranking} );
+		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3], null, {"success": campanhaparceirosanual.onreadygetfullranking} );
 		
 	},
 	
@@ -149,7 +163,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 			return;
 		}
 		var values = rows["values"];
-		if (values[0].tipapuracao == "erro") {
+		if (values[0].apelido == "erro") {
 			campanhaparceirosanual.loading.hide();
 			return;
 		}
@@ -159,7 +173,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 			
 			var premiado = "";
 			var v = "Sem premia&ccedil;&atilde;o";
-			var codigo = row["codparticipante"];
+			var codigo = row["nrorepresentante"];
 			try {
 				v = parseFloat(row["vlrpremio"]);
 				rowclass = "success";
@@ -177,20 +191,20 @@ var campanhaparceirosanual = SuperWidget.extend({
 				v = "Sem premia&ccedil;&atilde;o";
 			}
 			
-			if (row["codparticipante"] == campanhaparceiros.representante) {
+			if (row["nrorepresentante"] == campanhaparceiros.representante) {
 				premiado = "info";
 			}
 			
 			
-			if (row["codgrupo"] == campanhaparceirosanual.codgrupo) {
+			if (row["grupo"] == campanhaparceirosanual.mygroup) {
 				if (v == "") v = "Sem premia&ccedil;&atilde;o";
 				var o = {
 					"codigo": codigo,
 					"pontos": row["pontos"],
-					"ordem": row["ordempremio"],
+					"ordem": row["ordem"],
 					"premio": v,
 					"equipe": row["descequipe"],
-					"codgrupo": row["codgrupo"],
+					"codgrupo": row["grupo"],
 					"premiado": premiado
 					
 				}
@@ -275,7 +289,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 			return;
 		}
 		var values = rows["values"];
-		if (values[0].tipapuracao == "erro") {
+		if (values[0].apelido == "erro") {
 			FLUIGC.loading(".tab-detalhamento-anual").hide();
 			$(".tab-detalhamento-anual").html('<p>Campanhas de Parceiros 100% não possui detalhamento!</p>');	    			
 			return;

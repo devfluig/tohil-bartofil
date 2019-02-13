@@ -17,7 +17,7 @@
 				<div class="page-header custom-page-header">
 					<div class="row">
 						<div class="col-sm-2">
-							<img src="http://www.bartofil.com.br/site/empresas/bartofil/images/Logo_Bartofil.png" width="200px" alt="" title="">
+							<img src="/portal/api/servlet/image/1/custom/logo_image.png" alt="" title="">
 						</div>
 						<div class="col-sm-9">
 							 <h1>PORTAL DO REPRESENTANTE</h1>

@@ -31,6 +31,7 @@ var perfilrepresentante = SuperWidget.extend({
 	code: "bartofil_perfil_representante",
 	context: "/bartofil_perfil_representante",
 	current: null,
+	rowTable: null,
 	valortotalpedidos: 0,
 	listSkus: [],
 	listCfas: [],
@@ -60,6 +61,7 @@ var perfilrepresentante = SuperWidget.extend({
 			$(".widget-extrato").hide();
 			$(".widget-pedidos").hide();
 			$(".widget-campanha").hide();
+			$(".widget-promocoes").hide();
 			$(".widget-parceiros-anual").hide();
 			$(".wcm-header").hide();
 		}
@@ -92,6 +94,7 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".widget-campanha").hide();
 		$(".widget-parceiros").hide();
 		$(".widget-parceiros-anual").hide();
+		$(".widget-promocoes").hide();
 
 		$("."+$(el).data("widget")).show();
 	},
@@ -287,9 +290,9 @@ var perfilrepresentante = SuperWidget.extend({
 				
 				var options = {
 					width: 400, height: 220,
-		          	redFrom: 0, redTo: 100,
-		          	yellowFrom: 100, yellowTo: 130,
-		          	greenFrom: 130, greenTo: 200,
+		          	redFrom: 0, redTo: 94.99,
+		          	yellowFrom: 94.99, yellowTo: 100,
+		          	greenFrom: 100, greenTo: 200,
 		          	minorTicks: 10,
 		          	max: 200
 		        };
@@ -713,6 +716,9 @@ var perfilrepresentante = SuperWidget.extend({
 	showExtratoDetalhe: function (el, ev) {
 		
 		perfilrepresentante.loading.show();
+		perfilrepresentante.rowTable = el;
+		
+		$(".table-detail-cfa").remove();
 		
 		var mes = $("#periodo :selected").data("month");
 		var ano = $("#periodo :selected").data("year");
@@ -735,6 +741,7 @@ var perfilrepresentante = SuperWidget.extend({
 		}
 
 		var values = rows["values"];
+		var list = [];
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
 			
@@ -754,9 +761,11 @@ var perfilrepresentante = SuperWidget.extend({
 		
 		WCMAPI.convertFtlAsync(perfilrepresentante.code, 'detalhe.ftl', { "params": params },
 			function (data) {
-				$(el).after("<tr><td colspan='4'>" + data + "</td></tr>");
+				$(perfilrepresentante.rowTable).after("<tr class='table-detail-cfa'><td colspan='4'>" + data + "</td></tr>");
 				perfilrepresentante.loading.hide();
-			}, function(err) { }
+			}, function(err) { 
+				perfilrepresentante.loading.hide();
+			}
 		);		
 		
 	},
