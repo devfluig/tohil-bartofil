@@ -20,12 +20,16 @@ var campanhavendas = SuperWidget.extend({
 		
 		campanhavendas.getcampanha();
 		
-		$(window).onScrollEnd(function() {
-			if ($(".premiados").hasClass("fs-display-none")) {
-				campanhavendas.loading.show();
-				campanhavendas.offset = campanhavendas.limit;
-				campanhavendas.limit = campanhavendas.limit + 8;
-				campanhavendas.showcampanhas(false);	
+		$(window).on("scroll", function() {
+			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+			    $(window).off("scroll");
+			} else {
+				if ($(".premiados").hasClass("fs-display-none")) {
+					campanhavendas.loading.show();
+					campanhavendas.offset = campanhavendas.limit;
+					campanhavendas.limit = campanhavendas.limit + 8;
+					campanhavendas.showcampanhas(false);	
+				}
 			}
 		});
 		
@@ -38,7 +42,7 @@ var campanhavendas = SuperWidget.extend({
 		local : {},
 		global : {
 			"click-campanha": ['click_clickcampanha'],
-			'save-preferences': ['click_savePreferences'],
+			'save-preferences-camp': ['click_savePreferences'],
 			"click-fechar": ['click_clickfechar'],
 			"image-prev": ['click_clickprevimage'],
 			"image-next": ['click_clicknextimage'],
@@ -561,6 +565,7 @@ var campanhavendas = SuperWidget.extend({
 				
 			}
 		}		
+		
 		if (items.length > 0) {
 			var tpl = $('.tpl-continuous-scroll-campanhas').html();
 			var data = { "items": items};

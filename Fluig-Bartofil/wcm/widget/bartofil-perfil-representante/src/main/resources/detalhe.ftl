@@ -9,11 +9,11 @@
   	</thead>
   	<tbody>
 		<#list params['values'] as row>
-			<tr> 
+			<tr>
 	  			<td class="fs-txt-left">${row.produto}</td>
-	  			<td class="fs-txt-right">${row.valorFaturado}</td>
-	  			<td class="fs-txt-right">${row.comissaoRecebida}</td>
-	  			<td class="fs-txt-right">${row.comissaoMedia}</td>
+	  			<td class="fs-txt-right">R$ ${row.valorFaturado}</td>
+	  			<td class="fs-txt-right">R$ ${row.comissaoRecebida}</td>
+	  			<td class="fs-txt-right">${row.comissaoMedia}%</td>
 	  		</tr>
 		</#list>
   	</tbody>

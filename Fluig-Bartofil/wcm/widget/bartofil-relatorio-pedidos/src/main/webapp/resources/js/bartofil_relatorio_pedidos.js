@@ -29,8 +29,7 @@ var relatorioPedidos = SuperWidget.extend({
 	bindings : {
 		local : {},
 		global : {
-			"change-periodo": ['change_listpedidos'],
-			'save-preferences': ['click_savePreferences'],
+			"change-periodo": ['change_changePeriodo'],
 			"change-representante": ['change_listpedidos'],
 			'click-item': ['click_clickItem'],
 			'click-home': ['click_clickHome']
@@ -231,8 +230,15 @@ var relatorioPedidos = SuperWidget.extend({
 		}, this.instanceId, args );
 	},	
 	
+	changePeriodo: function(el, ev) {
+		if ($("option:selected", el).hasClass("widget-extrato") == false) {
+			relatorioPedidos.loading.show();
+			this.getPedidos();
+		}
+	},
+	
 	listpedidos: function(el, ev) {
-		relatorioPedidos .loading.show();
+		relatorioPedidos.loading.show();
 		relatorioPedidos.representante = perfilrepresentante.representante;
 		this.getPedidos();
 	},

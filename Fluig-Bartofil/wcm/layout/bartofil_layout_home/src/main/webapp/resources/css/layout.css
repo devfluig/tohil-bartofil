@@ -15,7 +15,9 @@ body {
     padding-left: 20px !important;
     margin: 0px 0 20px !important;
     color: #fff;
-    background-color: #31708f;
+    background: #31708f;
+    background: -webkit-linear-gradient(to right, #2c3e50, #2980b9);
+    background: linear-gradient(to right, #31708f, #2c3e50);    
 }
 
 .custom-page-header h1 {

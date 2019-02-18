@@ -15,22 +15,30 @@
 	</div>
 	
    	<script type="text/template" class="tpl-my-ranking">
-		<form class="form-inline" role="form">
-			<label>Ordem pr&ecirc;mio:</label>
-	    	<div class="form-group">
-	            <input type="text" class="form-control fs-txt-right" id="ordem-premio-trimestre" readonly value="{{ordem}}">
+		<form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Ordem pr&ecirc;mio:</label>
+				<div class="col-sm-1">
+		            <input type="text" class="form-control fs-txt-right" id="ordem-premio-trimestre" readonly value="{{ordem}}">
+	    		</div>
+	    		<label class="col-sm-1 control-label">Situa&ccedil;&atilde;o:</label>
+	    		<div class="col-sm-2">
+	            	<input type="text" class="form-control fs-txt-right" id="situacao-trimestre" readonly value="{{{situacao}}}" >
+	    		</div>
+				<label class="col-sm-1 control-label">Pontos:</label>
+	    		<div class="col-sm-2">
+	            	<input type="text" class="form-control fs-txt-right" id="pontos-trimestre" readonly value="{{pontos}}">
+	    		</div>
 	    	</div>
-			<label>Situa&ccedil;&atilde;o:</label>
 	    	<div class="form-group">
-	            <input type="text" class="form-control fs-txt-right" id="situacao-trimestre" readonly value="{{{situacao}}}" >
-	    	</div>
-			<label>Data processamento:</label>
-	    	<div class="form-group">
-	            <input type="text" class="form-control" id="data-processamento-trimestre" readonly value="{{data}}" >
-	    	</div>
-			<label>Pontos:</label>
-	    	<div class="form-group">
-	            <input type="text" class="form-control fs-txt-right" id="pontos-trimestre" readonly value="{{pontos}}">
+	    		<label class="col-sm-2 control-label">Data processamento:</label>
+	    		<div class="col-sm-2">
+	            	<input type="text" class="form-control" id="data-processamento-trimestre" readonly value="{{data}}" >
+	    		</div>
+				<label class="col-sm-2 control-label">Grupo:</label>
+	    		<div class="col-sm-5">
+	            	<input type="text" class="form-control" id="grupo-trimestre" readonly value="{{grupo}}" >
+	    		</div>
 	    	</div>
 		</form>
 	</script>	
@@ -73,19 +81,21 @@
     	</div>
 	</form>
 	<br>
-   	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed tab-colocacao">
-   		<thead>
-   			<tr class="primary">
-   				<th class="fs-txt-right">${i18n.getTranslation('codigo')}</th>
-   				<th class="fs-txt-right">${i18n.getTranslation('pontos')}</th>
-   				<th class="fs-txt-right">${i18n.getTranslation('ordem')}</th>
-   				<th class="fs-txt-right">${i18n.getTranslation('premio')}</th>
-   				<th class="fs-txt-left">${i18n.getTranslation('equipe')}</th>
-   			</tr>
-   		</thead>
-   		<tbody>
-   		</tbody>
-   	</table>
+	<div class="table-responsive">
+	   	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed tab-colocacao">
+	   		<thead>
+	   			<tr class="primary">
+	   				<th class="fs-txt-right">${i18n.getTranslation('codigo')}</th>
+	   				<th class="fs-txt-right">${i18n.getTranslation('pontos')}</th>
+	   				<th class="fs-txt-right">${i18n.getTranslation('ordem')}</th>
+	   				<th class="fs-txt-right">${i18n.getTranslation('premio')}</th>
+	   				<th class="fs-txt-left">${i18n.getTranslation('equipe')}</th>
+	   			</tr>
+	   		</thead>
+	   		<tbody>
+	   		</tbody>
+	   	</table>
+	</div>
    	<script type="text/template" class="tpl-item-ranking">
     	{{#items}}
  			<tr class="{{premiado}}">
@@ -113,27 +123,33 @@
 	        <div id="{{id}}" class="panel-collapse collapse">
 	            <div class="panel-body">
 	            	<div class="row"> 
-	            		 <div class="col-md-4 col-md-offset-8">
-						   	<table class="table table-striped with-border table-hover table-condensed">
-						   		<thead>
-						   			<tr class="primary">
-						   				<th class="fs-txt-left">${i18n.getTranslation('inicio')}</th>
-						   				<th class="fs-txt-left">${i18n.getTranslation('final')}</th>
-						   				<th class="fs-txt-left">${i18n.getTranslation('apurado')}</th>
-						   				<th class="fs-txt-left">${i18n.getTranslation('pontos')}</th>
-						   			</tr>
-						   		</thead>
-						   		<tbody>
-							    	{{#items}}
-							 			<tr>
-							 				<td class="fs-txt-center">{{datainicio}}</td>
-							 				<td class="fs-txt-center">{{datafinal}}</td>
-							 				<td class="fs-txt-center">{{apurado}}</td>
-							 				<td class="fs-txt-center">{{pontos}}</td>
-							 			</tr>
-							       	{{/items}}
-						   		</tbody>
-						   	</table>
+	            		 <div class="col-md-12">
+							<div class="table-responsive">
+							   	<table class="table table-striped with-border table-hover table-condensed">
+							   		<thead>
+							   			<tr class="primary">
+							   				<th class="fs-txt-left">Inicio</th>
+							   				<th class="fs-txt-left">Final</th>
+							   				<th class="fs-txt-right">Pontos Apurados</th>
+							   				<th class="fs-txt-right">Cobran&ccedil;a</th>
+							   				<th class="fs-txt-right">Pontos</th>
+							   				<th class="fs-txt-left">Detalhe</th>
+							   			</tr>
+							   		</thead>
+							   		<tbody>
+								    	{{#items}}
+								 			<tr>
+								 				<td class="fs-txt-left">{{datainicio}}</td>
+								 				<td class="fs-txt-left">{{datafinal}}</td>
+								 				<td class="fs-txt-right">{{pontosapurados}}</td>
+								 				<td class="fs-txt-right">{{cobranca}}</td>
+								 				<td class="fs-txt-right">{{pontos}}</td>
+								 				<td class="fs-txt-left">{{detalhe}}</td>
+								 			</tr>
+								       	{{/items}}
+							   		</tbody>
+							   	</table>
+							 </div>
 	            		 </div>
 	            	</div>
 	            </div>

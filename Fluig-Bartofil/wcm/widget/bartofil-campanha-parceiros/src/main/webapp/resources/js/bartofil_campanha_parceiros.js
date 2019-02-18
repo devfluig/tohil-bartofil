@@ -9,7 +9,7 @@ var campanhaparceiros = SuperWidget.extend({
 	grouprca: null,
 	context: "/bartofil_campanha_parceiros",
 	current: null,
-	mydivision: "1",
+	mygroup: "1",
 	trimestre: null,
 	equipesuperior: null,
 	
@@ -70,16 +70,17 @@ var campanhaparceiros = SuperWidget.extend({
 	},
 	
 	changePeriodo: function(el ,ev) {
-		campanhaparceiros.loading.show();
-		campanhaparceiros.representante = perfilrepresentante.representante;
-		campanhaparceiros.list = [];
-		campanhaparceiros.offset = 0;
-		$(".tab-detalhamento").html("");
-		campanhaparceiros.current = null;
-		campanhaparceiros.trimestre = $("#trimestre").val();
-		campanhaparceiros.limit = parseInt($("#paginacao").val());
-		campanhaparceiros.getfullranking();		
-		campanhaparceiros.getdetalhamentos();
+		if ($("option:selected", el).hasClass("widget-extrato") == false) {
+			campanhaparceiros.loading.show();
+			campanhaparceiros.representante = perfilrepresentante.representante;
+			campanhaparceiros.list = [];
+			campanhaparceiros.offset = 0;
+			$(".tab-detalhamento").html("");
+			campanhaparceiros.current = null;
+			campanhaparceiros.trimestre = $("#trimestre").val();
+			campanhaparceiros.limit = parseInt($("#paginacao").val());
+			campanhaparceiros.getranking();
+		}
 	},
 	
 	savePreferences: function(el, ev) {
@@ -144,8 +145,10 @@ var campanhaparceiros = SuperWidget.extend({
 		var c1 = DatasetFactory.createConstraint("representante", campanhaparceiros.representante, campanhaparceiros.representante, ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("limit", "1", "1", ConstraintType.MUST, false);
+		var ano = $("#periodo :selected").data("year");
+		var c4 = DatasetFactory.createConstraint("periodo", ano  + campanhaparceiros.trimestre, ano + campanhaparceiros.trimestre, ConstraintType.MUST, false);
 
-		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3], null, {"success": campanhaparceiros.onreadygetranking} );
+		DatasetFactory.getDataset("ds_campanha_parceiros_representante", null, [c1, c2, c3, c4], null, {"success": campanhaparceiros.onreadygetranking} );
 		
 	},
 	
@@ -174,6 +177,7 @@ var campanhaparceiros = SuperWidget.extend({
 			"situacao": row["vlrpremio"],
 			"data": row["dataprocessamento"],
 			"pontos": row["pontos"],
+			"grupo": row["descgrupo"]
 		}
 		
 		var tpl = $('.tpl-my-ranking').html();
@@ -183,7 +187,7 @@ var campanhaparceiros = SuperWidget.extend({
 		if (row["nrorepresentante"] == campanhaparceiros.representante) {
 			campanhaparceiros.current = row;
 			
-			campanhaparceiros.mydivision = row["divisao"];
+			campanhaparceiros.mygroup = row["grupo"];
 			campanhaparceiros.equipesuperior = row["nroequipesuperior"];
 			
 			campanhaparceiros.getdetalhamentos();
@@ -191,7 +195,7 @@ var campanhaparceiros = SuperWidget.extend({
 			
 		} else {
 			campanhaparceiros.current = null;
-			campanhaparceiros.mydivision = null;
+			campanhaparceiros.mygroup = null;
 			campanhaparceiros.equipesuperior = null;
 			
 			$('#table-ranking > tbody').html("");
@@ -208,7 +212,7 @@ var campanhaparceiros = SuperWidget.extend({
 		
 		var c1 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("limit", "9999", "9999", ConstraintType.MUST, false);
-		var c3 = DatasetFactory.createConstraint("divisao", campanhaparceiros.mydivision, campanhaparceiros.mydivision, ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("grupo", campanhaparceiros.mygroup, campanhaparceiros.mygroup, ConstraintType.MUST, false);
 		
 		var ano = $("#periodo :selected").data("year");
 		
@@ -272,7 +276,7 @@ var campanhaparceiros = SuperWidget.extend({
 				"premio": v,
 				"equipe": row["descequipe"],
 				"trimestre": row["trimestre"],
-				"divisao": row["divisao"],
+				"grupo": row["grupo"],
 				"premiado": premiado
 				
 			}
@@ -323,7 +327,7 @@ var campanhaparceiros = SuperWidget.extend({
 		
 		for (var i = campanhaparceiros.offset; i<campanhaparceiros.limit; i++) {
 			var o = filter[i];
-			if (o && +(o["trimestre"]) == +($("#trimestre").val()) && o["divisao"] == campanhaparceiros.mydivision) {
+			if (o && +(o["trimestre"]) == +($("#trimestre").val()) && o["grupo"] == campanhaparceiros.mygroup) {
 				mylist.push(o);
 			}
 		}
@@ -373,8 +377,10 @@ var campanhaparceiros = SuperWidget.extend({
 				o["items"].push({ 
 					"datainicio": row["datainicio"],
 					"datafinal": row["datafinal"],
+					"pontosapurados": +(row["pontosapurados"]),
 					"pontos": +(row["pontos"]),
-					"apurado": +(row["apurado"]) 
+					"cobranca": row["cobranca"] + "%",
+					"detalhe": row["detalhe"] 
 				});
 			} else {
 				var id = FLUIGC.utilities.randomUUID();
@@ -387,7 +393,9 @@ var campanhaparceiros = SuperWidget.extend({
 						"datainicio": row["datainicio"],
 					    "datafinal": row["datafinal"],
 						"pontos": +(row["pontos"]),
-						"apurado": +(row["apurado"]) 
+						"cobranca": row["cobranca"] + "%",
+						"detalhe": row["detalhe"], 
+						"pontosapurados": +(row["pontosapurados"]) 
 					}]
 				}
 			}

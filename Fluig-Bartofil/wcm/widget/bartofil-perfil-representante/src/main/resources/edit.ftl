@@ -6,6 +6,12 @@
 	            <input type="text" class="form-control" id="grouprca" name="grouprca" placeholder="Grupo" value="${grouprca!''}">
 	        </div>
 	    </div>
+	    <div class="form-group">
+	        <label for="grouprca" class="col-sm-2 control-label">Grupo Admin RCA:</label>
+	        <div class="col-sm-3">
+	            <input type="text" class="form-control" id="groupadmin" name="groupadmin" placeholder="Grupo" value="${groupadmin!''}">
+	        </div>
+	    </div>
     </form>
     <button type="submit" class="btn btn-default" data-save-preferences>Salvar</button>
 

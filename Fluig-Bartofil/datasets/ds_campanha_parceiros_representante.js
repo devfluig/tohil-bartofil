@@ -2,8 +2,7 @@ function createDataset(fields, constraints, sortFields) {
 	
 	var dataset = DatasetBuilder.newDataset();
 	dataset.addColumn("apelido");
-	dataset.addColumn("periodo");
-	dataset.addColumn("divisao");
+	dataset.addColumn("grupo");
 	dataset.addColumn("gerencia");
 	dataset.addColumn("pontos");
 	dataset.addColumn("dataprocessamento");
@@ -14,11 +13,13 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("ordem");
 	dataset.addColumn("nrorepresentante");
 	dataset.addColumn("nroequipesuperior");
+	dataset.addColumn("seqcampanha");
+	dataset.addColumn("descgrupo");
 	
 	var representante = null;
 	var limit = 999;
 	var offset = 0;
-	var divisao = null;
+	var grupo = null;
 	var periodo = null;
 	var equipesuperior = null;
 	if (constraints != null) {
@@ -29,8 +30,8 @@ function createDataset(fields, constraints, sortFields) {
 				limit = +(constraints[c].getInitialValue()); 
 			} else if (constraints[c].getFieldName() == "offset") {
 				offset = +(constraints[c].getInitialValue()); 
-			} else if (constraints[c].getFieldName() == "divisao") {
-				divisao = constraints[c].getInitialValue(); 
+			} else if (constraints[c].getFieldName() == "grupo") {
+				grupo = constraints[c].getInitialValue(); 
 			} else if (constraints[c].getFieldName() == "periodo") {
 				periodo = constraints[c].getInitialValue(); 
 			} else if (constraints[c].getFieldName() == "equipesuperior") {
@@ -43,21 +44,21 @@ function createDataset(fields, constraints, sortFields) {
 //	try {
 		
 		var where = "";
-		if (divisao != null) {
-			where += "&divisao=" + divisao;
-		}
-		if (periodo != null) {
-			where += "&periodo=" + periodo;
+		if (grupo != null) {
+			where += "&grupo=" + grupo;
 		}
 		if (equipesuperior != null) {
 			where += "&nroequipesuperior=" + equipesuperior;
+		}
+		if (representante != null) {
+			where += "&nrorepresentante=" + representante;
 		}
 		
   		var clientService = fluigAPI.getAuthorizeClientService();
         var data = {
             companyId : getValue("WKCompany") + '',
             serviceCode : 'RCA',
-            endpoint : "/v1/parceiro" + (representante != null ? '/' + representante : '') + "?sessionid=123abc" + where + "&offset=" + offset + "&limit=" + limit,
+            endpoint : "/v1/parceiro" + (periodo != null ? '/' + periodo : '') + "?sessionid=123abc" + where + "&offset=" + offset + "&limit=" + limit,
             method : 'get',     
             timeoutService: '1000',
 	        options : {
@@ -80,8 +81,7 @@ function createDataset(fields, constraints, sortFields) {
             	var dados = list[i];
             	
         	    dataset.addRow(new Array(dados["apelido"],
-							    		 dados["periodo"],
-							    		 dados["divisao"],
+							    		 dados["grupo"],
 							    		 dados["gerencia"],
 							    		 dados["pontos"],
 							    		 dados["dataprocessamento"],
@@ -91,7 +91,9 @@ function createDataset(fields, constraints, sortFields) {
 							    		 dados["descequipe"],
 							    		 dados["ordem"],
 							    		 dados["nrorepresentante"],
-							    		 dados["nroequipesuperior"]));
+							    		 dados["nroequipesuperior"],
+							    		 dados["seqcampanha"],
+							    		 dados["descgrupo"]));
         	    log.info("offset:" + offset + ":" + i + ":" + limit);
             }
 
