@@ -41,7 +41,7 @@
 	<div class="panel panel-info">
     	<div class="panel-heading">LISTA DE PEDIDOS - <span class="titleResumo"></span></div>
     	<div class="panel-body">
-    		<div id="datatablePedidos"></div>
+    		<div id="datatablePedidos" class="table-responsive"></div>
     	</div>
     </div>
 </div>

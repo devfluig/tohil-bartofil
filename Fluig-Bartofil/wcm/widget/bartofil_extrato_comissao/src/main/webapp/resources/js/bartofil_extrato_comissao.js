@@ -120,7 +120,7 @@ var extratocampanha = SuperWidget.extend({
 			var dl = moment(row["datalancamento"]);
 			var v = parseFloat(row["valor"].replace(/,/g, '').replace(",", "."));
 						
-			html += "<tr class='" + (row["debcredito"] == "D" ? 'danger' : 'success') + "'><td>" + (dl.isValid() ? dl.format("DD/MM/YYYY") : "") + "</td><td class='fs-txt-right'>" + row["codevento"] + "</td><td class='fs-txt-right'>" + row["nrocarga"] + "</td><td class='fs-txt-right'>" + row["nrodocumento"] + "</td><td class='fs-txt-right'>" + row["nropedidovenda"] + "</td><td class='fs-txt-right'>" + row["nroparcela"] + "</td><td>" + row["historico"] + "</td><td class='fs-txt-right'>" + extratocampanha.mask(v.toFixed(2)) + "</td><td class='fs-txt-left'>" + row["debcredito"] + "</td></tr>";
+			html += "<tr class='" + (row["debcredito"] == "D" ? 'danger' : 'success') + "'><td>" + (dl.isValid() ? dl.format("DD/MM/YYYY") : "") + "</td><td class='fs-txt-right'>" + (row["codevento"] ? row["codevento"] : "") + "</td><td class='fs-txt-right'>" + (row["nrocarga"] ? row["nrocarga"] : "") + "</td><td class='fs-txt-right'>" + (row["nrodocumento"] ? row["nrodocumento"] : "") + "</td><td class='fs-txt-right'>" + (row["nropedidovenda"] ? row["nropedidovenda"] : "") + "</td><td class='fs-txt-right'>" + (row["nroparcela"] ? row["nroparcela"] : "") + "</td><td>" + (row["historico"] ? row["historico"] : "") + "</td><td class='fs-txt-right'>R$ " + extratocampanha.mask(v.toFixed(2)) + "</td><td class='fs-txt-left'>" + row["debcredito"] + "</td></tr>";
 		
 			if (!totais[row["debcredito"]]) {
 				totais[row["debcredito"]] = { "qtde": 1, "valor": v };
@@ -151,19 +151,19 @@ var extratocampanha = SuperWidget.extend({
 		$('#table-lancamentos > tbody').html(html);
 		
 		html = '<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("totais")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("valor")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("qtd")}</strong></td></tr>' +
-			'<tr class="danger"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("debitos")}</strong></td><td class="fs-txt-right">' + (totais["D"] ? extratocampanha.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["D"] ? totais["D"].qtde : "0") + '</td></tr>' +
-			'<tr class="success"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("creditos")}</strong></td><td class="fs-txt-right">' + (totais["C"] ? extratocampanha.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["C"] ? totais["C"].qtde : "0") + '</td></tr>' + 
-			'<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("total.geral")}</strong></td><td class="fs-txt-right">' + extratocampanha.mask(total.toFixed(2)) + '</td><td class="fs-txt-center">' + qtde + '</td></tr>';
+			'<tr class="danger"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("debitos")}</strong></td><td class="fs-txt-right">R$ ' + (totais["D"] ? extratocampanha.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["D"] ? totais["D"].qtde : "0") + '</td></tr>' +
+			'<tr class="success"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("creditos")}</strong></td><td class="fs-txt-right">R$ ' + (totais["C"] ? extratocampanha.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["C"] ? totais["C"].qtde : "0") + '</td></tr>' + 
+			'<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("total.geral")}</strong></td><td class="fs-txt-right">R$ ' + extratocampanha.mask(total.toFixed(2)) + '</td><td class="fs-txt-center">' + qtde + '</td></tr>';
 		 
 		$('#table-lancamentos > tfoot').html(html);
 
 		html = "";
 		for (var key in eventos) {
 			var ev = eventos[key];
-			html += '<tr><td>' + key + '</td><td class="no-mobile">' + ev["descricao"] + '</td><td class="fs-txt-right">' + extratocampanha.mask(ev["debitos"].toFixed(2)) + '</td><td class="fs-txt-right">' + extratocampanha.mask(ev["creditos"].toFixed(2)) + '</td></tr>'; 
+			html += '<tr><td>' + key + '</td><td class="no-mobile">' + ev["descricao"] + '</td><td class="fs-txt-right">R$ ' + extratocampanha.mask(ev["debitos"].toFixed(2)) + '</td><td class="fs-txt-right">R$ ' + extratocampanha.mask(ev["creditos"].toFixed(2)) + '</td></tr>'; 
 		}
 		
-		html += '<tr class="warning"><td class="no-mobile"></td><td class="fs-txt-right"><strong>${i18n.getTranslation("total")}:</strong></td><td class="fs-txt-right"><strong>' + (totais["D"] ? extratocampanha.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</strong></td><td class="fs-txt-right"><strong>' + (totais["C"] ? extratocampanha.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</strong></td></tr>';
+		html += '<tr class="warning"><td class="no-mobile"></td><td class="fs-txt-right"><strong>${i18n.getTranslation("total")}:</strong></td><td class="fs-txt-right"><strong>R$ ' + (totais["D"] ? extratocampanha.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</strong></td><td class="fs-txt-right"><strong>R$ ' + (totais["C"] ? extratocampanha.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</strong></td></tr>';
 		
 		$('#table-eventos > tbody').html(html);
 		
@@ -222,12 +222,12 @@ var extratocampanha = SuperWidget.extend({
 				var m = moment(pedido);
 				var v = parseFloat(row["valor"].replace(/,/g, '').replace(",", "."));
 				total += v; 
-				html += '<tr><td>' + m.format("MMMM/YYYY") + '</td><td class="fs-txt-right">' + extratocampanha.mask(v.toFixed(2)) + '</td></tr>';
+				html += '<tr><td>' + m.format("MMMM/YYYY") + '</td><td class="fs-txt-right">R$ ' + extratocampanha.mask(v.toFixed(2)) + '</td></tr>';
 			}
 		}		
 		$('#table-meses > tbody').html(html);
 		
-		html = '<tr><td class="fs-txt-right"><strong>${i18n.getTranslation("total")}</strong></td><td class="fs-txt-right"><strong>' + extratocampanha.mask(total.toFixed(2)) + '</strong></td></tr>';
+		html = '<tr><td class="fs-txt-right"><strong>${i18n.getTranslation("total")}</strong></td><td class="fs-txt-right"><strong>R$ ' + extratocampanha.mask(total.toFixed(2)) + '</strong></td></tr>';
 		$('#table-meses > tfoot').html(html);
 		extratocampanha.loading.hide();
 		

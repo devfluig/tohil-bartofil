@@ -16,11 +16,13 @@
 			<div id="layout_home" class="super-widget wcm-widget-class fluig-style-guide" data-params="layout.instance()">
 				<div class="page-header custom-page-header">
 					<div class="row">
-						<div class="col-sm-2">
-							<img src="/portal/api/servlet/image/1/custom/logo_image.png" alt="" title="">
+						<div class="col-sm-3" style="padding-top: 20px;">
+							<a href="http://fluig.bartofil.com.br/portal/p/1/home" class="wcm_logo" title="Fluig">
+								<img src="/portal/api/servlet/image/1/custom/logo_image.png" alt="" title="">
+							</a>
 						</div>
-						<div class="col-sm-9">
-							 <h1>PORTAL DO REPRESENTANTE</h1>
+						<div class="col-sm-8">
+							 <h2>PORTAL DO REPRESENTANTE</h2>
 						</div>
 						<div class="col-sm-1">
 							<a href="/portal/p/api/servlet/logout.do" data-logoff class="btn btn-danger" role="button" style="margin-top: 15px"><span class="fluigicon fluigicon-logout"></span></a>

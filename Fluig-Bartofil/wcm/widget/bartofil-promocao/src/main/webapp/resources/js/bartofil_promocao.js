@@ -44,9 +44,12 @@ var promocoes = SuperWidget.extend({
 			"change-representante": ['change_listPromocoes'],
 			'save-preferences-promocao': ['click_savePreferences'],
 			'change-paginacao-promocao': ['change_changepaginacao'],
+			'click-document': ['click_clickPromocao'],
 		}
 	},
-	
+	clickPromocao: function(el, ev) {
+		window.open(WCMAPI.serverURL + "/portal/p/" + WCMAPI.tenantCode + "/ecmnavigation?app_ecm_navigation_doc=" + $(el).data("pdf") + "&app_ecm_navigation_docVersion=" + $(el).data("version"));
+	},
 	listPromocoes: function(el, ev) {
 		promocoes.loading.show();
 		promocoes.representante = $('#listrepresentatives').val();
@@ -68,6 +71,7 @@ var promocoes = SuperWidget.extend({
 		
 		var c1 = DatasetFactory.createConstraint("pasta", promocoes.folderpromocao, promocoes.folderpromocao, ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("empresa", WCMAPI.tenantCode, WCMAPI.tenantCode, ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("expiracao", "true", "true", ConstraintType.MUST, false);
 
 		DatasetFactory.getDataset("ds_lista_campanha_imagem", null, [c1, c2], null, {"success": promocoes.onReadyGetPromocoes} );
 		
@@ -90,16 +94,17 @@ var promocoes = SuperWidget.extend({
 						items[row["campanha"]].datafim = row["datafim"];
 						items[row["campanha"]].texto = row["texto"];
 					} else {
-						items[row["campanha"]].link = (items[row["campanha"]].link == "" ? "documentId=" + row["numero"] + "&version=" + row["versao"] : items[row["campanha"]].link + "|" + "documentId=" + row["numero"] + "&version=" + row["versao"]);
+						items[row["campanha"]].link = (items[row["campanha"]].link == "" ? row["numero"] + "," + row["versao"] : items[row["campanha"]].link + "|" + row["numero"] + "," + row["versao"]);
 					}
 				} else {
 					items[row["campanha"]] = {
 						"img": (isImg) ? row["descricao"] : "",
-						"link": (isImg == false) ? "documentId=" + row["numero"] + "&version=" + row["versao"] : "",
+						"link": (isImg == false) ? row["numero"] + "," + row["versao"] : "",
 						"toloading": (isImg) ? row["numero"] : null,
 						"datainicio": (isImg) ? row["datainicio"] : null,
 						"datafim": (isImg) ? row["datafim"] : null,
-						"id": row["numero"]
+						"id": row["numero"],
+						"texto": row["texto"]
 					}
 				}
 			}
@@ -168,7 +173,13 @@ var promocoes = SuperWidget.extend({
 					var l = o["links"].split("|");
 					var html = ""; 
 					for (var x=0; x<l.length; x++) {
-						html += "<a href='" + WCMAPI.serverURL + "/webdesk/webdownload?" + l[x] + "&tenantId=" + WCMAPI.tenantCode + "' class='card-link' target='_blank'><i class='fluigicon fluigicon-document-square icon-md'></i></a>";
+						var d = l[x].split(",")[0];
+						var v = l[x].split(",")[1];
+						html += "<a href='" + WCMAPI.serverURL + "/portal/p/" + WCMAPI.tenantCode + "/ecmnavigation?app_ecm_navigation_doc=" + d + "&app_ecm_navigation_docVersion=" + v + "' class='card-link' target='_blank'><i class='fluigicon fluigicon-document-square icon-md'></i></a>";
+						if (x==0) { 
+							o["pdf"] = d; 
+							o["version"] = v;
+						}
 					}
 					o["showlinks"] = html; 
 					items.push(o);

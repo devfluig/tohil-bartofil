@@ -12,12 +12,15 @@ function createDataset(fields, constraints, sortFields) {
 	
 	var pasta = 12;
 	var empresa = 1;
+	var expiracao = null;
 	if (constraints != null) {
 		for (var c in constraints){
 			if (constraints[c].getFieldName() == "pasta"){
 				pasta = constraints[c].getInitialValue(); 
 			} else if (constraints[c].getFieldName() == "empresa"){
 				empresa = constraints[c].getInitialValue(); 
+			} else if (constraints[c].getFieldName() == "expiracao"){
+				expiracao = constraints[c].getInitialValue(); 
 			}
 		}
 	}
@@ -29,7 +32,9 @@ function createDataset(fields, constraints, sortFields) {
     try {
     	var conn = ds.getConnection();
     	var stmt = conn.createStatement();
-    	var rs = stmt.executeQuery("select d.NR_DOCUMENTO, d.DS_PRINCIPAL_DOCUMENTO, D.NUM_PRIORID, d.NR_VERSAO, (select DS_PRINCIPAL_DOCUMENTO from DOCUMENTO where COD_EMPRESA = d.COD_EMPRESA and NR_DOCUMENTO = d.NR_DOCUMENTO_PAI) as CAMPANHA, d.DT_INI_VALIDADE, d.DT_EXPIRACAO, d.DS_COMENTARIO_ADICIONAL from DOCUMENTO d where d.COD_EMPRESA = " + empresa + " and d.versao_ativa = 1 and d.DT_EXPIRACAO >= CURDATE() and d.NR_DOCUMENTO_PAI in (select NR_DOCUMENTO from DOCUMENTO where COD_EMPRESA = " + empresa + " and NR_DOCUMENTO_PAI = " + pasta + ")");
+    	var sql = "select d.NR_DOCUMENTO, d.DS_PRINCIPAL_DOCUMENTO, D.NUM_PRIORID, d.NR_VERSAO, (select DS_PRINCIPAL_DOCUMENTO from DOCUMENTO where COD_EMPRESA = d.COD_EMPRESA and NR_DOCUMENTO = d.NR_DOCUMENTO_PAI) as CAMPANHA, d.DT_INI_VALIDADE, d.DT_EXPIRACAO, d.DS_COMENTARIO_ADICIONAL from DOCUMENTO d where d.COD_EMPRESA = " + empresa + " and d.versao_ativa = 1 " + (expiracao != null ? "and d.DT_EXPIRACAO >= CURDATE()" : "") + " and d.NR_DOCUMENTO_PAI in (select NR_DOCUMENTO from DOCUMENTO where COD_EMPRESA = " + empresa + " and NR_DOCUMENTO_PAI = " + pasta + ")"
+    		
+    	var rs = stmt.executeQuery(sql);
     	var columnCount = rs.getMetaData().getColumnCount();
         while(rs.next()) {
         	var Arr = new Array();

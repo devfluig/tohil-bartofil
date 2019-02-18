@@ -48,6 +48,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 			'change-paginacao-parceiro-anual': ['change_changepaginacao'],
 			"change-representante": ['change_changerepresentante'],
 			'change-ordenar-parceiro-anual': ['change_changeordenacao'],
+			'click-tab-parceiro-anual': ['click_showtab'],
 		}
 	},
 	
@@ -74,8 +75,8 @@ var campanhaparceirosanual = SuperWidget.extend({
 	showtab: function(el, ev) {
 		$(el).parent().find("li").removeClass("active")
 		$(el).addClass("active");
-		$(".tab-colocacao").addClass("fs-display-none");
-		$(".tab-detalhamento").addClass("fs-display-none");
+		$(".tab-colocacao-anual").addClass("fs-display-none");
+		$(".tab-detalhamento-anual").addClass("fs-display-none");
 		$("." + $(el).data("tab")).removeClass("fs-display-none");
 	},
 	
@@ -134,7 +135,8 @@ var campanhaparceirosanual = SuperWidget.extend({
 		$("#ordem-premio-anual").val(row["ordem"]);
 		$("#situacao-anual").val(row["vlrpremio"]);
 		$("#data-processamento-anual").val(m.format("DD/MM/YYYY"));
-		$("#status-anual").val(row["pontos"]);
+		$("#status-anual").val(campanhaparceirosanual.mask((+(row["pontos"])).toFixed(2)));
+		$("#grupo-anual").val(row["descgrupo"]);
 		
 		campanhaparceirosanual.current = row;
 		campanhaparceirosanual.mygroup = row["grupo"];
@@ -267,6 +269,8 @@ var campanhaparceirosanual = SuperWidget.extend({
 		var data = { "items": mylist };
 		var html = Mustache.render(tpl, data);
 		$('#table-campanha-anual > tbody').append(html);
+		
+		campanhaparceirosanual.getdetalhamentos();
 
 		campanhaparceirosanual.loading.hide();
 	},
@@ -275,10 +279,13 @@ var campanhaparceirosanual = SuperWidget.extend({
 		
 		FLUIGC.loading(".tab-detalhamento-anual").show();
 		
-		var c1 = DatasetFactory.createConstraint("representante", campanhaparceirosanual.representante, campanhaparceirosanual.representante, ConstraintType.MUST, false);
-		var c2 = DatasetFactory.createConstraint("codcampanha", campanhaparceirosanual.codcampanha, campanhaparceirosanual.codcampanha, ConstraintType.MUST, false);
+		var c1 = DatasetFactory.createConstraint("representante", campanhaparceirosanual.representante, campanhaparceiros.representante, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
+		var c3 = DatasetFactory.createConstraint("limit", "999", "999", ConstraintType.MUST, false);
+		var ano = $("#periodo :selected").data("year");
+		var c4 = DatasetFactory.createConstraint("periodo", ano + "99", ano + "99", ConstraintType.MUST, false);
 
-		DatasetFactory.getDataset("ds_campanha_parceiros_anual_detalhe", null, [c1, c2], null, {"success": campanhaparceirosanual.onreadygetdetalhamentos} );
+		DatasetFactory.getDataset("ds_campanha_parceiros_detalhe", null, [c1, c2, c3, c4], null, {"success": campanhaparceirosanual.onreadygetdetalhamentos} );
 		
 	},
 	
@@ -305,8 +312,10 @@ var campanhaparceirosanual = SuperWidget.extend({
 				o["items"].push({ 
 					"datainicio": row["datainicio"],
 					"datafinal": row["datafinal"],
-					"pontos": +(row["pontos"]),
-					"apurado": +(row["apurado"]) 
+					"pontosapurados": campanhaparceirosanual.mask((+(row["pontosapurados"])).toFixed(2)),
+					"pontos": campanhaparceirosanual.mask((+(row["pontos"])).toFixed(2)),
+					"cobranca": row["cobranca"] + "%",
+					"detalhe": row["detalhe"] 
 				});
 			} else {
 				var id = FLUIGC.utilities.randomUUID();
@@ -317,9 +326,11 @@ var campanhaparceirosanual = SuperWidget.extend({
 					"pontos": +(row["pontos"]),
 					"items": [{ 
 						"datainicio": row["datainicio"],
-					    "datafinal": row["datafinal"],
-						"pontos": +(row["pontos"]),
-						"apurado": +(row["apurado"]) 
+						"datafinal": row["datafinal"],
+						"pontosapurados": campanhaparceirosanual.mask((+(row["pontosapurados"])).toFixed(2)),
+						"pontos": campanhaparceirosanual.mask((+(row["pontos"])).toFixed(2)),
+						"cobranca": row["cobranca"] + "%",
+						"detalhe": row["detalhe"] 
 					}]
 				}
 			}
@@ -338,7 +349,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 				classbadge = "badge-danger";
 			}
 			
-			var data = { "items": o["items"], "quesito": o["quesito"], "id": o["id"], "hashid": o["hashid"], "total": o["pontos"], "classbadge": classbadge };
+			var data = { "items": o["items"], "quesito": o["quesito"], "id": o["id"], "hashid": o["hashid"], "total": campanhaparceirosanual.mask(o["pontos"].toFixed(2)), "classbadge": classbadge };
 			var html = Mustache.render(tpl, data);
 			$('.tab-detalhamento-anual').append(html);
 		}

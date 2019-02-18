@@ -128,6 +128,7 @@ var perfilrepresentante = SuperWidget.extend({
 	changeRepresentante: function () {
 		perfilrepresentante.loading.show();
 		perfilrepresentante.representante = $('#listrepresentatives').val();
+		$('.table-evolucao > tbody').html("");
 		perfilrepresentante.list = [];
 		perfilrepresentante.listSkus = [];
 		$(".tab-detalhamento").html("");
@@ -204,6 +205,7 @@ var perfilrepresentante = SuperWidget.extend({
 		var values = rows["values"];
 		if (values[0].situacao == "erro" || values[0].situacao == "undefined") {
 			WCMC.messageError('Representante não encontrado!');	    			
+		    perfilrepresentante.getMeta();
 			perfilrepresentante.loading.hide();
 			return;
 		}
@@ -221,14 +223,10 @@ var perfilrepresentante = SuperWidget.extend({
 			}
 			if (row["situacao"] == "F") {
 				comissaoFaturada += parseFloat(row["valortotalcomissaogeral"]);
-			} else if (row["situacao"] == "C") {
-				comissaoFaturada -= parseFloat(row["valortotalcomissaogeral"]);
 			} else {
 				comissaoAFaturar += parseFloat(row["valortotalcomissaogeral"]);
 			}
-			if (row["situacao"] == "C") {
-				perfilrepresentante.valortotalpedidos -= parseFloat(row["valortotalgeral"]);
-			} else {
+			if (row["situacao"] != "C" && row["situacao"] != "D") {
 				perfilrepresentante.valortotalpedidos += parseFloat(row["valortotalgeral"]);
 			}
 		}
@@ -358,6 +356,7 @@ var perfilrepresentante = SuperWidget.extend({
 
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
 			perfilrepresentante.loading.hide();
+			perfilrepresentante.getEvolucao();
 			return;
 		}
 		
@@ -413,8 +412,8 @@ var perfilrepresentante = SuperWidget.extend({
 				"valorFaturado": perfilrepresentante.mask(valortotal.toFixed(2)),
 				"comissaoRecebida": perfilrepresentante.mask(valorcomissao.toFixed(2)),
 				"premiosRecebidos": perfilrepresentante.mask(valorpremio.toFixed(2)),
-				"valorTotal": (valorcomissao + valorpremio).toFixed(2),
-				"percentual": (((valorcomissao + valorpremio) / valortotal) * 100).toFixed(2),
+				"valorTotal": perfilrepresentante.mask((valorcomissao + valorpremio).toFixed(2)),
+				"percentual": perfilrepresentante.mask((((valorcomissao + valorpremio) / valortotal) * 100).toFixed(2)),
 				"css": ""
 			}
 			t["valorFaturado"] += valortotal;
@@ -563,12 +562,9 @@ var perfilrepresentante = SuperWidget.extend({
 			"groupadmin": $('input[id="groupadmin"]', this.DOM).val(),
 		};
 		
-		console.log('args', args)
-		
 		WCMSpaceAPI.PageService.UPDATEPREFERENCES({
 		    async: true,
 		    success: function (data) {
-		    	console.log('data', data)
 				WCMC.messageInfo('Preferencias salvas com sucesso!');	    			
 		    },
 		    fail: function (xhr, message, errorData) {
@@ -578,9 +574,11 @@ var perfilrepresentante = SuperWidget.extend({
 	},	
 	
 	changePeriodo: function(el ,ev) {
-		perfilrepresentante.loading.show();
-		perfilrepresentante.list = [];
-		perfilrepresentante.getSituacaoConsolidado();		
+		if ($("option:selected", el).hasClass("widget-extrato") == false) {
+			perfilrepresentante.loading.show();
+			perfilrepresentante.list = [];
+			perfilrepresentante.getSituacaoConsolidado();		
+		}
 	},
 	
 	isadmin: function() {
@@ -607,110 +605,6 @@ var perfilrepresentante = SuperWidget.extend({
 		if (dataset && dataset.values && dataset.values.length > 0) { return true; }
 		
 		return false;
-	},
-	
-	showGraph: function() {
-	
-		var data = [{
-		        value: perfilrepresentante.pedidos.total("F"),
-		        label: SituacaoEnum.properties["F"].name
-		    }, {
-		        value: 18000,
-		        label: "Cancelado"
-		    }, {
-		        value: 45000,
-		        label: "Em analise"
-		    }, {
-		        value: 38000,
-		        label: "Liberado"
-		    }, {
-		        value: 25000,
-		        label: "Em separação"
-		    }];
-
-		var options = { 
-//		    legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].strokeColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
-			"segmentShowStroke": true,
-			"showTooltips": true
-		}
-		
-		var chart = FLUIGC.chart('#chartPie', {
-		    id: 'idChartPie',
-		    width: '700',
-		    height: '400'
-		});
-		var pieChart = chart.pie(data, options);
-		$(".legend-chart-pie").html(pieChart.generateLegend());
-
-		var chart = FLUIGC.chart('#chartGauge', {
-		    id: 'idChartGauge',
-		    width: '500',
-		    height: '200'
-		});
-		var chartGauge = chart.gauge({
-	        lines: 12,
-	        angle: 0.15,
-	        lineWidth: 0.44,
-	        pointer: {
-	            length: 0.9,
-	            strokeWidth: 0.035,
-	            color: '#000000'
-	        },
-	        limitMax: 'false',
-	        colorStart: '#6FADCF',
-	        colorStop: '#8FC0DA',
-	        strokeColor: '#E0E0E0',
-			"showTooltips": true,
-	        generateGradient: true
-	    });		
-		chartGauge.maxValue = 3000;
-		chartGauge.set(925);
-		chartGauge.value = 925;
-		$(".legend-chart-pie").html(pieChart.generateLegend());
-		
-		perfilrepresentante.showEvolucao();
-		
-	},
-	
-	showEvolucao: function() {
-		
-		$('.table-evolucao > tbody').html("");
-		
-		var list = [
-			{ "mes": "abr/18", "valorFaturado": "183.212,15", "comissaoRecebida": "8.244,55", "premiosRecebidos": "7.280,00", "valorTotal": "15.524,55", "percentual": "8,5%", "css": ""  },
-			{ "mes": "mai/18", "valorFaturado": "232.488,03", "comissaoRecebida": "10.461,96", "premiosRecebidos": "1.115,00", "valorTotal": "15.576,96", "percentual": "5,0%", "css": ""  },
-			{ "mes": "jun/18", "valorFaturado": "240.999,70", "comissaoRecebida": "10.844,99", "premiosRecebidos": "800,00", "valorTotal": "15.644,99", "percentual": "4,8%", "css": ""  },
-			{ "mes": "jul/18", "valorFaturado": "198.333,80", "comissaoRecebida": "8.925,02", "premiosRecebidos": "800,00", "valorTotal": "9.725,02", "percentual": "4,9%"  },
-			{ "mes": "ago/18", "valorFaturado": "260.213,65", "comissaoRecebida": "11.709,61", "premiosRecebidos": "6.350,00", "valorTotal": "18.059,61", "percentual": "6,9%", "css": ""  },
-			{ "mes": "set/18", "valorFaturado": "218.885,50", "comissaoRecebida": "9.849,80", "premiosRecebidos": "2.140,00", "valorTotal": "11.989,80", "percentual": "5,5%", "css": ""  },
-			{ "mes": "Semestre", "valorFaturado": "1.334.131,83", "comissaoRecebida": "60.035,93", "premiosRecebidos": "18.845,00", "valorTotal": "78.520,93", "percentual": "5,9%", "css": "info"  }
-		];
-		var tpl = $('.tpl-evolucao').html();
-		var data = { "items": list};
-		var html = Mustache.render(tpl, data);
-		$('.table-evolucao > tbody').append(html);
-		
-		perfilrepresentante.showExtratoDetalhado();
-		
-	},
-	
-	showExtratoDetalhado: function() {
-		
-		$('.table-extrato-comissao > tbody').html("");
-		
-		var list = [
-			{ "cfa": "4", "valorFaturado": "89.007,90", "comissaoRecebida": "7.565,67", "percentual": "8,5%"  },
-			{ "cfa": "6", "valorFaturado": "13.560,20", "comissaoRecebida": "922,09", "percentual": "6,8%" },
-			{ "cfa": "1", "valorFaturado": "25.866,12", "comissaoRecebida": "1.681,30", "percentual": "6,5%" },
-			{ "cfa": "2", "valorFaturado": "7.504,70", "comissaoRecebida": "462,79", "percentual": "6,2%"  },
-			{ "cfa": "8", "valorFaturado": "3.260,30", "comissaoRecebida": "179,32", "percentual": "5,5%" },
-			{ "cfa": "9", "valorFaturado": "8.333,20", "comissaoRecebida": "441,66", "percentual": "5,3%"  },
-			{ "cfa": "3", "valorFaturado": "519,60", "comissaoRecebida": "24,94", "percentual": "4,8%" }
-		];
-		var tpl = $('.tpl-extrato-comissao').html();
-		var data = { "items": list};
-		var html = Mustache.render(tpl, data);
-		$('.table-extrato-comissao > tbody').append(html);
 	},
 	
 	showExtratoDetalhe: function (el, ev) {
@@ -761,7 +655,7 @@ var perfilrepresentante = SuperWidget.extend({
 		
 		WCMAPI.convertFtlAsync(perfilrepresentante.code, 'detalhe.ftl', { "params": params },
 			function (data) {
-				$(perfilrepresentante.rowTable).after("<tr class='table-detail-cfa'><td colspan='4'>" + data + "</td></tr>");
+				$(perfilrepresentante.rowTable).after("<tr class='table-detail-cfa'><td colspan='5'>" + data + "</td></tr>");
 				perfilrepresentante.loading.hide();
 			}, function(err) { 
 				perfilrepresentante.loading.hide();

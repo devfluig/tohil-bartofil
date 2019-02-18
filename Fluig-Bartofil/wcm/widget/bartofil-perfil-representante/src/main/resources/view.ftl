@@ -42,14 +42,8 @@
 			    </div>			
 				<div class="form-group custom-form-group">
 					<label class="col-sm-2 control-label">Nome:</label>
-					<div class="col-sm-6">
-						<p class="form-control-static nome"></p>
-					</div>
-			    </div>						
-				<div class="form-group custom-form-group">
-					<label class="col-sm-2 control-label">Código:</label>
 					<div class="col-sm-3">
-						<p class="form-control-static codigo"></p>
+						<p class="form-control-static nome"></p>
 					</div>
 					<label class="col-sm-3 control-label">Venda média mensal último trimestre:</label>
 					<div class="col-sm-2">
@@ -57,9 +51,9 @@
 					</div>
 			    </div>						
 				<div class="form-group custom-form-group">
-					<label class="col-sm-2 control-label">Equipe:</label>
+					<label class="col-sm-2 control-label">Código:</label>
 					<div class="col-sm-3">
-						<p class="form-control-static equipe"></p>
+						<p class="form-control-static codigo"></p>
 					</div>
 					<label class="col-sm-3 control-label">Venda média mensal último semestre:</label>
 					<div class="col-sm-2">
@@ -67,9 +61,9 @@
 					</div>
 			    </div>						
 				<div class="form-group custom-form-group">
-					<label class="col-sm-2 control-label">Município de Residência:</label>
+					<label class="col-sm-2 control-label">Equipe:</label>
 					<div class="col-sm-3">
-						<p class="form-control-static municipio"></p>
+						<p class="form-control-static equipe"></p>
 					</div>
 					<label class="col-sm-3 control-label">Venda média mensal último ano:</label>
 					<div class="col-sm-2">
@@ -77,8 +71,12 @@
 					</div>
 			    </div>						
 				<div class="form-group custom-form-group">
-					<label class="col-sm-2 control-label">UF de Residência::</label>
+					<label class="col-sm-2 control-label">Município de Residência:</label>
 					<div class="col-sm-3">
+						<p class="form-control-static municipio"></p>
+					</div>
+					<label class="col-sm-3 control-label">UF de Residência:</label>
+					<div class="col-sm-2">
 						<p class="form-control-static uf"></p>
 					</div>
 			    </div>						
@@ -148,14 +146,14 @@
 				<input type="text" class="form-control fs-txt-right"  id="totalComissao" disabled>
 	    	</div>
 			<div class="col-sm-2">
-				<button class="btn btn-primay" data-btn-por-cfa role="button">Por CFA</button>					
+				<button class="btn btn-primary" data-btn-por-cfa role="button">Por CFA</button>					
 	    	</div>
     	</div>
     </form>
     
 	<div class="row widget-home">
 		<div class="col-sm-6 col-sm-offset-1">
-			<button class="btn btn-primay" data-btn-show-skus role="button">Quantidade de Itens (SKUs) dos Parceiros vendidos no mês: <b class="qtdeItensSkus"></b> itens</button>					
+			<button class="btn btn-primary" data-btn-show-skus role="button">Quantidade de Itens (SKUs) dos Parceiros vendidos no mês: <b class="qtdeItensSkus"></b> itens</button>					
     	</div>
     </div>
 	
@@ -163,43 +161,48 @@
 	    <h2>Evoluç&atilde;o do Semestre (&uacute;ltimos 6 meses):</h2>
 	</div>
 	
-	<table class="table table-striped table-hover table-evolucao widget-home">
-		<thead>
-			<tr>
-				<th class="fs-txt-left">M&ecirc;s</th>
-				<th class="fs-txt-right">Valor Faturado</th>
-				<th class="fs-txt-right">Comiss&atilde;o Recebida</th>
-				<th class="fs-txt-right">Pr&ecirc;mios Recebidos (em dinheiro)</th>
-				<th class="fs-txt-right">Valor Recebido</th>
-				<th class="fs-txt-right">%</th>
-			</tr>
-		</thead>
-		<tbody>
-		
-		</tbody>
-	</table>
-	
-    <script type="text/template" class="tpl-extrato-comissao">
-		<table class="table table-striped table-hover table-extrato-comissao widget-home">
+	<div class="table-responsive">
+		<table class="table table-striped table-hover table-evolucao widget-home">
 			<thead>
 				<tr>
-					<th>CFA/Produto</th>
+					<th class="fs-txt-left">M&ecirc;s</th>
 					<th class="fs-txt-right">Valor Faturado</th>
-					<th class="fs-txt-right">Comiss&atilde;o Recebida (R$)</th>
-					<th class="fs-txt-right">Comiss&atilde;o M&eacute;dia (%)</th>
+					<th class="fs-txt-right">Comiss&atilde;o Recebida</th>
+					<th class="fs-txt-right">Pr&ecirc;mios Recebidos (em dinheiro)</th>
+					<th class="fs-txt-right">Valor Recebido</th>
+					<th class="fs-txt-right">%</th>
 				</tr>
 			</thead>
 			<tbody>
-		        {{#items}}
-			    	<tr data-click-cfa class="fs-cursor-pointer" data-id="{{cfa}}">
-			    		<td>{{cfa}}</td>
-			    		<td class="fs-txt-right">R$ {{valorFaturado}}</td>
-			    		<td class="fs-txt-right">R$ {{comissaoRecebida}}</td>
-			    		<td class="fs-txt-right">{{percentual}}%</td>
-			    	</tr>
-		        {{/items}}
+			
 			</tbody>
 		</table>
+	</div>
+    <script type="text/template" class="tpl-extrato-comissao">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-extrato-comissao widget-home">
+				<thead>
+					<tr>
+						<th></th>
+						<th>CFA/Produto</th>
+						<th class="fs-txt-right">Valor Faturado</th>
+						<th class="fs-txt-right">Comiss&atilde;o Recebida (R$)</th>
+						<th class="fs-txt-right">Comiss&atilde;o M&eacute;dia (%)</th>
+					</tr>
+				</thead>
+				<tbody>
+			        {{#items}}
+				    	<tr data-click-cfa class="fs-cursor-pointer" data-id="{{cfa}}">
+							<td><a class="btn btn-default btn-xs" role="button"><i class="fluigicon fluigicon-plus icon-xs"></i></a></td> 
+				    		<td>{{cfa}}</td>
+				    		<td class="fs-txt-right">R$ {{valorFaturado}}</td>
+				    		<td class="fs-txt-right">R$ {{comissaoRecebida}}</td>
+				    		<td class="fs-txt-right">{{percentual}}%</td>
+				    	</tr>
+			        {{/items}}
+				</tbody>
+			</table>
+		</div>
 	</script>
 		
     <script type="text/template" class="tpl-evolucao">
@@ -220,22 +223,24 @@
     </script>
     
     <script type="text/template" class="tpl-decendio">
-		<table class='table table-condesed table-striped'>
-			<thead>
-				<tr>
-					<th>Cliente</th>
-					<th>Valor Faturado</th>
-				</tr>
-			</thead>
-			<tbody>
-	        {{#items}}
-				<tr>
-					<td>{{cliente}}</td>
-					<td class="fs-txt-right">R$ {{valor}}</td>
-				</tr>
-	        {{/items}}
-			</tbody>
-		</table>
+		<div class="table-responsive">
+			<table class='table table-condesed table-striped'>
+				<thead>
+					<tr>
+						<th>Cliente</th>
+						<th>Valor Faturado</th>
+					</tr>
+				</thead>
+				<tbody>
+		        {{#items}}
+					<tr>
+						<td>{{cliente}}</td>
+						<td class="fs-txt-right">R$ {{valor}}</td>
+					</tr>
+		        {{/items}}
+				</tbody>
+			</table>
+		</div>
 	</script>
 </div>
 

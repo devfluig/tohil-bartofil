@@ -70,15 +70,17 @@ var campanhaparceiros = SuperWidget.extend({
 	},
 	
 	changePeriodo: function(el ,ev) {
-		campanhaparceiros.loading.show();
-		campanhaparceiros.representante = perfilrepresentante.representante;
-		campanhaparceiros.list = [];
-		campanhaparceiros.offset = 0;
-		$(".tab-detalhamento").html("");
-		campanhaparceiros.current = null;
-		campanhaparceiros.trimestre = $("#trimestre").val();
-		campanhaparceiros.limit = parseInt($("#paginacao").val());
-		campanhaparceiros.getranking();
+		if ($("option:selected", el).hasClass("widget-extrato") == false) {
+			campanhaparceiros.loading.show();
+			campanhaparceiros.representante = perfilrepresentante.representante;
+			campanhaparceiros.list = [];
+			campanhaparceiros.offset = 0;
+			$(".tab-detalhamento").html("");
+			campanhaparceiros.current = null;
+			campanhaparceiros.trimestre = $("#trimestre").val();
+			campanhaparceiros.limit = parseInt($("#paginacao").val());
+			campanhaparceiros.getranking();
+		}
 	},
 	
 	savePreferences: function(el, ev) {

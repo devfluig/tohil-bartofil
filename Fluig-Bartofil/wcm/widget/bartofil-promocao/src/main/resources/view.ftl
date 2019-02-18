@@ -26,16 +26,15 @@
     <script type="text/template" class="tpl-continuous-scroll-promocoes">
 		<div class="row clearfix itens-promocoes">
 	        {{#items}}
-				<div class="col-sm-4 col-md-3">
-					<div class="card">
-            			<img class="card-img-top" id="img{{id}}" src="{{img}}" alt="{{descricao}}" height="150">
-            			<div class="card-body">
-	           				<h3 class="card-title">{{descricao}}</h3>
-	           				<p class="card-text">{{texto}}</p>
-				            <p style="padding-top: 5px;"><span class="label label-default">Iniciada {{datainicio}}</span><span class="label label-danger">Termina em {{datafim}}</span></span></p>
-	           				{{{showlinks}}}
-	           			</div>
-        			</div>
+				<div class="col-sm-4 col-md-3" data-click-document data-pdf="{{pdf}}" data-version="{{version}}">
+				    <div class="thumbnail">
+				        <img id="img{{id}}" src="{{img}}" alt="{{descricao}}" style="height: 300px;">
+				        <div class="caption">
+				            <h4>{{descricao}}</h4>
+				            <p>{{{texto}}}</p>
+				            <p style="padding-top: 5px;"><span class="label label-default">Iniciada {{datainicio}}</span><span class="label label-danger">at&eacute; {{datafim}}</span></p>
+				        </div>
+				    </div>
 				</div>
 	        {{/items}}
 	    </div>
