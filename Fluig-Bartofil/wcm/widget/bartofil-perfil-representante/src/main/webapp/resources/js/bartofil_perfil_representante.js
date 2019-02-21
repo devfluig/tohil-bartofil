@@ -100,6 +100,7 @@ var perfilrepresentante = SuperWidget.extend({
 	},
 	
 	showCfa: function(el, ev) {
+		perfilrepresentante.loading.show();
 		perfilrepresentante.getCfas();
 	},
 	
@@ -223,7 +224,7 @@ var perfilrepresentante = SuperWidget.extend({
 			}
 			if (row["situacao"] == "F") {
 				comissaoFaturada += parseFloat(row["valortotalcomissaogeral"]);
-			} else {
+			} else if (row["situacao"] != "C" && row["situacao"] != "D") {
 				comissaoAFaturar += parseFloat(row["valortotalcomissaogeral"]);
 			}
 			if (row["situacao"] != "C" && row["situacao"] != "D") {
@@ -438,6 +439,7 @@ var perfilrepresentante = SuperWidget.extend({
 		t["valorTotal"] = perfilrepresentante.mask(t["valorTotal"].toFixed(2));
 		list.push(t);
 		
+		$('.table-evolucao > tbody').html("");
 		var tpl = $('.tpl-evolucao').html();
 		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
@@ -554,6 +556,7 @@ var perfilrepresentante = SuperWidget.extend({
 		}, function(err, data) {
 			console.log(err, data)
 		});
+		perfilrepresentante.loading.hide();
 		
 	},
 	savePreferences: function(el, ev) {

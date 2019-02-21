@@ -202,7 +202,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 				if (v == "") v = "Sem premia&ccedil;&atilde;o";
 				var o = {
 					"codigo": codigo,
-					"pontos": row["pontos"],
+					"pontos": campanhaparceirosanual.mask((+row["pontos"]).toFixed(2)),
 					"ordem": row["ordem"],
 					"premio": v,
 					"equipe": row["descequipe"],
@@ -337,6 +337,8 @@ var campanhaparceirosanual = SuperWidget.extend({
 		}
 		
 		console.log(items);
+		
+		$('.tab-detalhamento-anual').html("");
 		
 		for (var key in items) {
 			var o = items[key];

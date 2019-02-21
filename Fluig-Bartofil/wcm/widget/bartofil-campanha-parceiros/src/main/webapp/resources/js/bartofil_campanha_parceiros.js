@@ -176,7 +176,7 @@ var campanhaparceiros = SuperWidget.extend({
 			"ordem": row["ordem"],
 			"situacao": row["vlrpremio"],
 			"data": row["dataprocessamento"],
-			"pontos": row["pontos"],
+			"pontos": campanhaparceiros.mask((+row["pontos"]).toFixed(2)),
 			"grupo": row["descgrupo"]
 		}
 		
@@ -271,7 +271,7 @@ var campanhaparceiros = SuperWidget.extend({
 			var o = {
 				"codigo": codigo,
 				"nome": row["apelido"],
-				"pontos": row["pontos"],
+				"pontos": campanhaparceiros.mask((+row["pontos"]).toFixed(2)),
 				"ordem": row["ordem"],
 				"premio": v,
 				"equipe": row["descequipe"],
@@ -402,6 +402,7 @@ var campanhaparceiros = SuperWidget.extend({
 		}
 		
 		console.log(items);
+		$(".tab-detalhamento").html("");
 		
 		for (var key in items) {
 			var o = items[key];
@@ -414,7 +415,7 @@ var campanhaparceiros = SuperWidget.extend({
 				classbadge = "badge-danger";
 			}
 			
-			var data = { "items": o["items"], "quesito": o["quesito"], "id": o["id"], "hashid": o["hashid"], "total": o["pontos"], "classbadge": classbadge };
+			var data = { "items": o["items"], "quesito": o["quesito"], "id": o["id"], "hashid": o["hashid"], "total": campanhaparceiros.mask(o["pontos"].toFixed(2)), "classbadge": classbadge };
 			var html = Mustache.render(tpl, data);
 			$('.tab-detalhamento').append(html);
 		}
