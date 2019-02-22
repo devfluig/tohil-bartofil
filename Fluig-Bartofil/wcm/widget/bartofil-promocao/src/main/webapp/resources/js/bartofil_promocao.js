@@ -73,7 +73,7 @@ var promocoes = SuperWidget.extend({
 		var c2 = DatasetFactory.createConstraint("empresa", WCMAPI.tenantCode, WCMAPI.tenantCode, ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("expiracao", "true", "true", ConstraintType.MUST, false);
 
-		DatasetFactory.getDataset("ds_lista_campanha_imagem", null, [c1, c2], null, {"success": promocoes.onReadyGetPromocoes} );
+		DatasetFactory.getDataset("ds_lista_campanha_imagem", null, [c1, c2, c3], null, {"success": promocoes.onReadyGetPromocoes} );
 		
 	},
 	
