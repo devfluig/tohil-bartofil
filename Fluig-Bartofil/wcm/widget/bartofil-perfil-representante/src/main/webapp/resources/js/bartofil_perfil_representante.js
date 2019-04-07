@@ -21,6 +21,25 @@ const SituacaoEnum = {
 
 Object.freeze(SituacaoEnum);
 
+const WidgetEnum = {
+    HOME: 'perfilrepresentante["onShowWidget"]',
+    PEDIDOS: 'relatorioPedidos["onShowWidget"]',
+    EXTRATO: 'extratocampanha["onShowWidget"]',
+    CAMPANHA: 'campanhavendas["onShowWidget"]',
+    ANUAL: 'campanhaparceirosanual["onShowWidget"]',
+    properties: {
+	    'widget-home': 'perfilrepresentante["onShowWidget"]',
+	    'widget-pedidos': 'relatorioPedidos["onShowWidget"]',
+	    'widget-extrato': 'extratocampanha["onShowWidget"]',
+	    'widget-campanha': 'campanhavendas["onShowWidget"]',
+	    'widget-parceiros-anual': 'campanhaparceirosanual["onShowWidget"]',
+	    'widget-parceiros': 'campanhaparceiros["onShowWidget"]',
+	    	
+    }
+}
+
+Object.freeze(WidgetEnum);
+
 var perfilrepresentante = SuperWidget.extend({
 	loading: FLUIGC.loading(window),
 	list: [],
@@ -32,10 +51,13 @@ var perfilrepresentante = SuperWidget.extend({
 	context: "/bartofil_perfil_representante",
 	current: null,
 	rowTable: null,
+	devolucoes: 0,
 	valortotalpedidos: 0,
 	listSkus: [],
 	listCfas: [],
 	listDecendio: {},
+	currentWidget: null,
+	isLoaded: false,
 	
 	init : function() {
 		if (this.isEditMode == false) {
@@ -56,6 +78,9 @@ var perfilrepresentante = SuperWidget.extend({
 				WCMC.messageError('Você não é um representante e não tem acesso de administrador ao portal, favor acessar o Fluig no endereço ' + WCMAPI.serverURL + '/portal/p/1/ecmnavigation');	    			
 				$(".widget-perfil").remove();
 			}
+			
+			perfilrepresentante.isLoaded = true;
+			perfilrepresentante.currentWidget = WidgetEnum.properties["widget-home"];
 			
 			$(".widget-parceiros").hide();
 			$(".widget-extrato").hide();
@@ -81,6 +106,13 @@ var perfilrepresentante = SuperWidget.extend({
 			'btn-show-skus': ['click_showSkus'],
 		}
 	},
+	onShowWidget: function() {
+		if (!perfilrepresentante.isLoaded) {
+			perfilrepresentante.isLoaded = true;
+			perfilrepresentante.loading.show();
+			perfilrepresentante.getfoto();
+		}
+	},
 	widget: function(el, ev) {
 		
 		if ($(el).data("widget") == "universidade") return false;
@@ -97,6 +129,13 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".widget-promocoes").hide();
 
 		$("."+$(el).data("widget")).show();
+		
+		$(window).scrollTop($("." + $(el).data("widget")).offset().top);
+		
+		perfilrepresentante.currentWidget = WidgetEnum.properties[$(el).data("widget")]; 
+		
+		eval(perfilrepresentante.currentWidget)();
+		
 	},
 	
 	showCfa: function(el, ev) {
@@ -112,7 +151,7 @@ var perfilrepresentante = SuperWidget.extend({
 		var m = moment().locale(locale);
 		var list = []; 
 		for (var i=0; i<6; i++) {
-			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MMMM") + "/" + m.format("YYYY"), "class": (i<2 ? "" : "widget-extrato") };
+			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MMMM") + "/" + m.format("YYYY") };
 			list.push(o);
 			m.subtract(1, 'months');
 		}
@@ -127,14 +166,17 @@ var perfilrepresentante = SuperWidget.extend({
 	},
 	
 	changeRepresentante: function () {
-		perfilrepresentante.loading.show();
 		perfilrepresentante.representante = $('#listrepresentatives').val();
 		$('.table-evolucao > tbody').html("");
 		perfilrepresentante.list = [];
 		perfilrepresentante.listSkus = [];
 		$(".tab-detalhamento").html("");
 		perfilrepresentante.current = null;
-		perfilrepresentante.getfoto();
+		perfilrepresentante.isLoaded = false;
+		
+		console.log(perfilrepresentante.currentWidget);
+		
+		eval(perfilrepresentante.currentWidget)();
 		
 	},
 	
@@ -176,7 +218,9 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".uf").html(row["enderuf"]);
 		$(".equipe").html(row["descequipe"]);
 		
-		google.charts.setOnLoadCallback(perfilrepresentante.getSituacaoConsolidado);		
+		google.charts.setOnLoadCallback(perfilrepresentante.getSituacaoConsolidado);
+	    
+
 		
 	},
 	
@@ -213,6 +257,7 @@ var perfilrepresentante = SuperWidget.extend({
 		
 		var data = [["Situação", "Valor"]];
 		perfilrepresentante.valortotalpedidos = 0;
+		perfilrepresentante.devolucoes = 0;
 		var comissaoFaturada = 0;
 		var comissaoAFaturar = 0;
 		var values = rows["values"];
@@ -226,6 +271,8 @@ var perfilrepresentante = SuperWidget.extend({
 				comissaoFaturada += parseFloat(row["valortotalcomissaogeral"]);
 			} else if (row["situacao"] != "C" && row["situacao"] != "D") {
 				comissaoAFaturar += parseFloat(row["valortotalcomissaogeral"]);
+			} else if (row["situacao"] == "D") {
+				perfilrepresentante.devolucoes += parseFloat(row["valortotalgeral"]);
 			}
 			if (row["situacao"] != "C" && row["situacao"] != "D") {
 				perfilrepresentante.valortotalpedidos += parseFloat(row["valortotalgeral"]);
@@ -236,20 +283,13 @@ var perfilrepresentante = SuperWidget.extend({
 		$("#comissaoVendaAFatura").val("R$ " + perfilrepresentante.mask(comissaoAFaturar.toFixed(2)));
 		$("#totalComissao").val("R$ " + perfilrepresentante.mask((comissaoFaturada + comissaoAFaturar).toFixed(2)));
 		
-		var options = {
-			pieSliceText: 'value',
-			width: '300px',
-			height: '300px',
-			sliceVisibilityThreshold: 0
-        };
-		var chart = new google.visualization.PieChart(document.getElementById('chartPie'));
-	    chart.draw(google.visualization.arrayToDataTable(data), options);		
-	    
 	    perfilrepresentante.getMeta();
 
 	},
 	
 	getMeta: function() {
+		perfilrepresentante.loading.show();
+		
 		var mes = $("#periodo :selected").data("month");
 		var ano = $("#periodo :selected").data("year");
 		
@@ -310,8 +350,11 @@ var perfilrepresentante = SuperWidget.extend({
 		        
 		        if (meta < 0) { faltante = 0; }
 
+		        var valorBruto = perfilrepresentante.valortotalpedidos + perfilrepresentante.devolucoes;
 		        $(".valor-potencial").html("R$ " + perfilrepresentante.mask(meta.toFixed(2)));
-		        $(".valor-vendido").html("R$ " + perfilrepresentante.mask(perfilrepresentante.valortotalpedidos.toFixed(2)));
+		        $(".venda-bruta").html("R$ " + perfilrepresentante.mask(valorBruto.toFixed(2)));
+		        $(".devolucao").html("R$ " + perfilrepresentante.mask(perfilrepresentante.devolucoes.toFixed(2)));
+		        $(".venda-liquida").html("R$ " + perfilrepresentante.mask(perfilrepresentante.valortotalpedidos.toFixed(2)));
 		        $(".percentual-potencial").html(perfilrepresentante.mask(percentual.toFixed(2)) + "%");
 		        $(".valor-faltante").html("R$ " + perfilrepresentante.mask(faltante.toFixed(2)));
 		        $(".valor-dia").html("R$ " + perfilrepresentante.mask(valordia.toFixed(2)));
@@ -577,11 +620,9 @@ var perfilrepresentante = SuperWidget.extend({
 	},	
 	
 	changePeriodo: function(el ,ev) {
-		if ($("option:selected", el).hasClass("widget-extrato") == false) {
-			perfilrepresentante.loading.show();
-			perfilrepresentante.list = [];
-			perfilrepresentante.getSituacaoConsolidado();		
-		}
+		perfilrepresentante.list = [];
+		perfilrepresentante.isLoaded = false;
+		eval(perfilrepresentante.currentWidget)();
 	},
 	
 	isadmin: function() {

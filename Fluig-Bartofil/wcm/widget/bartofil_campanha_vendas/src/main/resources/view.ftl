@@ -2,33 +2,23 @@
 	data-params="campanhavendas.instance({instanceId: ${instanceId}, foldercampanha: '${foldercampanha!''}', grouprca: '${grouprca!''}'})">
 
 	<div class="page-header">
-		<h1>${i18n.getTranslation('divulgacao.campanha')}</h1>
+		<h1>CONCURSOS DE VENDAS</h1>
 	</div>
 
 	<form class="form-inline header-itens-campanha" role="form">
 		<label>${i18n.getTranslation('ordernar.por')}:</label>
     	<div class="form-group">
     		<select class="form-control" id="ordenar" data-change-ordenar>
-    			<option value="id" data-type="integer">C&Oacute;DIGO</option>
+    			<option value="id" data-type="integer">Nº DO CONCURSO</option>
     			<option value="dtainicio" data-type="date">DATA INICIO</option>
     			<option value="dtaprorrogado" data-type="date">${i18n.getTranslation('data.prorrogado')}</option>
     			<option value="dtaencerrado" data-type="date">DATA ENCERRAMENTO</option>
     			<option value="descricao" data-type="string">DESCRI&Ccedil;&Atilde;O</option>
     		</select>
     	</div>
-		<label>${i18n.getTranslation('por.pagina')}:</label>
-    	<div class="form-group">
-    		<select class="form-control" id="paginacao" data-change-paginacao>
-    			<option value="8">8</option>
-    			<option value="16">16</option>
-    			<option value="24">24</option>
-    			<option value="32">32</option>
-    			<option value="999">Todas</option>
-    		</select>
-    	</div>
 		<label>${i18n.getTranslation('busca')}:</label>
         <div class="form-group">
-            <input type="text" class="form-control" id="busca" placeholder="${i18n.getTranslation('digite.texto')}">
+            <input type="text" class="form-control" id="busca-concurso" placeholder="${i18n.getTranslation('digite.texto')}">
         </div>
 	</form>
 	<br>
@@ -76,7 +66,7 @@
 				    		</tbody>
 				    	</table>
 						<ul class="list-group">
-						    <li class="list-group-item list-group-item-warning">Ranking dos Premiados</li>
+						    <li class="list-group-item active">Classifica&ccedil;&atilde;o do Concurso</li>
 						</ul>	    		
 				    	<table id="table-ranking-vendas" class="table table-striped with-border table-hover table-condensed">
 				    		<thead>

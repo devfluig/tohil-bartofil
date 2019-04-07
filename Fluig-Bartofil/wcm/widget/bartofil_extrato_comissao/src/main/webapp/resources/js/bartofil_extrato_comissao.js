@@ -4,6 +4,7 @@ var extratocampanha = SuperWidget.extend({
 	mobile: FLUIGC.utilities.checkDevice().isMobile,
 	loading: FLUIGC.loading(".widget-extrato"),
 	representante: null,
+	isLoaded: false,
 	init : function() {
 		$(".pageTitle").parent().remove();
 		extratocampanha.loading.show();
@@ -17,17 +18,22 @@ var extratocampanha = SuperWidget.extend({
 			$("[data-click-print]").hide();
 		}
 		
-		this.getcomissoes();
 	},
 
 	bindings : {
 		local : {},
 		global : {
-			"click-detalhado": ['click_showdetalhado'],
-			"click-resumido": ['click_showresumido'],
-			"change-periodo": ['change_getcomissoes'],
+			"change-periodo": ['change_changePeriodo'],
 			"click-print": ['click_print'],
 			"change-representante": ['change_listcomissoes']
+		}
+	},
+	
+	onShowWidget: function() {
+		if (!extratocampanha.isLoaded) {
+			extratocampanha.loading.show();
+			extratocampanha.isLoaded = true;
+			extratocampanha.getcomissoes();
 		}
 	},
 	
@@ -49,9 +55,9 @@ var extratocampanha = SuperWidget.extend({
 	},	
 	
 	listcomissoes: function(el, ev) {
-		extratocampanha.loading.show();
+		extratocampanha.isLoaded = false;
 		extratocampanha.current = perfilrepresentante.representante; 
-		extratocampanha.getcomissoes();
+		eval(perfilrepresentante.currentWidget)();
 	},
 	
 	print: function() {
@@ -60,6 +66,10 @@ var extratocampanha = SuperWidget.extend({
 		newWin.document.write('<html><head><link type="text/css" rel="stylesheet" href="https://style.fluig.com/css/fluig-style-guide.min.css"></head><body onload="window.print()">'+$(".toprint").html()+'</body></html>');
 		newWin.document.close();
 		setTimeout(function(){newWin.close();},10);		
+	},
+	changePeriodo: function(el, ev) {
+		extratocampanha.isLoaded = false;
+		eval(perfilrepresentante.currentWidget)();
 	},
 	
 	getcomissoes: function(el, ev) {
@@ -240,16 +250,6 @@ var extratocampanha = SuperWidget.extend({
 	    valor = valor.toString().replace(/(\d)(\d{2})$/,"$1,$2");
 	    return valor                    
 	},
-	
-	showdetalhado: function(el, ev) {
-		$(".detalhado").show();
-		$(".resumido").hide();
-	},
-	
-	showresumido: function(el, ev) {
-		$(".detalhado").hide();
-		$(".resumido").show();
-	}
 	
 });
 

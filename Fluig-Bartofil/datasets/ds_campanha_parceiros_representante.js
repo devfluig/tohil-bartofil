@@ -48,7 +48,7 @@ function createDataset(fields, constraints, sortFields) {
 			where += "&grupo=" + grupo;
 		}
 		if (equipesuperior != null) {
-			where += "&nroequipesuperior=" + equipesuperior;
+			//where += "&nroequipesuperior=" + equipesuperior;
 		}
 		if (representante != null) {
 			where += "&nrorepresentante=" + representante;

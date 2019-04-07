@@ -12,7 +12,7 @@
 			    		<select class="form-control" id="periodo" data-change-periodo>
 						    <script type="text/template" class="tpl-continuous-scroll-periodo">
 						        {{#items}}
-					    			<option class="{{class}}" data-month="{{mes}}" data-year="{{ano}}">{{periodo}}</option>
+					    			<option data-month="{{mes}}" data-year="{{ano}}">{{periodo}}</option>
 						        {{/items}}
 						    </script>
 			    		</select>
@@ -83,12 +83,12 @@
 			</form>
    		</div>
    		<p  class="col-md-12 col-sm-12">
-   			<a href="#" class="btn btn-info btn-lg button-home active" data-click-widget data-widget=widget-home role="button">HOME</a>
+   			<a href="#" class="btn btn-info btn-lg button-home active" data-click-widget data-widget=widget-home role="button">P&aacute;gina inicial</a>
+   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-pedidos role="button">Meus pedidos</a>
 			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-extrato role="button">Extrato de Comiss&atilde;o</a>
    			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros role="button">Campanha Trimestral<br>Parceiros 100%</a>
   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros-anual role="button">Campanha Anual<br>Parceiros 100%</a>
-   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-campanha role="button">Demais Concursos e<br>Campanha de Vendas</a>
-   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-pedidos role="button">Meus pedidos</a>
+   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-campanha role="button">Concursos de Vendas</a>
    			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-promocoes role="button">Promo&ccedil;&otilde;es</a>
    			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=universidade role="button" disabled="disabled">Universidade BCR <br>(Em desenvolvimento)</a>
    		</p>
@@ -99,20 +99,21 @@
 	</div>
 	
 	<div class="row widget-home">
-		<div class="col-sm-4"><div id="chartPie" style="width: 500px; height: 300px;"></div></div>
-		<div class="col-sm-4">
+		<div class="col-sm-6">
 			<div id="chartGauge" style="margin-left: 82px;"></div>
 			<div class="legend-chart-gauge col-sm-8">
 				<ul class="list-group">
 				    <li class="list-group-item list-group-item-info list-group-item-custom">Potencial de Venda <b class="valor-potencial"></b></li>
-				    <li class="list-group-item list-group-item-info list-group-item-custom">Valor Vendido <b class="valor-vendido"></b></li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom">Venda Bruta <b class="venda-bruta"></b></li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom">Devolu&ccedil;&atilde;o <b class="devolucao"></b></li>
+				    <li class="list-group-item list-group-item-info list-group-item-custom">Venda Liquida <b class="venda-liquida"></b></li>
 				    <li class="list-group-item list-group-item-info list-group-item-custom">Potencial alcançado <b class="percentual-potencial"></b></li>
 				    <li class="list-group-item list-group-item-info list-group-item-custom">Falta <b class="valor-faltante"></b></li>
 				    <li class="list-group-item list-group-item-info list-group-item-custom">Venda/dia necessária: <b class="valor-dia"></b></li>
 				</ul>
 			</div>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md-6">
 			<div class="list-group">
 			    <a href="#" class="list-group-item disabled" data-click-decendio>Número de clientes atendidos:</a>
 			    <a href="#" class="list-group-item" data-click-decendio data-id=1>1&ordm; Decêndio: <b class="decendio-1"></b> clientes</a>
@@ -138,15 +139,14 @@
 			<div class="col-sm-2">
 				<input type="text" class="form-control fs-txt-right" id="comissaoVendaAFatura" disabled>
 	    	</div>
-	    	<p class="help-block">(Em análise + Liberado + Em separação)</p>
     	</div>
 		<div class="form-group">
-			<label class="col-sm-3 control-label">TOTAL:</label>
+			<label class="col-sm-3 control-label">Comissão total:</label>
 			<div class="col-sm-2">
 				<input type="text" class="form-control fs-txt-right"  id="totalComissao" disabled>
 	    	</div>
 			<div class="col-sm-2">
-				<button class="btn btn-primary" data-btn-por-cfa role="button">Por CFA</button>					
+				<button class="btn btn-primary" data-btn-por-cfa role="button">Comissão por CFA</button>					
 	    	</div>
     	</div>
     </form>
@@ -158,7 +158,7 @@
     </div>
 	
 	<div class="page-header widget-home">
-	    <h2>Evoluç&atilde;o do Semestre (&uacute;ltimos 6 meses):</h2>
+	    <h2>EVOLU&Ccedil;&Atilde;O DO SEMESTRE (&Uacute;LTIMOS 6 MESES):</h2>
 	</div>
 	
 	<div class="table-responsive">
@@ -177,6 +177,7 @@
 			
 			</tbody>
 		</table>
+		<p class="help-block widget-home">valores considerando a data de faturamento (Estes valores podem divergir do gráfico de desempenho)</p>
 	</div>
     <script type="text/template" class="tpl-extrato-comissao">
 		<div class="table-responsive">

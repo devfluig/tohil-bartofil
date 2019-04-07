@@ -14,18 +14,13 @@ var relatorioPedidos = SuperWidget.extend({
 	listItems: null,
 	listConditions: null,
 	pieChartData: [],
+	isLoaded: false,
 	init : function() {
 		$(".pageTitle").parent().remove();
-		relatorioPedidos.loading.show();
-		
 		relatorioPedidos.grouprca = perfilrepresentante.grouprca;
 		relatorioPedidos.representante = perfilrepresentante.representante;
 		
-		google.charts.load('current', {'packages':['corechart']});
-		google.charts.setOnLoadCallback(relatorioPedidos.getPedidos);
-		
 	},
-
 	bindings : {
 		local : {},
 		global : {
@@ -33,6 +28,14 @@ var relatorioPedidos = SuperWidget.extend({
 			"change-representante": ['change_listpedidos'],
 			'click-item': ['click_clickItem'],
 			'click-home': ['click_clickHome']
+		}
+	},
+	onShowWidget: function() {
+		if (!relatorioPedidos.isLoaded) {
+			relatorioPedidos.loading.show();
+			relatorioPedidos.isLoaded = true;
+			google.charts.load('current', {'packages':['corechart']});
+			google.charts.setOnLoadCallback(relatorioPedidos.getPedidos);
 		}
 	},
 	clickHome: function(el, ev) {
@@ -231,16 +234,14 @@ var relatorioPedidos = SuperWidget.extend({
 	},	
 	
 	changePeriodo: function(el, ev) {
-		if ($("option:selected", el).hasClass("widget-extrato") == false) {
-			relatorioPedidos.loading.show();
-			this.getPedidos();
-		}
+		relatorioPedidos.isLoaded = false;
+		eval(perfilrepresentante.currentWidget)();
 	},
 	
 	listpedidos: function(el, ev) {
-		relatorioPedidos.loading.show();
 		relatorioPedidos.representante = perfilrepresentante.representante;
-		this.getPedidos();
+		relatorioPedidos.isLoaded = false;
+		eval(perfilrepresentante.currentWidget)();
 	},
 	
 	getPedidos: function(el, ev) {
@@ -257,14 +258,11 @@ var relatorioPedidos = SuperWidget.extend({
 		var c2 = DatasetFactory.createConstraint("datainclusaofim", endOfMonth, endOfMonth, ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("codRepresentante", relatorioPedidos.representante, relatorioPedidos.representante, ConstraintType.MUST, false);
 		
-		console.log("dataset", c1, c2, c3)
-	      
 		DatasetFactory.getDataset('ds_webservice_meus_pedidos', null, [c1, c2, c3], null, {"success": relatorioPedidos.onReadyGetPedidos});
 		
 	},
 
 	onReadyGetPedidos: function(rows) {
-		console.log("dataset", rows)
 		if (!rows || !rows["values"] || rows["values"].length == 0) {
 			relatorioPedidos.loading.hide();
 			return;
@@ -374,7 +372,6 @@ var relatorioPedidos = SuperWidget.extend({
 			"despesas":despesas 
 		}; 
 		
-		console.log('relatorioPedidos.current', relatorioPedidos.current)
 		relatorioPedidos.pieChartData = [];
 		var data = [["Situação", "Valor"]];
 		var t = relatorioPedidos.current["totais"];

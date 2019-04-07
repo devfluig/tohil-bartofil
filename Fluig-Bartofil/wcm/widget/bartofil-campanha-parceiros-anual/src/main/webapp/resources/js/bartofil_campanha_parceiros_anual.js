@@ -11,6 +11,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 	trimestre: null,
 	equipesuperior: null,
 	codcampanha: null,
+	isLoaded: false,
 	init : function() {
 		$(".pageTitle").parent().remove();
 		
@@ -37,8 +38,6 @@ var campanhaparceirosanual = SuperWidget.extend({
 		campanhaparceirosanual.loading.show();
 		campanhaparceirosanual.representante = perfilrepresentante.representante;
 		
-		this.getranking();
-		
 	},
 
 	bindings : {
@@ -52,15 +51,25 @@ var campanhaparceirosanual = SuperWidget.extend({
 		}
 	},
 	
+	onShowWidget: function() {
+		if (!campanhaparceirosanual.isLoaded) {
+			campanhaparceirosanual.loading.show();
+			campanhaparceirosanual.isLoaded = true;
+			campanhaparceirosanual.getranking();
+			
+		}
+	},
+	
 	changerepresentante: function () {
-		campanhaparceirosanual.loading.show();
 		campanhaparceirosanual.representante = perfilrepresentante.representante;
 		campanhaparceirosanual.list = [];
 		campanhaparceirosanual.offset = 0;
 		$(".tab-detalhamento-anual").html("");
 		campanhaparceirosanual.current = null;
 		campanhaparceirosanual.limit = parseInt($("#paginacao-anual").val());
-		campanhaparceirosanual.getranking();
+		
+		campanhaparceirosanual.isLoaded = false;
+		eval(perfilrepresentante.currentWidget)();
 		
 	},
 	
@@ -133,7 +142,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 		var m = moment(row["dtaprocessamento"])
 		
 		$("#ordem-premio-anual").val(row["ordem"]);
-		$("#situacao-anual").val(row["vlrpremio"]);
+		$("#premiacao-anual").val(row["vlrpremio"]);
 		$("#data-processamento-anual").val(m.format("DD/MM/YYYY"));
 		$("#status-anual").val(campanhaparceirosanual.mask((+(row["pontos"])).toFixed(2)));
 		$("#grupo-anual").val(row["descgrupo"]);
@@ -233,7 +242,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 		var search = $("#busca-anual").val(); 
 		if (search && search != "") {
 			filter = campanhaparceirosanual.list.filter(function(item) {
-				return item["codigo"].toLowerCase().indexOf(search) != -1 || item["equipe"].toLowerCase().indexOf(search.toLowerCase()) != -1;
+				return item["codigo"].toLowerCase().indexOf(search) != -1;
 			})
 		}
 		
