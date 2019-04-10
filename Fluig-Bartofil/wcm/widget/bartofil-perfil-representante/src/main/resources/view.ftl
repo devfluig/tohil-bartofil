@@ -86,6 +86,7 @@
    			<a href="#" class="btn btn-info btn-lg button-home active" data-click-widget data-widget=widget-home role="button">P&aacute;gina inicial</a>
    			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-pedidos role="button">Meus pedidos</a>
 			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-extrato role="button">Extrato de Comiss&atilde;o</a>
+   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros-mensal role="button">Campanha Mensal<br>Parceiros 100%</a>
    			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros role="button">Campanha Trimestral<br>Parceiros 100%</a>
   			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-parceiros-anual role="button">Campanha Anual<br>Parceiros 100%</a>
    			<a href="#" class="btn btn-info btn-lg button-home" data-click-widget data-widget=widget-campanha role="button">Concursos de Vendas</a>
@@ -149,11 +150,18 @@
 				<button class="btn btn-primary" data-btn-por-cfa role="button">Comissão por CFA</button>					
 	    	</div>
     	</div>
+		<div class="form-group">
+			<label class="col-sm-5 control-label">Quantidade de Itens (SKUs) dos Parceiros vendidos no mês: <b class="qtdeItensSkus"></b> itens</label>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-1 col-sm-offset-4">
+				<button class="btn btn-primary" data-btn-show-skus role="button">Ver itens</button>
+			</div>
+		</div>
     </form>
     
 	<div class="row widget-home">
 		<div class="col-sm-6 col-sm-offset-1">
-			<button class="btn btn-primary" data-btn-show-skus role="button">Quantidade de Itens (SKUs) dos Parceiros vendidos no mês: <b class="qtdeItensSkus"></b> itens</button>					
     	</div>
     </div>
 	
@@ -176,6 +184,14 @@
 			<tbody>
 			
 			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan=5></td>
+					<td>
+						<a href="#" class="btn btn-primary" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
+					</td>
+				</tr>
+			</tfoot>
 		</table>
 		<p class="help-block widget-home">valores considerando a data de faturamento (Estes valores podem divergir do gráfico de desempenho)</p>
 	</div>

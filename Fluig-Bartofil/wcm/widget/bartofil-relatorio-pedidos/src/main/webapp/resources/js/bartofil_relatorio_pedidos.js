@@ -26,8 +26,8 @@ var relatorioPedidos = SuperWidget.extend({
 		global : {
 			"change-periodo": ['change_changePeriodo'],
 			"change-representante": ['change_listpedidos'],
-			'click-item': ['click_clickItem'],
-			'click-home': ['click_clickHome']
+			'click-home': ['click_clickHome'],
+			'change-situacao': ['change_changeSituacao'],
 		}
 	},
 	onShowWidget: function() {
@@ -38,29 +38,18 @@ var relatorioPedidos = SuperWidget.extend({
 			google.charts.setOnLoadCallback(relatorioPedidos.getPedidos);
 		}
 	},
+	changeSituacao: function(el, ev) {
+		console.log(this); // DOM element
+	    console.log(el); // jQuery event
+	    console.log(ev); // true | false
+		relatorioPedidos.showResumo();
+		
+	},
 	clickHome: function(el, ev) {
 		$(".no-detail").show( "puff", 1000 );
 		$(".in-detail").hide( "fold", 1000 );
 	},
-	clickItem: function(el, ev) {
-		
-		if ($(el).data("id") == null || $(el).data("id") == "") { return false; }
-		
-		$(".no-detail").hide( "puff", 1000 );
-		$(".in-detail").show( "fold", 1000 );
-
-		if ($(el).data("id") == "ND") {
-			$(".detail-cgo").hide();
-		} else if ($(el).data("id") != null && $(el).data("id") != "") {
-			$(".detail-cgo").show();
-		}
-		
-		relatorioPedidos.showResumo($(el).data("id"));
-	},
-	
-	showResumo: function(type) {
-		if (type == null || type == "") { return false; }
-		
+	showResumo: function() {
 		var total = {
 			"total": 0,
 			"comissao": 0,
@@ -71,8 +60,37 @@ var relatorioPedidos = SuperWidget.extend({
 			"dias": 0
 		};
 		
-		var origem = {};
 		var dataRequest = [];
+		
+		for (var i=0; i<relatorioPedidos.list.length; i++) {
+			var item = relatorioPedidos.list[i];
+			var valorcobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
+			var valortotalcomissao = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+			var valortotalacobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
+			
+			total["total"] += valorcobrar;
+			total["comissao"] += valortotalcomissao;
+			total["quantidade"] += 1;
+			
+			if (total["dias"] == 0) {
+				total["dias"] = +(item["diasuteisrestantes"]);
+			}
+			
+			var check = $("#switch-" + item["situacao"]).prop("checked");
+			console.log(item["situacao"], check);
+			if (check) {
+				var m = moment(item["datainclusao"]);
+				console.log("moment", item["datainclusao"], m)
+				item["datainclusaof"] = m.format("DD/MM/YYYY");
+				item["valor"] = (item["situacao"] == "" || item["situacao"] == "C") ? item["valortotalpedido"] : item["valortotalacobrar"];
+				item["valor"] = parseFloat(item["valor"].replace(/,/g, '').replace(",", "."));
+				item["valor"] = relatorioPedidos.mask(item["valor"].toFixed(2));
+				item["comissao"] = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+				item["comissao"] = relatorioPedidos.mask(item["comissao"].toFixed(2));
+				dataRequest.push(item);
+			}
+		}
+		/*
 		
 		if (type != "ND") {
 			var cgo = null;
@@ -86,44 +104,6 @@ var relatorioPedidos = SuperWidget.extend({
 				type = Object.keys(relatorioPedidos["current"].totais)[0];
 			}
 			
-			for (var i=0; i<relatorioPedidos.list.length; i++) {
-				var item = relatorioPedidos.list[i];
-				console.log(item);
-				console.log(item["datainclusao"]);
-				var valorcobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
-				var valortotalcomissao = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
-				var valortotalacobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
-				
-				total["total"] += valorcobrar;
-				total["comissao"] += valortotalcomissao;
-				total["quantidade"] += 1;
-				
-				if (total["dias"] == 0) {
-					total["dias"] = +(item["diasuteisrestantes"]);
-				}
-				
-				var validCgo = false;
-				if (cgo != null) {
-					if (item["cgo"] == cgo) { validCgo = true; }
-				} else {
-					validCgo = true;
-				}
-				
-				if (validCgo && (item["situacao"] == type || type == "ALL") && item["naturezaoperacao"] == "V") {
-					origem[item["descorigempedido"]] = (origem[item["descorigempedido"]] ? origem[item["descorigempedido"]] + valortotalacobrar : valortotalacobrar)
-				}
-				if (validCgo && (item["situacao"] == type || type == "ALL")) {
-					var m = moment(item["datainclusao"]);
-					console.log("moment", item["datainclusao"], m)
-					item["datainclusaof"] = m.format("DD/MM/YYYY");
-					item["valor"] = (item["situacao"] == "") ? item["valortotalpedido"] : item["valortotalacobrar"];
-					item["valor"] = parseFloat(item["valor"].replace(/,/g, '').replace(",", "."));
-					item["valor"] = relatorioPedidos.mask(item["valor"].toFixed(2));
-					item["comissao"] = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
-					item["comissao"] = relatorioPedidos.mask(item["comissao"].toFixed(2));
-					dataRequest.push(item);
-				}
-			}
 			
 		} else {
 			$(".titleResumo").html("");
@@ -154,9 +134,7 @@ var relatorioPedidos = SuperWidget.extend({
 					dataRequest.push(item);
 				}
 			}
-		}
-		
-		
+		}*/
 		
 		relatorioPedidos.dataTable = FLUIGC.datatable('#datatablePedidos', {
 			dataRequest: dataRequest,
@@ -366,89 +344,40 @@ var relatorioPedidos = SuperWidget.extend({
 				}
 			}
 		}
-
+		
+		$(".switch-situacao").html('');
+		var html = '<ul class="list-group">';
+    
+    
+		for (var key in total) {
+			var o = total[key];
+			html += '<li class="list-group-item"><span class="badge badge-success">R$ ' + relatorioPedidos.mask(o["total"].toFixed(2)) + '</span><label class="checkbox-inline">' +
+				'<input id="switch-' + key + '" type="checkbox" checked data-situacao="' + key + '" data-change-situacao data-size="mini" data-on-color="success" data-off-color="danger">' + o["situacao"] + 
+				'</label></li>'
+//			FLUIGC.switcher.init('#switch-' + key);			
+		}
+		
+		if (despesas) {
+			html += '<li class="list-group-item"><span class="badge badge-danger">R$ ' + relatorioPedidos.mask(despesas["total"].toFixed(2)) + '</span><label class="checkbox-inline">' +
+				'<input id="switch-D" type="checkbox" checked data-situacao="D" data-change-situacao data-size="mini" data-on-color="success" data-off-color="danger">Devoluções' + 
+				'</label>'
+			$(".switch-situacao").append(html);
+//			FLUIGC.switcher.init('#switch-ND');			
+		}
+		html += '</ul>';
+		$(".switch-situacao").html(html);
+		
+/*		FLUIGC.switcher.onChange(".change-situacao", function(event, state){
+			console.log(this); // DOM element
+		    console.log(event); // jQuery event
+		    console.log(state); // true | false
+		});*/		
 		relatorioPedidos.current = {
 			"totais": total,
 			"despesas":despesas 
 		}; 
 		
-		relatorioPedidos.pieChartData = [];
-		var data = [["Situação", "Valor"]];
-		var t = relatorioPedidos.current["totais"];
-		for (var key in t) {
-			var o = t[key];
-			data.push([o["situacao"] + " R$ " + relatorioPedidos.mask(o["total"].toFixed(2)), o["total"]]);
-			relatorioPedidos.pieChartData.push({ "situacao": o["situacao"], "codigo": key})
-		}
-		
-		var d = relatorioPedidos.current["despesas"];
-		if (d) {
-			data.push(["Devoluções R$ " + relatorioPedidos.mask(d["total"].toFixed(2)), d["total"]]);
-			relatorioPedidos.pieChartData.push({ "situacao": "Devoluções", "codigo": "ND"})
-		}
-		
-		var options = {
-			'width': '300px',
-			'height': '300px',
-			"sliceVisibilityThreshold": 0,
-			'tooltip' : {
-				'trigger': 'none'
-			}
-        };
-		var chart = new google.visualization.PieChart(document.getElementById('pieSituacao'));
-
-		function selectHandler() {
-			var selectedItem = chart.getSelection()[0];
-			if (selectedItem) {
-				var o = relatorioPedidos.pieChartData[selectedItem.row];
-				relatorioPedidos.showResumo(o["codigo"]);
-				if (o["codigo"] == "F") {
-					relatorioPedidos.showGraphFaturamento();
-				} else {
-					$(".pie-faturamento").hide();
-				}
-				
-				
-			}
-	    }
-		function mouseHandlerPointer() {
-		   document.getElementById('pieSituacao').style.cursor = 'pointer';
-		 }  
-
-		function mouseHandlerDefault() {
-		   document.getElementById('pieSituacao').style.cursor = 'default';
-		 }		
-		google.visualization.events.addListener(chart, 'select', selectHandler);
-		google.visualization.events.addListener(chart, 'onmouseover', mouseHandlerPointer);                 
-		google.visualization.events.addListener(chart, 'onmouseout', mouseHandlerDefault);
-		
-	    chart.draw(google.visualization.arrayToDataTable(data), options);
-		
-		relatorioPedidos.showResumo("ALL");
-		relatorioPedidos.showGraphFaturamento();
-	},
-	showGraphFaturamento: function() {
-		$(".pie-faturamento").show();
-		var data = [["Situação", "Valor"]];
-		var t = relatorioPedidos.current["totais"];
-		
-		if (t["F"]) {
-			var f = t["F"].cgo;
-			for (var key in f) {
-				var o = f[key];
-				data.push([key + " R$ " + relatorioPedidos.mask(o["total"].toFixed(2)), o["total"]]);
-			}
-			
-			var options = {
-				pieSliceText: 'value',
-				width: '300px',
-				height: '300px',
-				sliceVisibilityThreshold: 0
-	        };
-			var chart = new google.visualization.PieChart(document.getElementById('pieFaturamento'));
-		    chart.draw(google.visualization.arrayToDataTable(data), options);
-		}
-		
+		relatorioPedidos.showResumo();
 	},
 	mask: function (valor) {
 	    valor = valor.toString().replace(/\D/g,"");

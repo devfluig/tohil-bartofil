@@ -1,0 +1,20 @@
+/* Coloque aqui seu codigo CSS */
+.nav-pills {
+	border-bottom: 1px solid #ddd;
+}
+
+.badge-success {
+    background-color: #5cb85c !important;
+}
+
+.badge-danger {
+    background-color: #d9534f !important;
+}
+
+.badge-default {
+    background-color: #777 !important;
+}
+
+.fluig-style-guide .list-group-item-heading {
+    margin-bottom: 12px !important;
+}

@@ -48,6 +48,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 			"change-representante": ['change_changerepresentante'],
 			'change-ordenar-parceiro-anual': ['change_changeordenacao'],
 			'click-tab-parceiro-anual': ['click_showtab'],
+			'change-periodo': ['change_changePeriodo'],
 		}
 	},
 	
@@ -60,6 +61,10 @@ var campanhaparceirosanual = SuperWidget.extend({
 		}
 	},
 	
+	changePeriodo: function(el ,ev) {
+		campanhaparceirosanual.isLoaded = false;
+		eval(perfilrepresentante.currentWidget)();
+	},
 	changerepresentante: function () {
 		campanhaparceirosanual.representante = perfilrepresentante.representante;
 		campanhaparceirosanual.list = [];

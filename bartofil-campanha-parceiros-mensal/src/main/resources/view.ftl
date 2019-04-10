@@ -1,14 +1,14 @@
-<div id="campanha_vendas_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide widget-campanha"
-	data-params="campanhavendas.instance({instanceId: ${instanceId}, foldercampanha: '${foldercampanha!''}', grouprca: '${grouprca!''}'})">
+<div id="campanha_mensal_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide widget-parceiros-mensal"
+	data-params="campanhaparceirosmensal.instance({instanceId: ${instanceId}, foldercampanha: '${foldercampanha!''}', grouprca: '${grouprca!''}'})">
 
 	<div class="page-header">
-		<h1>CONCURSOS DE VENDAS</h1>
+		<h1>CAMPANHA DE PARCEIROS MENSAL</h1>
 	</div>
 
-	<form class="form-inline header-itens-campanha" role="form">
+	<form class="form-inline header-itens-campanha-mensal" role="form">
 		<label>${i18n.getTranslation('ordernar.por')}:</label>
     	<div class="form-group">
-    		<select class="form-control" id="ordenar" data-change-ordenar>
+    		<select class="form-control" id="ordenar-mensal" data-change-ordenar-mensal>
     			<option value="id" data-type="integer">Nº DO CONCURSO</option>
     			<option value="dtainicio" data-type="date">DATA INICIO</option>
     			<option value="dtaprorrogado" data-type="date">${i18n.getTranslation('data.prorrogado')}</option>
@@ -18,17 +18,17 @@
     	</div>
 		<label>${i18n.getTranslation('busca')}:</label>
         <div class="form-group">
-            <input type="text" class="form-control" id="busca-concurso" placeholder="${i18n.getTranslation('digite.texto')}">
+            <input type="text" class="form-control" id="busca-concurso-mensal" placeholder="${i18n.getTranslation('digite.texto')}">
         </div>
 	</form>
 	<br>
 	
-    <script type="text/template" class="tpl-continuous-scroll-campanhas">
-		<div class="row clearfix itens-campanha">
+    <script type="text/template" class="tpl-continuous-scroll-campanhas-mensal">
+		<div class="row clearfix itens-campanha-mensal">
 	        {{#items}}
 				<div class="col-sm-4 col-md-3">
-				    <div class="thumbnail" data-click-campanha data-id="{{id}}">
-				        <img id="img{{id}}" src="{{image}}" style="height: 300px;">
+				    <div class="thumbnail" data-click-campanha-mensal data-id="{{id}}">
+				        <img id="img-mensal-{{id}}" src="{{image}}" style="height: 300px;">
 				        <div class="caption">
 				            <h4>{{id}} - {{descricao}}</h4>
 				            <p>{{{posicao}}}<button type="button" class="btn {{classbutton}} fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
@@ -40,16 +40,16 @@
 	    </div>
     </script>
 	
-   	<div class="table-responsive fs-display-none premiados">
+   	<div class="table-responsive fs-display-none premiados-mensal">
 		<div class="panel panel-info">
-		    <div class="panel-heading" style="height: 53px;"><span class="title-detail">DETALHES</span><button type="button" class="btn btn-default fs-float-right" data-click-fechar>Voltar</button></div>
+		    <div class="panel-heading" style="height: 53px;"><span class="title-detail-mensal">DETALHES</span><button type="button" class="btn btn-default fs-float-right" data-click-fechar-mensal>Voltar</button></div>
 		    <div class="panel-body">
 		    	<div class="row">
 		    		<div class="col-md-7 col-sm-9">
 						<ul class="list-group">
 						    <li class="list-group-item active">Minha posição</li>
 						</ul>	    		
-				    	<table id="table-myranking" class="table table-striped with-border table-hover table-condensed">
+				    	<table id="table-myranking-mensal" class="table table-striped with-border table-hover table-condensed">
 				    		<thead>
 				    			<tr class="primary">
 				    				<th class="fs-txt-left">${i18n.getTranslation('situacao')}</th>
@@ -68,7 +68,7 @@
 						<ul class="list-group">
 						    <li class="list-group-item active">Classifica&ccedil;&atilde;o do Concurso</li>
 						</ul>	    		
-				    	<table id="table-ranking-vendas" class="table table-striped with-border table-hover table-condensed">
+				    	<table id="table-ranking-vendas-mensal" class="table table-striped with-border table-hover table-condensed">
 				    		<thead>
 				    			<tr class="primary">
 				    				<th class="fs-txt-left">${i18n.getTranslation('situacao')}</th>
@@ -84,7 +84,7 @@
 				    		</tbody>
 				    	</table>
 				    	
-					   	<script type="text/template" class="tpl-item-ranking-vendas">
+					   	<script type="text/template" class="tpl-item-ranking-vendas-mensal">
 					    	{{#items}}
 					 			<tr class="{{premiado}}">
 					 				<td class="fs-txt-left">{{{situacao}}}</td>
@@ -99,10 +99,10 @@
 					   	</script>
 				    	
 		    		</div>
-		    		<div class="col-md-5 col-sm-3 list-imagens-detail">
-			            <a href="#" data-image-prev><span class="fluigicon fluigicon-chevron-left fluigicon-md prev-image"></span></a>
+		    		<div class="col-md-5 col-sm-3 list-imagens-detail-mensal">
+			            <a href="#" data-image-prev-mensal><span class="fluigicon fluigicon-chevron-left fluigicon-md prev-image"></span></a>
 			            <img src="" class="image-detail">
-			            <a href="#" data-image-next><span class="fluigicon fluigicon-chevron-right fluigicon-md next-image"></span></a>
+			            <a href="#" data-image-next-mensal><span class="fluigicon fluigicon-chevron-right fluigicon-md next-image"></span></a>
 		    		</div>
 		    	</div>
 		    </div>

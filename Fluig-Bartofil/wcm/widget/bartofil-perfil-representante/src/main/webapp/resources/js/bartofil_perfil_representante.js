@@ -34,6 +34,7 @@ const WidgetEnum = {
 	    'widget-campanha': 'campanhavendas["onShowWidget"]',
 	    'widget-parceiros-anual': 'campanhaparceirosanual["onShowWidget"]',
 	    'widget-parceiros': 'campanhaparceiros["onShowWidget"]',
+	    'widget-parceiros-mensal': 'campanhaparceirosmensal["onShowWidget"]',
 	    	
     }
 }
@@ -104,6 +105,7 @@ var perfilrepresentante = SuperWidget.extend({
 			'click-cfa': ['click_showExtratoDetalhe'],
 			'btn-por-cfa': ['click_showCfa'],
 			'btn-show-skus': ['click_showSkus'],
+			'scroll-to-left': ['click_scrollLeft'],
 		}
 	},
 	onShowWidget: function() {
@@ -126,6 +128,7 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".widget-campanha").hide();
 		$(".widget-parceiros").hide();
 		$(".widget-parceiros-anual").hide();
+		$(".widget-parceiros-mensal").hide();
 		$(".widget-promocoes").hide();
 
 		$("."+$(el).data("widget")).show();
@@ -865,6 +868,10 @@ var perfilrepresentante = SuperWidget.extend({
 		}
 		
 		perfilrepresentante.listDecendio = decendio; 
+	},
+	scrollLeft: function(el, ev) {
+		$(".table-responsive").scrollLeft(0)
 	}
+	
 	
 });

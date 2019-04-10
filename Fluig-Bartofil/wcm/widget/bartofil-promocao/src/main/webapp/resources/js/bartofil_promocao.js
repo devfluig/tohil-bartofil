@@ -48,7 +48,7 @@ var promocoes = SuperWidget.extend({
 		}
 	},
 	clickPromocao: function(el, ev) {
-		window.open(WCMAPI.serverURL + "/portal/p/" + WCMAPI.tenantCode + "/ecmnavigation?app_ecm_navigation_doc=" + $(el).data("pdf") + "&app_ecm_navigation_docVersion=" + $(el).data("version"));
+		window.open(WCMAPI.serverURL + "/webdesk/webdownload?documentId=" + $(el).data("pdf") + "&version=" + $(el).data("version") + "&tenantId=" + WCMAPI.tenantCode + "&replication=false");
 	},
 	listPromocoes: function(el, ev) {
 		promocoes.loading.show();
