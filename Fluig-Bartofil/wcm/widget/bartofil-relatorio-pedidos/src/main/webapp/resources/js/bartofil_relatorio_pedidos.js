@@ -28,6 +28,9 @@ var relatorioPedidos = SuperWidget.extend({
 			"change-representante": ['change_listpedidos'],
 			'click-home': ['click_clickHome'],
 			'change-situacao': ['change_changeSituacao'],
+			'change-origem': ['change_changeOrigem'],
+			'change-all': ['change_changeAll'],
+			'scroll-to-left': ['click_scrollLeft'],
 		}
 	},
 	onShowWidget: function() {
@@ -39,17 +42,23 @@ var relatorioPedidos = SuperWidget.extend({
 		}
 	},
 	changeSituacao: function(el, ev) {
-		console.log(this); // DOM element
-	    console.log(el); // jQuery event
-	    console.log(ev); // true | false
-		relatorioPedidos.showResumo();
-		
+		relatorioPedidos.showResumo(false);
+	},
+	changeOrigem: function(el, ev) {
+		relatorioPedidos.showResumo(true);
+	},
+	changeAll: function(el, ev) {
+		var type = $(el).data("type");
+		$(".check-" + type).each(function() {
+			$(this).prop("checked", $(el).prop("checked"));
+		})
+		relatorioPedidos.showResumo((type == "origem" ? true : false));
 	},
 	clickHome: function(el, ev) {
 		$(".no-detail").show( "puff", 1000 );
 		$(".in-detail").hide( "fold", 1000 );
 	},
-	showResumo: function() {
+	showResumo: function(isOrigem) {
 		var total = {
 			"total": 0,
 			"comissao": 0,
@@ -60,13 +69,22 @@ var relatorioPedidos = SuperWidget.extend({
 			"dias": 0
 		};
 		
+		var porsituacao = {
+			"total": 0,
+			"comissao": 0,
+			"quantidade": 0
+		}
+		
+		var pororigem = {};
+		
 		var dataRequest = [];
 		
 		for (var i=0; i<relatorioPedidos.list.length; i++) {
 			var item = relatorioPedidos.list[i];
-			var valorcobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
-			var valortotalcomissao = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
-			var valortotalacobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
+			var valorcobrar = (item["valortotalacobrar"] == null ? 0 : parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", ".")));
+			var valortotalcomissao = (item["valortotalcomissao"] == null ? 0 : parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", ".")));
+			var valortotalacobrar = (item["valortotalacobrar"] == null ? 0 : parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", ".")));
+			var valortotalpedido = (item["valortotalpedido"] == null ? 0 : parseFloat(item["valortotalpedido"].replace(/,/g, '').replace(",", ".")));
 			
 			total["total"] += valorcobrar;
 			total["comissao"] += valortotalcomissao;
@@ -76,66 +94,89 @@ var relatorioPedidos = SuperWidget.extend({
 				total["dias"] = +(item["diasuteisrestantes"]);
 			}
 			
-			var check = $("#switch-" + item["situacao"]).prop("checked");
-			console.log(item["situacao"], check);
-			if (check) {
+			var check1 = $("#switch-" + item["situacao"]).prop("checked");
+			var check2 = true;
+			if (isOrigem) { 
+				check2 = $("#switch-origem-" + item["descorigempedido"]).prop("checked");
+			}
+			if (check1 && check2) {
 				var m = moment(item["datainclusao"]);
 				console.log("moment", item["datainclusao"], m)
 				item["datainclusaof"] = m.format("DD/MM/YYYY");
 				item["valor"] = (item["situacao"] == "" || item["situacao"] == "C") ? item["valortotalpedido"] : item["valortotalacobrar"];
 				item["valor"] = parseFloat(item["valor"].replace(/,/g, '').replace(",", "."));
 				item["valor"] = relatorioPedidos.mask(item["valor"].toFixed(2));
-				item["comissao"] = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
+				item["comissao"] = (item["valortotalcomissao"] == null ? 0 : parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", ".")));
 				item["comissao"] = relatorioPedidos.mask(item["comissao"].toFixed(2));
 				dataRequest.push(item);
+				
+				if (item["naturezaoperacao"] == "V") {
+					if (item["situacao"] != "C") {
+						porsituacao.quantidade = porsituacao.quantidade + 1;
+						porsituacao.total = porsituacao.total + (item["situacao"] == "C" ? valortotalpedido : valorcobrar);
+						porsituacao.comissao = porsituacao.comissao + valortotalcomissao;
+						
+						if (pororigem[item["descorigempedido"]]) {
+							pororigem[item["descorigempedido"]].quantidade = pororigem[item["descorigempedido"]].quantidade + 1;
+							pororigem[item["descorigempedido"]].total = pororigem[item["descorigempedido"]].total + (item["situacao"] == "C" ? 0 : valorcobrar);
+							pororigem[item["descorigempedido"]].comissao = pororigem[item["descorigempedido"]].comissao + valortotalcomissao;
+						} else {
+							pororigem[item["descorigempedido"]] = {
+								"quantidade": 1,
+								"total": (item["situacao"] == "C" ? valortotalpedido : valorcobrar),
+								"comissao": valortotalcomissao,
+								"descorigempedido": item["descorigempedido"]
+							}
+						}
+					}
+				}
 			}
 		}
-		/*
 		
-		if (type != "ND") {
-			var cgo = null;
-			if (type.indexOf("-") != -1) {
-				cgo = type.split("-")[1];
-				type = type.split("-")[0]; 
-			}
-			var o = relatorioPedidos["current"].totais[type];
-			if (!o && type != "ALL" && Object.keys(relatorioPedidos["current"].totais).length > 0) {
-				o = relatorioPedidos["current"].totais[Object.keys(relatorioPedidos["current"].totais)[0]];
-				type = Object.keys(relatorioPedidos["current"].totais)[0];
+		$(".total-qtde").html(porsituacao.quantidade)
+		$(".total-valor").html("R$ " + relatorioPedidos.mask(porsituacao.total.toFixed(2)));
+		$(".total-comissao").html("R$ " + relatorioPedidos.mask(porsituacao.comissao.toFixed(2)));
+		
+		console.log('porsituacao', porsituacao)
+		if (isOrigem == false) {
+			var qtdetotal = 0;
+			var pedidototal = 0;
+			var comissaototal = 0;
+			
+			html = '<table class="table table-condesed table-striped">' + 
+				'<thead>' + 
+				'<tr>' + 
+				'<th><input id="switch-all-origem" type="checkbox" checked data-type="origem" data-change-all data-size="mini"></th>' + 
+				'<th>ORIGEM</th>' + 
+				'<th class="fs-txt-right">QTD</th>' + 
+				'<th class="fs-txt-right">VALOR DO PEDIDO</th>' + 
+				'<th class="fs-txt-right">VALOR DA COMISS&Atilde;O</th>' +
+				'</tr>' + 
+				'</thead>' + 
+				'<tbody>';
+			
+			for (var key in pororigem) {
+				var o = pororigem[key];
+				html += '<tr><td>' +
+					'<input id="switch-origem-' + key + '" type="checkbox" checked data-origem="' + key + '" data-change-origem data-size="mini" class="check-origem"></td>' +
+					'<td><label>' + o["descorigempedido"] + '</label></td>' + 
+					'<td class="fs-txt-right">' + o["quantidade"] + '</td>' + 
+					'<td class="fs-txt-right">R$ ' + relatorioPedidos.mask(o["total"].toFixed(2)) + '</td>' + 
+					'<td class="fs-txt-right">R$ ' + relatorioPedidos.mask(o["comissao"].toFixed(2)) + '</td></tr>';
+				qtdetotal += o["quantidade"];
+				pedidototal += o["total"];
+				comissaototal += o["comissao"];
 			}
 			
-			
-		} else {
-			$(".titleResumo").html("");
-			for (var i=0; i<relatorioPedidos.list.length; i++) {
-				var item = relatorioPedidos.list[i];
-				
-				var valorcobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
-				var valortotalcomissao = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
-				var valortotalacobrar = parseFloat(item["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
-				
-				total["total"] += valorcobrar;
-				total["comissao"] += valortotalcomissao;
-				total["quantidade"] += 1;
-				
-				if (total["dias"] == 0) {
-					total["dias"] = +(item["diasuteisrestantes"]);
-				}
-				
-				if (item["naturezaoperacao"] == "D") {
-					origem[item["descorigempedido"]] = (origem[item["descorigempedido"]] ? origem[item["descorigempedido"]] + valortotalacobrar : valortotalacobrar)
-					var m = moment(item["datainclusao"]);
-					item["datainclusao"] = m.format("DD/MM/YYYY");
-					item["valor"] = (item["situacao"] == "") ? item["valortotalpedido"] : item["valortotalacobrar"];
-					item["valor"] = parseFloat(item["valor"].replace(/,/g, '').replace(",", "."));
-					item["valor"] = relatorioPedidos.mask(item["valor"].toFixed(2));
-					item["comissao"] = parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
-					item["comissao"] = relatorioPedidos.mask(item["comissao"].toFixed(2));
-					dataRequest.push(item);
-				}
-			}
-		}*/
-		
+			html += '<tr class="success" style="font-weight: bold;"><td>&nbsp</td>' +
+				'<td class="fs-txt-right">TOTAL</td>' + 
+				'<td class="fs-txt-right total-qtde">' + qtdetotal + '</td>' + 
+				'<td class="fs-txt-right total-valor">R$ ' + relatorioPedidos.mask(pedidototal.toFixed(2)) + '</td>' + 
+				'<td class="fs-txt-right total-comissao">R$ ' + relatorioPedidos.mask(comissaototal.toFixed(2)) + '</td></tr>';
+			html += '</tbody></table>';
+			$(".switch-origem").html(html);
+		}
+
 		relatorioPedidos.dataTable = FLUIGC.datatable('#datatablePedidos', {
 			dataRequest: dataRequest,
 			renderContent: ".template_datatable",
@@ -253,6 +294,7 @@ var relatorioPedidos = SuperWidget.extend({
 		}
 		
 		var total = { };
+		var origemtotal = { };
 		var despesas = null;
 		
 		relatorioPedidos.list = values;
@@ -260,9 +302,10 @@ var relatorioPedidos = SuperWidget.extend({
 			perfilrepresentante.populateCustomers(values);
 		}
 		
+		
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
-			
+			console.log(row);
 			var description = "";
 			if (row["cgo"] == "501") {
 				description = "Venda";
@@ -292,9 +335,9 @@ var relatorioPedidos = SuperWidget.extend({
 				situacao = "Em transito"; 
 			}
 
-			var valorcobrar = parseFloat(row["valortotalacobrar"].replace(/,/g, '').replace(",", "."));
-			var valortotalcomissao = parseFloat(row["valortotalcomissao"].replace(/,/g, '').replace(",", "."));
-			var valortotalpedido = parseFloat(row["valortotalpedido"].replace(/,/g, '').replace(",", "."));
+			var valorcobrar = (row["valortotalacobrar"] == null ? 0 : parseFloat(row["valortotalacobrar"].replace(/,/g, '').replace(",", ".")));
+			var valortotalcomissao = (row["valortotalcomissao"] == null ? 0 : parseFloat(row["valortotalcomissao"].replace(/,/g, '').replace(",", ".")));
+			var valortotalpedido = (row["valortotalpedido"] == null ? 0 : parseFloat(row["valortotalpedido"].replace(/,/g, '').replace(",", ".")));
 			
 			if (row["naturezaoperacao"] == "V") {
 				if (total[row["situacao"]]) {
@@ -330,6 +373,20 @@ var relatorioPedidos = SuperWidget.extend({
 						"quantidade": 1,
 					}
 				}
+				if (row["situacao"] != "C") {
+					if (origemtotal[row["descorigempedido"]]) {
+						origemtotal[row["descorigempedido"]].quantidade = origemtotal[row["descorigempedido"]].quantidade + 1;
+						origemtotal[row["descorigempedido"]].total = origemtotal[row["descorigempedido"]].total + (row["situacao"] == "C" ? 0 : valorcobrar);
+						origemtotal[row["descorigempedido"]].comissao = origemtotal[row["descorigempedido"]].comissao + valortotalcomissao;
+					} else {
+						origemtotal[row["descorigempedido"]] = {
+							"quantidade": 1,
+							"total": (row["situacao"] == "C" ? valortotalpedido : valorcobrar),
+							"comissao": valortotalcomissao,
+							"descorigempedido": row["descorigempedido"]
+						}
+					}
+				}
 			} else if (row["naturezaoperacao"] == "D") {
 				if (despesas) {
 					despesas["quantidade"] = despesas["quantidade"] + 1;
@@ -346,38 +403,59 @@ var relatorioPedidos = SuperWidget.extend({
 		}
 		
 		$(".switch-situacao").html('');
-		var html = '<ul class="list-group">';
-    
-    
+		var html = '<table class="table table-condesed table-striped">' + 
+			'<thead>' + 
+			'<tr>' + 
+			'<th><input id="switch-all" type="checkbox" checked data-type="situacao" data-change-all data-size="mini"></th>' + 
+			'<th>SITUA&Ccedil;&Atilde;O</th>' + 
+			'<th class="fs-txt-right">QTD</th>' + 
+			'<th class="fs-txt-right">VALOR DO PEDIDO</th>' + 
+			'<th class="fs-txt-right">VALOR DA COMISS&Atilde;O</th>' +
+			'</tr>' + 
+			'</thead>' + 
+			'<tbody>';
+		
+		var qtdetotal = 0;
+		var pedidototal = 0;
+		var comissaototal = 0;
+		
 		for (var key in total) {
 			var o = total[key];
-			html += '<li class="list-group-item"><span class="badge badge-success">R$ ' + relatorioPedidos.mask(o["total"].toFixed(2)) + '</span><label class="checkbox-inline">' +
-				'<input id="switch-' + key + '" type="checkbox" checked data-situacao="' + key + '" data-change-situacao data-size="mini" data-on-color="success" data-off-color="danger">' + o["situacao"] + 
-				'</label></li>'
-//			FLUIGC.switcher.init('#switch-' + key);			
+			html += '<tr><td>' +
+				'<input id="switch-' + key + '" type="checkbox" checked data-situacao="' + key + '" data-change-situacao data-size="mini" class="check-situacao"></td>' +
+				'<td><label>' + o["situacao"] + '</label></td>' + 
+				'<td class="fs-txt-right">' + o["quantidade"] + '</td>' + 
+				'<td class="fs-txt-right">R$ ' + relatorioPedidos.mask(o["total"].toFixed(2)) + '</td>' + 
+				'<td class="fs-txt-right">R$ ' + relatorioPedidos.mask(o["comissao"].toFixed(2)) + '</td></tr>';
+			if (key != 'C') {
+				qtdetotal += o["quantidade"];
+				pedidototal += o["total"];
+				comissaototal += o["comissao"];
+			}
 		}
 		
 		if (despesas) {
-			html += '<li class="list-group-item"><span class="badge badge-danger">R$ ' + relatorioPedidos.mask(despesas["total"].toFixed(2)) + '</span><label class="checkbox-inline">' +
-				'<input id="switch-D" type="checkbox" checked data-situacao="D" data-change-situacao data-size="mini" data-on-color="success" data-off-color="danger">Devoluções' + 
-				'</label>'
-			$(".switch-situacao").append(html);
-//			FLUIGC.switcher.init('#switch-ND');			
+			html += '<tr><td>' +
+			'<input id="switch-D" type="checkbox" checked data-situacao="D" data-change-situacao data-size="mini" class="check-situacao"></td>' +
+			'<td><label>Devoluções</label></td>' + 
+			'<td class="fs-txt-right">' + despesas["quantidade"] + '</td>' + 
+			'<td class="fs-txt-right">R$ ' + relatorioPedidos.mask(despesas["total"].toFixed(2)) + '</td>' + 
+			'<td class="fs-txt-right">R$ ' + relatorioPedidos.mask(despesas["comissao"].toFixed(2)) + '</td></tr>';
 		}
-		html += '</ul>';
+		html += '<tr class="success" style="font-weight: bold;"><td>&nbsp</td>' +
+			'<td class="fs-txt-right">TOTAL</td>' + 
+			'<td class="fs-txt-right total-qtde">' + qtdetotal + '</td>' + 
+			'<td class="fs-txt-right total-valor">R$ ' + relatorioPedidos.mask(pedidototal.toFixed(2)) + '</td>' + 
+			'<td class="fs-txt-right total-comissao">R$ ' + relatorioPedidos.mask(comissaototal.toFixed(2)) + '</td></tr>';
+			html += '</tbody></table>';
 		$(".switch-situacao").html(html);
 		
-/*		FLUIGC.switcher.onChange(".change-situacao", function(event, state){
-			console.log(this); // DOM element
-		    console.log(event); // jQuery event
-		    console.log(state); // true | false
-		});*/		
 		relatorioPedidos.current = {
 			"totais": total,
 			"despesas":despesas 
 		}; 
 		
-		relatorioPedidos.showResumo();
+		relatorioPedidos.showResumo(false);
 	},
 	mask: function (valor) {
 	    valor = valor.toString().replace(/\D/g,"");
@@ -479,5 +557,8 @@ var relatorioPedidos = SuperWidget.extend({
 			
 			return 0;
 	    });
+	},
+	scrollLeft: function(el, ev) {
+		$(".table-responsive").scrollLeft(0)
 	}
 });

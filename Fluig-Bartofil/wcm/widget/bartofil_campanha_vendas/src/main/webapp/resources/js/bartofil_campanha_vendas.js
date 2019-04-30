@@ -60,6 +60,10 @@ var campanhavendas = SuperWidget.extend({
 	},
 	changePeriodo: function(el ,ev) {
 		campanhavendas.isLoaded = false;
+		campanhavendas.list = [];
+		campanhavendas.offset = 0;
+		campanhavendas.current = null;
+		campanhavendas.limit = 99999;
 		eval(perfilrepresentante.currentWidget)();
 	},
 	
@@ -533,11 +537,9 @@ var campanhavendas = SuperWidget.extend({
 		
 		console.log("showcampanhas", campanhavendas.offset, campanhavendas.limit);
 		
-		if (clean) {
-			$(".itens-campanha").remove();
-			campanhavendas.offset = 0;
-			campanhavendas.limit = 99999;
-		}
+		$(".itens-campanha").remove();
+		campanhavendas.offset = 0;
+		campanhavendas.limit = 99999;
 		
 		var filter = campanhavendas.list;
 		var search = $("#busca-concurso").val(); 

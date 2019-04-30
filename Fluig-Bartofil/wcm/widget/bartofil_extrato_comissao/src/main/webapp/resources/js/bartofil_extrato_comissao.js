@@ -25,10 +25,16 @@ var extratocampanha = SuperWidget.extend({
 		global : {
 			"change-periodo": ['change_changePeriodo'],
 			"click-print": ['click_print'],
-			"change-representante": ['change_listcomissoes']
+			"change-representante": ['change_listcomissoes'],
+			'scroll-to-left': ['click_scrollLeft'],
 		}
 	},
 	
+	changePeriodo: function(el, ev) {
+		extratocampanha.isLoaded = false;
+		
+		eval(perfilrepresentante.currentWidget)();
+	},
 	onShowWidget: function() {
 		if (!extratocampanha.isLoaded) {
 			extratocampanha.loading.show();
@@ -66,10 +72,6 @@ var extratocampanha = SuperWidget.extend({
 		newWin.document.write('<html><head><link type="text/css" rel="stylesheet" href="https://style.fluig.com/css/fluig-style-guide.min.css"></head><body onload="window.print()">'+$(".toprint").html()+'</body></html>');
 		newWin.document.close();
 		setTimeout(function(){newWin.close();},10);		
-	},
-	changePeriodo: function(el, ev) {
-		extratocampanha.isLoaded = false;
-		eval(perfilrepresentante.currentWidget)();
 	},
 	
 	getcomissoes: function(el, ev) {
@@ -163,7 +165,8 @@ var extratocampanha = SuperWidget.extend({
 		html = '<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("totais")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("valor")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("qtd")}</strong></td></tr>' +
 			'<tr class="danger"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("debitos")}</strong></td><td class="fs-txt-right">R$ ' + (totais["D"] ? extratocampanha.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["D"] ? totais["D"].qtde : "0") + '</td></tr>' +
 			'<tr class="success"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("creditos")}</strong></td><td class="fs-txt-right">R$ ' + (totais["C"] ? extratocampanha.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["C"] ? totais["C"].qtde : "0") + '</td></tr>' + 
-			'<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("total.geral")}</strong></td><td class="fs-txt-right">R$ ' + extratocampanha.mask(total.toFixed(2)) + '</td><td class="fs-txt-center">' + qtde + '</td></tr>';
+			'<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("total.geral")}</strong></td><td class="fs-txt-right">R$ ' + extratocampanha.mask(total.toFixed(2)) + '</td><td class="fs-txt-center">' + qtde + '</td></tr>' + 
+			'<tr><td colspan=9><a href="#" class="btn btn-primary btn-scroll fs-float-right" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a></td></tr>';
 		 
 		$('#table-lancamentos > tfoot').html(html);
 
@@ -249,6 +252,9 @@ var extratocampanha = SuperWidget.extend({
 	    valor = valor.toString().replace(/(\d)(\d{5})$/,"$1.$2");
 	    valor = valor.toString().replace(/(\d)(\d{2})$/,"$1,$2");
 	    return valor                    
+	},
+	scrollLeft: function(el, ev) {
+		$(".table-responsive").scrollLeft(0)
 	},
 	
 });

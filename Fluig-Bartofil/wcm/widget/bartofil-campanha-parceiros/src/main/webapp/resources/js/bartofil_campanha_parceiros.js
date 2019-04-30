@@ -86,6 +86,16 @@ var campanhaparceiros = SuperWidget.extend({
 			campanhaparceiros.offset = 0;
 			$(".tab-detalhamento").html("");
 			campanhaparceiros.current = null;
+			var mes = +($("#periodo :selected").data("month"));
+			var trimestre = 1;
+			if (mes == 4 | mes == 5 || mes == 6) {
+				trimestre = 2;
+			} else if (mes == 7 | mes == 8 || mes == 9) {
+				trimestre = 3;
+			} else if (mes == 10 | mes == 11 || mes == 12) {
+				trimestre = 4;
+			}
+			$("#trimestre").val(trimestre);
 			campanhaparceiros.trimestre = $("#trimestre").val();
 			campanhaparceiros.limit = 99999;
 			campanhaparceiros.isLoaded = false;
@@ -173,7 +183,8 @@ var campanhaparceiros = SuperWidget.extend({
 			"premiacao": row["vlrpremio"],
 			"data": row["dataprocessamento"],
 			"pontos": campanhaparceiros.mask((+row["pontos"]).toFixed(2)),
-			"grupo": row["descgrupo"]
+			"grupo": row["descgrupo"],
+			"situacao": row["situacao"]
 		}
 		
 		var tpl = $('.tpl-my-ranking').html();

@@ -16,14 +16,22 @@
 	    <h2>MEUS PEDIDOS</h2>
 	</div>
 	
-	<div class="row">
-		<div class="col-sm-5 switch-situacao"></div>
+	<div class="panel panel-info">
+    	<div class="panel-heading">RESUMO POR SITUA&Ccedil;&Atilde;O</div>
+    	<div class="panel-body switch-situacao">
+		</div>
+	</div>
+	<div class="panel panel-info">
+    	<div class="panel-heading">RESUMO POR ORIGEM</div>
+    	<div class="panel-body switch-origem">
+		</div>
 	</div>
 	<div class="panel panel-info">
     	<div class="panel-heading">LISTA DE PEDIDOS</div>
     	<div class="panel-body">
-    		<div id="datatablePedidos" class="table-responsive"></div>
 			<p class="help-block widget-pedidos" style="display: block;">Clique no pedido para ver detalhes</p>
+    		<div id="datatablePedidos" class="table-responsive"></div>
+			<a href="#" class="btn btn-primary btn-scroll fs-float-right" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
     	</div>
     </div>
 </div>

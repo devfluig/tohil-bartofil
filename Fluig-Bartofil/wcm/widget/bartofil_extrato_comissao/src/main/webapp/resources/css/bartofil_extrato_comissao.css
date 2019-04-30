@@ -3,3 +3,8 @@
 	text-align: center;
 }
 
+@media (min-width: 700px) {
+	.btn-scroll {
+		display: none !important;		
+	}
+}

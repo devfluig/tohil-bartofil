@@ -188,7 +188,7 @@
 				<tr>
 					<td colspan=5></td>
 					<td>
-						<a href="#" class="btn btn-primary" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
+						<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
 					</td>
 				</tr>
 			</tfoot>

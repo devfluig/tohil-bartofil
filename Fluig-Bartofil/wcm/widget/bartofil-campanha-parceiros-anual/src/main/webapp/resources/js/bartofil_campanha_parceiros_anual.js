@@ -151,6 +151,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 		$("#data-processamento-anual").val(m.format("DD/MM/YYYY"));
 		$("#status-anual").val(campanhaparceirosanual.mask((+(row["pontos"])).toFixed(2)));
 		$("#grupo-anual").val(row["descgrupo"]);
+		$("#situacao-anual").val(row["situacao"]);
 		
 		campanhaparceirosanual.current = row;
 		campanhaparceirosanual.mygroup = row["grupo"];

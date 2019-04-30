@@ -23,7 +23,8 @@
 		            			</tr>
 		            		</thead>
 		            		<tbody></tbody>
-		            		<tfoot></tfoot>
+		            		<tfoot>
+		            		</tfoot>
 		            	</table>
 		            </div>
 				</div>
@@ -49,6 +50,13 @@
 		            		</thead>
 		            		<tbody>
 		            		</tbody>
+		            		<tfoot>
+		            			<tr>
+		            				<td colspan=4>
+										<a href="#" class="btn btn-primary btn-scroll fs-float-right" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
+		            				</td>
+		            			</tr>
+		            		</tfoot>
 		            	</table>
 		            </div>
 				</div>

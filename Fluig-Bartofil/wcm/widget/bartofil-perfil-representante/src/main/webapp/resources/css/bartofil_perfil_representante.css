@@ -69,3 +69,9 @@
 .row {
   margin:0 !important;
 }
+
+@media (min-width: 700px) {
+	.btn-scroll {
+		display: none !important;		
+	}
+}

@@ -89,6 +89,7 @@ var perfilrepresentante = SuperWidget.extend({
 			$(".widget-campanha").hide();
 			$(".widget-promocoes").hide();
 			$(".widget-parceiros-anual").hide();
+			$(".widget-parceiros-mensal").hide();
 			$(".wcm-header").hide();
 		}
 	},
@@ -625,6 +626,9 @@ var perfilrepresentante = SuperWidget.extend({
 	changePeriodo: function(el ,ev) {
 		perfilrepresentante.list = [];
 		perfilrepresentante.isLoaded = false;
+		if (extratocampanha) {
+			extratocampanha.isLoaded = false;
+		}
 		eval(perfilrepresentante.currentWidget)();
 	},
 	

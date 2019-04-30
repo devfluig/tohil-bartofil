@@ -106,4 +106,9 @@
     padding-left: 5px !important;
     padding-right: 5px !important;
 }	
+
+@media (min-width: 700px) {
+	.btn-scroll {
+		display: none !important;		
+	}
 }

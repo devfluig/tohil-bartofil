@@ -15,6 +15,7 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("nroequipesuperior");
 	dataset.addColumn("seqcampanha");
 	dataset.addColumn("descgrupo");
+	dataset.addColumn("situacao");
 	
 	var representante = null;
 	var limit = 999;
@@ -93,7 +94,8 @@ function createDataset(fields, constraints, sortFields) {
 							    		 dados["nrorepresentante"],
 							    		 dados["nroequipesuperior"],
 							    		 dados["seqcampanha"],
-							    		 dados["descgrupo"]));
+							    		 dados["descgrupo"],
+							    		 dados["situacao"]));
         	    log.info("offset:" + offset + ":" + i + ":" + limit);
             }
 
