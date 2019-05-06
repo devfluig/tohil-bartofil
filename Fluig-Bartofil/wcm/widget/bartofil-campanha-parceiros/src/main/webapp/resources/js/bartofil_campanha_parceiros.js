@@ -87,13 +87,13 @@ var campanhaparceiros = SuperWidget.extend({
 			$(".tab-detalhamento").html("");
 			campanhaparceiros.current = null;
 			var mes = +($("#periodo :selected").data("month"));
-			var trimestre = 1;
+			var trimestre = "01";
 			if (mes == 4 | mes == 5 || mes == 6) {
-				trimestre = 2;
+				trimestre = "02";
 			} else if (mes == 7 | mes == 8 || mes == 9) {
-				trimestre = 3;
+				trimestre = "03";
 			} else if (mes == 10 | mes == 11 || mes == 12) {
-				trimestre = 4;
+				trimestre = "04";
 			}
 			$("#trimestre").val(trimestre);
 			campanhaparceiros.trimestre = $("#trimestre").val();

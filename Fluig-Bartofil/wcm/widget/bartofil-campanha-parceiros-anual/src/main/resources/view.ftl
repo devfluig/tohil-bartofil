@@ -1,4 +1,4 @@
-<div id="campanha_parceiros_anual_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide widget-parceiros-anual"
+listDecendio<div id="campanha_parceiros_anual_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide widget-parceiros-anual"
 	data-params="campanhaparceirosanual.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}'})">
 
 	<div class="page-header">

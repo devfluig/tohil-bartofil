@@ -103,31 +103,27 @@ var relatorioPedidos = SuperWidget.extend({
 				var m = moment(item["datainclusao"]);
 				console.log("moment", item["datainclusao"], m)
 				item["datainclusaof"] = m.format("DD/MM/YYYY");
-				item["valor"] = (item["situacao"] == "" || item["situacao"] == "C") ? item["valortotalpedido"] : item["valortotalacobrar"];
+				item["valor"] = (item["situacao"] == "" || item["situacao"] == "C" || item["situacao"] == "D") ? item["valortotalpedido"] : item["valortotalacobrar"];
 				item["valor"] = parseFloat(item["valor"].replace(/,/g, '').replace(",", "."));
 				item["valor"] = relatorioPedidos.mask(item["valor"].toFixed(2));
 				item["comissao"] = (item["valortotalcomissao"] == null ? 0 : parseFloat(item["valortotalcomissao"].replace(/,/g, '').replace(",", ".")));
 				item["comissao"] = relatorioPedidos.mask(item["comissao"].toFixed(2));
 				dataRequest.push(item);
 				
-				if (item["naturezaoperacao"] == "V") {
-					if (item["situacao"] != "C") {
-						porsituacao.quantidade = porsituacao.quantidade + 1;
-						porsituacao.total = porsituacao.total + (item["situacao"] == "C" ? valortotalpedido : valorcobrar);
-						porsituacao.comissao = porsituacao.comissao + valortotalcomissao;
-						
-						if (pororigem[item["descorigempedido"]]) {
-							pororigem[item["descorigempedido"]].quantidade = pororigem[item["descorigempedido"]].quantidade + 1;
-							pororigem[item["descorigempedido"]].total = pororigem[item["descorigempedido"]].total + (item["situacao"] == "C" ? 0 : valorcobrar);
-							pororigem[item["descorigempedido"]].comissao = pororigem[item["descorigempedido"]].comissao + valortotalcomissao;
-						} else {
-							pororigem[item["descorigempedido"]] = {
-								"quantidade": 1,
-								"total": (item["situacao"] == "C" ? valortotalpedido : valorcobrar),
-								"comissao": valortotalcomissao,
-								"descorigempedido": item["descorigempedido"]
-							}
-						}
+				porsituacao.quantidade = porsituacao.quantidade + 1;
+				porsituacao.total = porsituacao.total + (item["situacao"] == "C" || item["situacao"] == "D" ? valortotalpedido : valorcobrar);
+				porsituacao.comissao = porsituacao.comissao + valortotalcomissao;
+				
+				if (pororigem[item["descorigempedido"]]) {
+					pororigem[item["descorigempedido"]].quantidade = pororigem[item["descorigempedido"]].quantidade + 1;
+					pororigem[item["descorigempedido"]].total = pororigem[item["descorigempedido"]].total + (item["situacao"] == "C" || item["situacao"] == "D" ? valortotalpedido : valorcobrar);
+					pororigem[item["descorigempedido"]].comissao = pororigem[item["descorigempedido"]].comissao + valortotalcomissao;
+				} else {
+					pororigem[item["descorigempedido"]] = {
+						"quantidade": 1,
+						"total": (item["situacao"] == "C" || item["situacao"] == "D" ? valortotalpedido : valorcobrar),
+						"comissao": valortotalcomissao,
+						"descorigempedido": item["descorigempedido"]
 					}
 				}
 			}
@@ -137,7 +133,6 @@ var relatorioPedidos = SuperWidget.extend({
 		$(".total-valor").html("R$ " + relatorioPedidos.mask(porsituacao.total.toFixed(2)));
 		$(".total-comissao").html("R$ " + relatorioPedidos.mask(porsituacao.comissao.toFixed(2)));
 		
-		console.log('porsituacao', porsituacao)
 		if (isOrigem == false) {
 			var qtdetotal = 0;
 			var pedidototal = 0;
@@ -436,11 +431,14 @@ var relatorioPedidos = SuperWidget.extend({
 		
 		if (despesas) {
 			html += '<tr><td>' +
-			'<input id="switch-D" type="checkbox" checked data-situacao="D" data-change-situacao data-size="mini" class="check-situacao"></td>' +
-			'<td><label>Devoluções</label></td>' + 
-			'<td class="fs-txt-right">' + despesas["quantidade"] + '</td>' + 
-			'<td class="fs-txt-right">R$ ' + relatorioPedidos.mask(despesas["total"].toFixed(2)) + '</td>' + 
-			'<td class="fs-txt-right">R$ ' + relatorioPedidos.mask(despesas["comissao"].toFixed(2)) + '</td></tr>';
+				'<input id="switch-D" type="checkbox" checked data-situacao="D" data-change-situacao data-size="mini" class="check-situacao"></td>' +
+				'<td><label>Devoluções</label></td>' + 
+				'<td class="fs-txt-right">' + despesas["quantidade"] + '</td>' + 
+				'<td class="fs-txt-right">R$ ' + relatorioPedidos.mask(despesas["total"].toFixed(2)) + '</td>' + 
+				'<td class="fs-txt-right">R$ ' + relatorioPedidos.mask(despesas["comissao"].toFixed(2)) + '</td></tr>';
+			qtdetotal += despesas["quantidade"];
+			pedidototal += despesas["total"];
+			comissaototal += despesas["comissao"];
 		}
 		html += '<tr class="success" style="font-weight: bold;"><td>&nbsp</td>' +
 			'<td class="fs-txt-right">TOTAL</td>' + 

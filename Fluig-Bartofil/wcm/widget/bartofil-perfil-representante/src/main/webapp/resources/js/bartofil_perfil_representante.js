@@ -91,6 +91,12 @@ var perfilrepresentante = SuperWidget.extend({
 			$(".widget-parceiros-anual").hide();
 			$(".widget-parceiros-mensal").hide();
 			$(".wcm-header").hide();
+			$('.btn-scroll').css('margin-left', $('.table-responsive').scrollLeft() + 260);
+			
+			$('.table-responsive').scroll(function() { 
+				$('.btn-scroll').css('margin-left', $('.table-responsive').scrollLeft() + 260); 
+			}); 
+			
 		}
 	},
 
@@ -178,7 +184,7 @@ var perfilrepresentante = SuperWidget.extend({
 		perfilrepresentante.current = null;
 		perfilrepresentante.isLoaded = false;
 		
-		console.log(perfilrepresentante.currentWidget);
+		this.getfoto();
 		
 		eval(perfilrepresentante.currentWidget)();
 		
@@ -286,7 +292,6 @@ var perfilrepresentante = SuperWidget.extend({
 		$("#comissaoVendaFaturada").val("R$ " + perfilrepresentante.mask(comissaoFaturada.toFixed(2)));
 		$("#comissaoVendaAFatura").val("R$ " + perfilrepresentante.mask(comissaoAFaturar.toFixed(2)));
 		$("#totalComissao").val("R$ " + perfilrepresentante.mask((comissaoFaturada + comissaoAFaturar).toFixed(2)));
-		
 	    perfilrepresentante.getMeta();
 
 	},
@@ -415,7 +420,6 @@ var perfilrepresentante = SuperWidget.extend({
 			$(".decendio-" + row["decendio"]).html(row["quantidadeclientes"])
 			itens += parseInt(row)
 		}		
-		
 		perfilrepresentante.getEvolucao();
 		
 	},
@@ -447,6 +451,7 @@ var perfilrepresentante = SuperWidget.extend({
 		};
 		
 		var list = [];
+		moment.locale('pt-BR');
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
 			

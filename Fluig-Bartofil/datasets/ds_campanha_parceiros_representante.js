@@ -17,11 +17,11 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("descgrupo");
 	dataset.addColumn("situacao");
 	
-	var representante = null;
+	var representante = "12252";
 	var limit = 999;
 	var offset = 0;
 	var grupo = null;
-	var periodo = null;
+	var periodo = "201901";
 	var equipesuperior = null;
 	if (constraints != null) {
 		for (var c in constraints){

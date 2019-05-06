@@ -114,7 +114,7 @@
 				</ul>
 			</div>
 		</div>
-		<div class="col-md-6">
+		<div class="col-sm-6">
 			<div class="list-group">
 			    <a href="#" class="list-group-item disabled" data-click-decendio>Número de clientes atendidos:</a>
 			    <a href="#" class="list-group-item" data-click-decendio data-id=1>1&ordm; Decêndio: <b class="decendio-1"></b> clientes</a>
@@ -186,14 +186,13 @@
 			</tbody>
 			<tfoot>
 				<tr>
-					<td colspan=5></td>
-					<td>
+					<td colspan=6>
 						<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
 					</td>
 				</tr>
 			</tfoot>
 		</table>
-		<p class="help-block widget-home">valores considerando a data de faturamento (Estes valores podem divergir do gráfico de desempenho)</p>
+		<p class="help-block widget-home">Valores considerando a data de faturamento (Estes valores podem divergir do gráfico de desempenho)</p>
 	</div>
     <script type="text/template" class="tpl-extrato-comissao">
 		<div class="table-responsive">
