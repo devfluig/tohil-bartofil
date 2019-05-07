@@ -173,6 +173,11 @@
 		<table class="table table-striped table-hover table-evolucao widget-home">
 			<thead>
 				<tr>
+					<td colspan=6>
+						<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
+					</td>
+				</tr>
+				<tr>
 					<th class="fs-txt-left">M&ecirc;s</th>
 					<th class="fs-txt-right">Valor Faturado</th>
 					<th class="fs-txt-right">Comiss&atilde;o Recebida</th>

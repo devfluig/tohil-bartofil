@@ -228,10 +228,40 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".uf").html(row["enderuf"]);
 		$(".equipe").html(row["descequipe"]);
 		
-		google.charts.setOnLoadCallback(perfilrepresentante.getSituacaoConsolidado);
+		google.charts.setOnLoadCallback(perfilrepresentante.getDevolucaoConsolidado);
 	    
+	},
+	
+	getDevolucaoConsolidado: function() {
+		perfilrepresentante.loading.show();
 
+		var ano = $("#periodo :selected").data("year");
+		var mes = +($("#periodo :selected").data("month"));
+		var trimestre = "01";
+		if (mes == 4 | mes == 5 || mes == 6) {
+			trimestre = "02";
+		} else if (mes == 7 | mes == 8 || mes == 9) {
+			trimestre = "03";
+		} else if (mes == 10 | mes == 11 || mes == 12) {
+			trimestre = "04";
+		}
 		
+		var periodo = ano + "" + trimestre;
+		
+		var c1 = DatasetFactory.createConstraint("periodo", periodo, periodo, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("representante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
+		
+		DatasetFactory.getDataset('ds_devolucao_consolidada', null, [c1, c2], null, {"success": perfilrepresentante.onReadyGetDevolucaoConsolidado});
+		
+	},
+
+	onReadyGetDevolucaoConsolidado: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			perfilrepresentante.devolucoes = 0
+		} else {
+			perfilrepresentante.devolucoes = parseFloat(rows["values"][0].vlrtotal);
+		}
+		perfilrepresentante.getSituacaoConsolidado();
 	},
 	
 	getSituacaoConsolidado: function() {
@@ -267,7 +297,6 @@ var perfilrepresentante = SuperWidget.extend({
 		
 		var data = [["Situação", "Valor"]];
 		perfilrepresentante.valortotalpedidos = 0;
-		perfilrepresentante.devolucoes = 0;
 		var comissaoFaturada = 0;
 		var comissaoAFaturar = 0;
 		var values = rows["values"];
@@ -281,8 +310,6 @@ var perfilrepresentante = SuperWidget.extend({
 				comissaoFaturada += parseFloat(row["valortotalcomissaogeral"]);
 			} else if (row["situacao"] != "C" && row["situacao"] != "D") {
 				comissaoAFaturar += parseFloat(row["valortotalcomissaogeral"]);
-			} else if (row["situacao"] == "D") {
-				perfilrepresentante.devolucoes += parseFloat(row["valortotalgeral"]);
 			}
 			if (row["situacao"] != "C" && row["situacao"] != "D") {
 				perfilrepresentante.valortotalpedidos += parseFloat(row["valortotalgeral"]);
