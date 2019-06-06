@@ -48,7 +48,7 @@ var promocoes = SuperWidget.extend({
 		}
 	},
 	clickPromocao: function(el, ev) {
-		window.open(WCMAPI.serverURL + "/portal/p/" + WCMAPI.tenantCode + "/ecmnavigation?app_ecm_navigation_doc=" + $(el).data("pdf") + "&app_ecm_navigation_docVersion=" + $(el).data("version"));
+		window.open(WCMAPI.serverURL + "/webdesk/webdownload?documentId=" + $(el).data("pdf") + "&version=" + $(el).data("version") + "&tenantId=" + WCMAPI.tenantCode + "&replication=false");
 	},
 	listPromocoes: function(el, ev) {
 		promocoes.loading.show();
@@ -73,7 +73,7 @@ var promocoes = SuperWidget.extend({
 		var c2 = DatasetFactory.createConstraint("empresa", WCMAPI.tenantCode, WCMAPI.tenantCode, ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("expiracao", "true", "true", ConstraintType.MUST, false);
 
-		DatasetFactory.getDataset("ds_lista_campanha_imagem", null, [c1, c2], null, {"success": promocoes.onReadyGetPromocoes} );
+		DatasetFactory.getDataset("ds_lista_campanha_imagem", null, [c1, c2, c3], null, {"success": promocoes.onReadyGetPromocoes} );
 		
 	},
 	
@@ -165,37 +165,35 @@ var promocoes = SuperWidget.extend({
 			})
 		}
 		
-		if (filter.length < promocoes.limit) {
-			for (var i=promocoes.offset; i<promocoes.limit; i++) {
-				var o = filter[i];
-				if (o) {
-					control++;
-					var l = o["links"].split("|");
-					var html = ""; 
-					for (var x=0; x<l.length; x++) {
-						var d = l[x].split(",")[0];
-						var v = l[x].split(",")[1];
-						html += "<a href='" + WCMAPI.serverURL + "/portal/p/" + WCMAPI.tenantCode + "/ecmnavigation?app_ecm_navigation_doc=" + d + "&app_ecm_navigation_docVersion=" + v + "' class='card-link' target='_blank'><i class='fluigicon fluigicon-document-square icon-md'></i></a>";
-						if (x==0) { 
-							o["pdf"] = d; 
-							o["version"] = v;
-						}
+		for (var i=promocoes.offset; i<promocoes.limit; i++) {
+			var o = filter[i];
+			if (o) {
+				control++;
+				var l = o["links"].split("|");
+				var html = ""; 
+				for (var x=0; x<l.length; x++) {
+					var d = l[x].split(",")[0];
+					var v = l[x].split(",")[1];
+					html += "<a href='" + WCMAPI.serverURL + "/portal/p/" + WCMAPI.tenantCode + "/ecmnavigation?app_ecm_navigation_doc=" + d + "&app_ecm_navigation_docVersion=" + v + "' class='card-link' target='_blank'><i class='fluigicon fluigicon-document-square icon-md'></i></a>";
+					if (x==0) { 
+						o["pdf"] = d; 
+						o["version"] = v;
 					}
-					o["showlinks"] = html; 
-					items.push(o);
-					if (control == 4) {
-						var tpl = $('.tpl-continuous-scroll-promocoes').html();
-						var data = { "items": items};
-						var html = Mustache.render(tpl, data);
-						$('.widget-promocoes').append(html);
-						
-						control = 0;
-						lines++;
-						items = [];
-					}
-					
 				}
-			}		
+				o["showlinks"] = html; 
+				items.push(o);
+				if (control == 4) {
+					var tpl = $('.tpl-continuous-scroll-promocoes').html();
+					var data = { "items": items};
+					var html = Mustache.render(tpl, data);
+					$('.widget-promocoes').append(html);
+					
+					control = 0;
+					lines++;
+					items = [];
+				}
+				
+			}
 		}
 		
 		console.log('items items', items)

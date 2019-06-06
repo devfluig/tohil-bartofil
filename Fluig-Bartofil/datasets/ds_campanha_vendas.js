@@ -19,6 +19,8 @@ function createDataset(fields, constraints, sortFields) {
 	var representante = "12252";
 	var limit = 999;
 	var offset = 0;
+	var periodo = "201904";
+	var tipo = "O";
 	if (constraints != null) {
 		for (var c in constraints){
 			if (constraints[c].getFieldName() == "representante") {
@@ -27,6 +29,10 @@ function createDataset(fields, constraints, sortFields) {
 				limit = +(constraints[c].getInitialValue()); 
 			} else if (constraints[c].getFieldName() == "offset") {
 				offset = +(constraints[c].getInitialValue()); 
+			} else if (constraints[c].getFieldName() == "tipcampanha") {
+				tipo = constraints[c].getInitialValue(); 
+			} else if (constraints[c].getFieldName() == "anomes") {
+				periodo = constraints[c].getInitialValue(); 
 			}
 		}
 	}
@@ -39,7 +45,7 @@ function createDataset(fields, constraints, sortFields) {
         var data = {
             companyId : getValue("WKCompany") + '',
             serviceCode : 'RCA',
-            endpoint : "/v1/campanha?sessionid=123abc&codparticipante=" + representante + "&order=codcampanha&offset=" + offset + "&limit=" + limit,
+            endpoint : "/v1/campanha?sessionid=123abc&codparticipante=" + representante + "&order=ordempremio&anomes=" + periodo + "&tipcampanha=" + tipo + "&offset=" + offset + "&limit=" + limit,
             method : 'get',     
             timeoutService: '1000',
 	        options : {

@@ -21,6 +21,26 @@ const SituacaoEnum = {
 
 Object.freeze(SituacaoEnum);
 
+const WidgetEnum = {
+    HOME: 'perfilrepresentante["onShowWidget"]',
+    PEDIDOS: 'relatorioPedidos["onShowWidget"]',
+    EXTRATO: 'extratocampanha["onShowWidget"]',
+    CAMPANHA: 'campanhavendas["onShowWidget"]',
+    ANUAL: 'campanhaparceirosanual["onShowWidget"]',
+    properties: {
+	    'widget-home': 'perfilrepresentante["onShowWidget"]',
+	    'widget-pedidos': 'relatorioPedidos["onShowWidget"]',
+	    'widget-extrato': 'extratocampanha["onShowWidget"]',
+	    'widget-campanha': 'campanhavendas["onShowWidget"]',
+	    'widget-parceiros-anual': 'campanhaparceirosanual["onShowWidget"]',
+	    'widget-parceiros': 'campanhaparceiros["onShowWidget"]',
+	    'widget-parceiros-mensal': 'campanhaparceirosmensal["onShowWidget"]',
+	    	
+    }
+}
+
+Object.freeze(WidgetEnum);
+
 var perfilrepresentante = SuperWidget.extend({
 	loading: FLUIGC.loading(window),
 	list: [],
@@ -32,10 +52,13 @@ var perfilrepresentante = SuperWidget.extend({
 	context: "/bartofil_perfil_representante",
 	current: null,
 	rowTable: null,
+	devolucoes: 0,
 	valortotalpedidos: 0,
 	listSkus: [],
 	listCfas: [],
 	listDecendio: {},
+	currentWidget: null,
+	isLoaded: false,
 	
 	init : function() {
 		if (this.isEditMode == false) {
@@ -57,13 +80,23 @@ var perfilrepresentante = SuperWidget.extend({
 				$(".widget-perfil").remove();
 			}
 			
+			perfilrepresentante.isLoaded = true;
+			perfilrepresentante.currentWidget = WidgetEnum.properties["widget-home"];
+			
 			$(".widget-parceiros").hide();
 			$(".widget-extrato").hide();
 			$(".widget-pedidos").hide();
 			$(".widget-campanha").hide();
 			$(".widget-promocoes").hide();
 			$(".widget-parceiros-anual").hide();
+			$(".widget-parceiros-mensal").hide();
 			$(".wcm-header").hide();
+			$('.btn-scroll').css('margin-left', $('.table-responsive').scrollLeft() + 260);
+			
+			$('.table-responsive').scroll(function() { 
+				$('.btn-scroll').css('margin-left', $('.table-responsive').scrollLeft() + 260); 
+			}); 
+			
 		}
 	},
 
@@ -79,6 +112,14 @@ var perfilrepresentante = SuperWidget.extend({
 			'click-cfa': ['click_showExtratoDetalhe'],
 			'btn-por-cfa': ['click_showCfa'],
 			'btn-show-skus': ['click_showSkus'],
+			'scroll-to-left': ['click_scrollLeft'],
+		}
+	},
+	onShowWidget: function() {
+		if (!perfilrepresentante.isLoaded) {
+			perfilrepresentante.isLoaded = true;
+			perfilrepresentante.loading.show();
+			perfilrepresentante.getfoto();
 		}
 	},
 	widget: function(el, ev) {
@@ -94,12 +135,21 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".widget-campanha").hide();
 		$(".widget-parceiros").hide();
 		$(".widget-parceiros-anual").hide();
+		$(".widget-parceiros-mensal").hide();
 		$(".widget-promocoes").hide();
 
 		$("."+$(el).data("widget")).show();
+		
+		$(window).scrollTop($("." + $(el).data("widget")).offset().top);
+		
+		perfilrepresentante.currentWidget = WidgetEnum.properties[$(el).data("widget")]; 
+		
+		eval(perfilrepresentante.currentWidget)();
+		
 	},
 	
 	showCfa: function(el, ev) {
+		perfilrepresentante.loading.show();
 		perfilrepresentante.getCfas();
 	},
 	
@@ -111,7 +161,7 @@ var perfilrepresentante = SuperWidget.extend({
 		var m = moment().locale(locale);
 		var list = []; 
 		for (var i=0; i<6; i++) {
-			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MMMM") + "/" + m.format("YYYY"), "class": (i<2 ? "" : "widget-extrato") };
+			var o = { "mes": m.format("MM"), "ano": m.format("YYYY"), "periodo": m.format("MMMM") + "/" + m.format("YYYY") };
 			list.push(o);
 			m.subtract(1, 'months');
 		}
@@ -126,14 +176,17 @@ var perfilrepresentante = SuperWidget.extend({
 	},
 	
 	changeRepresentante: function () {
-		perfilrepresentante.loading.show();
 		perfilrepresentante.representante = $('#listrepresentatives').val();
 		$('.table-evolucao > tbody').html("");
 		perfilrepresentante.list = [];
 		perfilrepresentante.listSkus = [];
 		$(".tab-detalhamento").html("");
 		perfilrepresentante.current = null;
-		perfilrepresentante.getfoto();
+		perfilrepresentante.isLoaded = false;
+		
+		this.getfoto();
+		
+		eval(perfilrepresentante.currentWidget)();
 		
 	},
 	
@@ -175,8 +228,34 @@ var perfilrepresentante = SuperWidget.extend({
 		$(".uf").html(row["enderuf"]);
 		$(".equipe").html(row["descequipe"]);
 		
-		google.charts.setOnLoadCallback(perfilrepresentante.getSituacaoConsolidado);		
+		google.charts.setOnLoadCallback(perfilrepresentante.getDevolucaoConsolidado);
+	    
+	},
+	
+	getDevolucaoConsolidado: function() {
+		perfilrepresentante.loading.show();
+
+		var ano = $("#periodo :selected").data("year");
+		var mes = +($("#periodo :selected").data("month"));
 		
+		if (mes < 10) { mes = '0' + mes; }
+
+		var periodo = ano + "" + mes;
+		
+		var c1 = DatasetFactory.createConstraint("periodo", periodo, periodo, ConstraintType.MUST, false);
+		var c2 = DatasetFactory.createConstraint("representante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
+		
+		DatasetFactory.getDataset('ds_devolucao_consolidada', null, [c1, c2], null, {"success": perfilrepresentante.onReadyGetDevolucaoConsolidado});
+		
+	},
+
+	onReadyGetDevolucaoConsolidado: function(rows) {
+		if (!rows || !rows["values"] || rows["values"].length == 0) {
+			perfilrepresentante.devolucoes = 0
+		} else {
+			perfilrepresentante.devolucoes = parseFloat(rows["values"][0].vlrtotal);
+		}
+		perfilrepresentante.getSituacaoConsolidado();
 	},
 	
 	getSituacaoConsolidado: function() {
@@ -223,7 +302,7 @@ var perfilrepresentante = SuperWidget.extend({
 			}
 			if (row["situacao"] == "F") {
 				comissaoFaturada += parseFloat(row["valortotalcomissaogeral"]);
-			} else {
+			} else if (row["situacao"] != "C" && row["situacao"] != "D") {
 				comissaoAFaturar += parseFloat(row["valortotalcomissaogeral"]);
 			}
 			if (row["situacao"] != "C" && row["situacao"] != "D") {
@@ -234,21 +313,13 @@ var perfilrepresentante = SuperWidget.extend({
 		$("#comissaoVendaFaturada").val("R$ " + perfilrepresentante.mask(comissaoFaturada.toFixed(2)));
 		$("#comissaoVendaAFatura").val("R$ " + perfilrepresentante.mask(comissaoAFaturar.toFixed(2)));
 		$("#totalComissao").val("R$ " + perfilrepresentante.mask((comissaoFaturada + comissaoAFaturar).toFixed(2)));
-		
-		var options = {
-			pieSliceText: 'value',
-			width: '300px',
-			height: '300px',
-			sliceVisibilityThreshold: 0
-        };
-		var chart = new google.visualization.PieChart(document.getElementById('chartPie'));
-	    chart.draw(google.visualization.arrayToDataTable(data), options);		
-	    
 	    perfilrepresentante.getMeta();
 
 	},
 	
 	getMeta: function() {
+		perfilrepresentante.loading.show();
+		
 		var mes = $("#periodo :selected").data("month");
 		var ano = $("#periodo :selected").data("year");
 		
@@ -309,8 +380,11 @@ var perfilrepresentante = SuperWidget.extend({
 		        
 		        if (meta < 0) { faltante = 0; }
 
+		        var valorBruto = perfilrepresentante.valortotalpedidos + perfilrepresentante.devolucoes;
 		        $(".valor-potencial").html("R$ " + perfilrepresentante.mask(meta.toFixed(2)));
-		        $(".valor-vendido").html("R$ " + perfilrepresentante.mask(perfilrepresentante.valortotalpedidos.toFixed(2)));
+		        $(".venda-bruta").html("R$ " + perfilrepresentante.mask(valorBruto.toFixed(2)));
+		        $(".devolucao").html("R$ " + perfilrepresentante.mask(perfilrepresentante.devolucoes.toFixed(2)));
+		        $(".venda-liquida").html("R$ " + perfilrepresentante.mask(perfilrepresentante.valortotalpedidos.toFixed(2)));
 		        $(".percentual-potencial").html(perfilrepresentante.mask(percentual.toFixed(2)) + "%");
 		        $(".valor-faltante").html("R$ " + perfilrepresentante.mask(faltante.toFixed(2)));
 		        $(".valor-dia").html("R$ " + perfilrepresentante.mask(valordia.toFixed(2)));
@@ -359,15 +433,34 @@ var perfilrepresentante = SuperWidget.extend({
 			perfilrepresentante.getEvolucao();
 			return;
 		}
-		
+				
 		var values = rows["values"];
+		var listdecendio = {
+			"1": {},
+			"2": {},
+			"3": {}
+		};
 		var itens = 0;
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
-			$(".decendio-" + row["decendio"]).html(row["quantidadeclientes"])
-			itens += parseInt(row)
-		}		
-		
+			var valortotalgeral = parseFloat(row["valortotalgeral"]);
+			var id = row["decendio"];
+			console.log('id', id)
+			var o = listdecendio[id];
+			console.log('o', o)
+			if (o[row["nomeclientes"]]) {
+				o[row["nomeclientes"]] += valortotalgeral;
+			} else {
+				o[row["nomeclientes"]] = valortotalgeral;
+			}
+			
+		}
+
+		$(".decendio-1").html(Object.keys(listdecendio["1"]).length);
+		$(".decendio-2").html(Object.keys(listdecendio["2"]).length);
+		$(".decendio-3").html(Object.keys(listdecendio["3"]).length);
+
+		perfilrepresentante.listDecendio = listdecendio;
 		perfilrepresentante.getEvolucao();
 		
 	},
@@ -399,6 +492,7 @@ var perfilrepresentante = SuperWidget.extend({
 		};
 		
 		var list = [];
+		moment.locale('pt-BR');
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
 			
@@ -438,6 +532,7 @@ var perfilrepresentante = SuperWidget.extend({
 		t["valorTotal"] = perfilrepresentante.mask(t["valorTotal"].toFixed(2));
 		list.push(t);
 		
+		$('.table-evolucao > tbody').html("");
 		var tpl = $('.tpl-evolucao').html();
 		var data = { "items": list};
 		var html = Mustache.render(tpl, data);
@@ -554,6 +649,7 @@ var perfilrepresentante = SuperWidget.extend({
 		}, function(err, data) {
 			console.log(err, data)
 		});
+		perfilrepresentante.loading.hide();
 		
 	},
 	savePreferences: function(el, ev) {
@@ -574,11 +670,12 @@ var perfilrepresentante = SuperWidget.extend({
 	},	
 	
 	changePeriodo: function(el ,ev) {
-		if ($("option:selected", el).hasClass("widget-extrato") == false) {
-			perfilrepresentante.loading.show();
-			perfilrepresentante.list = [];
-			perfilrepresentante.getSituacaoConsolidado();		
+		perfilrepresentante.list = [];
+		perfilrepresentante.isLoaded = false;
+		if (extratocampanha) {
+			extratocampanha.isLoaded = false;
 		}
+		eval(perfilrepresentante.currentWidget)();
 	},
 	
 	isadmin: function() {
@@ -821,6 +918,10 @@ var perfilrepresentante = SuperWidget.extend({
 		}
 		
 		perfilrepresentante.listDecendio = decendio; 
+	},
+	scrollLeft: function(el, ev) {
+		$(".table-responsive").scrollLeft(0)
 	}
+	
 	
 });

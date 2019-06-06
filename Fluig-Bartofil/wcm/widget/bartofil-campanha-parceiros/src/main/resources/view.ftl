@@ -2,7 +2,7 @@
 	data-params="campanhaparceiros.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}'})">
 
 	<div class="page-header">
-		<h2>${i18n.getTranslation('posicao.rca.campanha')}</h2>
+		<h2>CAMPANHA TRIMESTRAL</h2>
 	</div>
 	
 	
@@ -17,58 +17,49 @@
    	<script type="text/template" class="tpl-my-ranking">
 		<form class="form-horizontal" role="form">
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Ordem pr&ecirc;mio:</label>
-				<div class="col-sm-1">
+				<label class="col-sm-2 control-label">Sua classifica&ccedil;&atilde;o atual:</label>
+				<div class="col-sm-2">
 		            <input type="text" class="form-control fs-txt-right" id="ordem-premio-trimestre" readonly value="{{ordem}}">
 	    		</div>
-	    		<label class="col-sm-1 control-label">Situa&ccedil;&atilde;o:</label>
+				<label class="col-sm-2 control-label">Sua premia&ccedil;&atilde;o atual:</label>
 	    		<div class="col-sm-2">
-	            	<input type="text" class="form-control fs-txt-right" id="situacao-trimestre" readonly value="{{{situacao}}}" >
+	            	<input type="text" class="form-control" id="premiacao-atual" readonly value="{{premiacao}}" >
 	    		</div>
-				<label class="col-sm-1 control-label">Pontos:</label>
+				<label class="col-sm-2 control-label">Sua pontua&ccedil;&atilde;o atual:</label>
 	    		<div class="col-sm-2">
 	            	<input type="text" class="form-control fs-txt-right" id="pontos-trimestre" readonly value="{{pontos}}">
 	    		</div>
 	    	</div>
 	    	<div class="form-group">
-	    		<label class="col-sm-2 control-label">Data processamento:</label>
+	    		<label class="col-sm-2 control-label">Situa&ccedil;&atilde;o atual da campanha:</label>
+	    		<div class="col-sm-2">
+	            	<input type="text" class="form-control fs-txt-right" id="situacao-trimestre" readonly value="{{{situacao}}}" >
+	    		</div>
+	    		<label class="col-sm-2 control-label">Informa&ccedil;&otilde;es atualizadas em:</label>
 	    		<div class="col-sm-2">
 	            	<input type="text" class="form-control" id="data-processamento-trimestre" readonly value="{{data}}" >
 	    		</div>
-				<label class="col-sm-2 control-label">Grupo:</label>
-	    		<div class="col-sm-5">
+				<label class="col-sm-2 control-label">Seu grupo na Campanha:</label>
+	    		<div class="col-sm-2">
 	            	<input type="text" class="form-control" id="grupo-trimestre" readonly value="{{grupo}}" >
 	    		</div>
 	    	</div>
 		</form>
 	</script>	
 	
-	<ul class="nav nav-pills clearfix" role="tablist">
-	    <li class="active" data-click-tab-parceiro data-tab="tab-colocacao"><a href="#">${i18n.getTranslation('colocacao.trimestre')}</a></li>
-	    <li data-click-tab-parceiro data-tab="tab-detalhamento"><a href="#">${i18n.getTranslation('detalhamento')}</a></li>
-	</ul>
+	<div class="row">
+		<label class="radio-inline">
+	    	<input type="radio" name="radio-classificacao" id="tab-colocacao" data-click-tab-parceiro checked data-tab="tab-colocacao" value="tab-colocacao">Classifica&ccedil;&atilde;o
+		</label>
+		<label class="radio-inline">
+	    	<input type="radio" name="radio-classificacao" id="tab-detalhamento" data-click-tab-parceiro data-tab="tab-detalhamento" value="tab-detalhamento">Apuração detalhada
+		</label>
+	</div>
 	<br>
 	<form class="form-inline tab-colocacao" role="form">
-		<label>${i18n.getTranslation('ordernar.por')}:</label>
-    	<div class="form-group">
-    		<select class="form-control" id="ordenar" data-change-ordenar-parceiro>
-    			<option value="ordem" data-type="integer">${i18n.getTranslation('colocacao')}</option>
-    			<option value="nome" data-type="string">${i18n.getTranslation('nome')}</option>
-    			<option value="pontos" data-type="integer">${i18n.getTranslation('pontos')}</option>
-    		</select>
-    	</div>
-		<label>${i18n.getTranslation('por.pagina')}:</label>
-    	<div class="form-group">
-    		<select class="form-control" id="paginacao" data-change-paginacao-parceiro>
-    			<option value="30">30</option>
-    			<option value="50">50</option>
-    			<option value="75">75</option>
-    			<option value="100">100</option>
-    		</select>
-    	</div>
-		<label>${i18n.getTranslation('busca')}:</label>
-        <div class="form-group">
-            <input type="text" class="form-control" id="busca" placeholder="${i18n.getTranslation('digite.texto')}">
+		<label class='nav-representative fs-display-none'>PESQUISA POR C&Oacute;DIGO:</label>
+        <div class="form-group nav-representative fs-display-none">
+            <input type="text" class="form-control" id="busca" placeholder="Digite o c&oacute;digo de RCA">
         </div>
 		<label class="fs-text-uppercase">${i18n.getTranslation('trimestre')}:</label>
     	<div class="form-group">
@@ -78,6 +69,9 @@
     			<option value="03">3</option>
     			<option value="04">4</option>
     		</select>
+    	</div>
+    	<div class="form-group">
+    		<a class="btn btn-default" href="#" data-click-minha-colocacao role="button">Ver minha coloca&ccedil;&atilde;o</a>
     	</div>
 	</form>
 	<br>

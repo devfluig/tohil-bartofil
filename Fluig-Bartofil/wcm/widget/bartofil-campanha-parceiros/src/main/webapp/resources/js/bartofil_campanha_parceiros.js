@@ -1,6 +1,6 @@
 var campanhaparceiros = SuperWidget.extend({
 	
-	loading: FLUIGC.loading(window),
+	loading: FLUIGC.loading('.widget-parceiros'),
 	offset: 0,
 	limit: 30,
 	list: [],
@@ -12,6 +12,7 @@ var campanhaparceiros = SuperWidget.extend({
 	mygroup: "1",
 	trimestre: null,
 	equipesuperior: null,
+	isLoaded: false,
 	
 	init : function() {
 		$(".pageTitle").parent().remove();
@@ -33,27 +34,34 @@ var campanhaparceiros = SuperWidget.extend({
 		campanhaparceiros.representante = perfilrepresentante.representante;
 		campanhaparceiros.grouprca = perfilrepresentante.grouprca;
 		
-		var list = []; 
-		var today = moment(new Date());
-		trimestre = "0" + today.quarter();
-		$('#trimestre').append(trimestre);
-		campanhaparceiros.trimestre = trimestre;
-		
-		this.getranking();
-		
 	},
 
 	bindings : {
 		local : {},
 		global : {
 			"click-detalhado-parceiro": ['click_showdetalhado'],
-			'change-paginacao-parceiro': ['change_changepaginacao'],
 			"change-representante": ['change_changerepresentante'],
-			'change-ordenar-parceiro': ['change_changeordenacao'],
 			'change-periodo': ['change_changePeriodo'],
 			'save-preferences-parceiro': ['click_savePreferences'],
 			'click-tab-parceiro': ['click_showtab'],
 			'change-trimestre-parceiro': ['change_changetrimestre'],
+			'click-minha-colocacao': ['click_myPosition'],
+		}
+	},
+	
+	onShowWidget: function() {
+		if (!campanhaparceiros.isLoaded) {
+			
+			var list = []; 
+			var today = moment(new Date());
+			trimestre = "0" + today.quarter();
+			$('#trimestre').val(trimestre);
+			campanhaparceiros.trimestre = trimestre;
+			
+			campanhaparceiros.loading.show();
+			campanhaparceiros.isLoaded = true;
+			campanhaparceiros.getranking();
+			
 		}
 	},
 	
@@ -64,8 +72,10 @@ var campanhaparceiros = SuperWidget.extend({
 		campanhaparceiros.offset = 0;
 		$(".tab-detalhamento").html("");
 		campanhaparceiros.current = null;
-		campanhaparceiros.limit = parseInt($("#paginacao").val());
-		campanhaparceiros.getranking();
+		campanhaparceiros.limit = 99999;
+		
+		campanhaparceiros.isLoaded = false;
+		eval(perfilrepresentante.currentWidget)();
 		
 	},
 	
@@ -77,9 +87,20 @@ var campanhaparceiros = SuperWidget.extend({
 			campanhaparceiros.offset = 0;
 			$(".tab-detalhamento").html("");
 			campanhaparceiros.current = null;
+			var mes = +($("#periodo :selected").data("month"));
+			var trimestre = "01";
+			if (mes == 4 | mes == 5 || mes == 6) {
+				trimestre = "02";
+			} else if (mes == 7 | mes == 8 || mes == 9) {
+				trimestre = "03";
+			} else if (mes == 10 | mes == 11 || mes == 12) {
+				trimestre = "04";
+			}
+			$("#trimestre").val(trimestre);
 			campanhaparceiros.trimestre = $("#trimestre").val();
-			campanhaparceiros.limit = parseInt($("#paginacao").val());
-			campanhaparceiros.getranking();
+			campanhaparceiros.limit = 99999;
+			campanhaparceiros.isLoaded = false;
+			eval(perfilrepresentante.currentWidget)();
 		}
 	},
 	
@@ -105,9 +126,8 @@ var campanhaparceiros = SuperWidget.extend({
 		campanhaparceiros.trimestre = $(el).val();
 		campanhaparceiros.list = [];
 		campanhaparceiros.offset = 0;
-		campanhaparceiros.limit = parseInt($("#paginacao").val());
-		campanhaparceiros.getfullranking();		
-		campanhaparceiros.getdetalhamentos();		
+		campanhaparceiros.limit = 99999;
+		campanhaparceiros.getranking();		
 	},
 	showtab: function(el, ev) {
 		$(el).parent().find("li").removeClass("active")
@@ -117,27 +137,13 @@ var campanhaparceiros = SuperWidget.extend({
 		$("." + $(el).data("tab")).removeClass("fs-display-none");
 	},
 	
-	changepaginacao: function(el, ev) {
-		campanhaparceiros.loading.show();
-		campanhaparceiros.offset = 0;
-		campanhaparceiros.limit = parseInt($(el).val());
-		campanhaparceiros.showranking(true);		
-	},
-	
-	changeordenacao: function(el, ev) {
-		campanhaparceiros.loading.show();
-		campanhaparceiros.offset = 0;
-		campanhaparceiros.limit = parseInt($(el).val());
-		campanhaparceiros.showranking(true);		
-	},
-	
 	listcampanha: function(el, ev) {
 		campanhaparceiros.loading.show();
 		campanhaparceiros.representante = $('#listrepresentatives').val();
 		$('.tab-detalhamento').html("");
 		campanhaparceiros.list = [];
 		campanhaparceiros.offset = 0;
-		campanhaparceiros.limit = parseInt($("#paginacao").val());
+		campanhaparceiros.limit = 99999;
 		campanhaparceiros.getranking();
 	},
 	
@@ -171,13 +177,15 @@ var campanhaparceiros = SuperWidget.extend({
 		}
 		
 		var row = values[0];
+		var m = moment(row["dataprocessamento"])
 		
 		var data = {
 			"ordem": row["ordem"],
-			"situacao": row["vlrpremio"],
-			"data": row["dataprocessamento"],
-			"pontos": row["pontos"],
-			"grupo": row["descgrupo"]
+			"premiacao": row["vlrpremio"],
+			"data": m.format("DD/MM/YYYY"),
+			"pontos": campanhaparceiros.mask((+row["pontos"]).toFixed(2)),
+			"grupo": row["descgrupo"],
+			"situacao": row["situacao"]
 		}
 		
 		var tpl = $('.tpl-my-ranking').html();
@@ -271,7 +279,7 @@ var campanhaparceiros = SuperWidget.extend({
 			var o = {
 				"codigo": codigo,
 				"nome": row["apelido"],
-				"pontos": row["pontos"],
+				"pontos": campanhaparceiros.mask((+row["pontos"]).toFixed(2)),
 				"ordem": row["ordem"],
 				"premio": v,
 				"equipe": row["descequipe"],
@@ -294,33 +302,21 @@ var campanhaparceiros = SuperWidget.extend({
 		if (clean) {
 			$('#table-ranking > tbody').html("");
 			campanhaparceiros.offset = 0;
-			campanhaparceiros.limit = parseInt($("#paginacao").val());
+			campanhaparceiros.limit = 99999;
 		}
 
 		var filter = campanhaparceiros.list;
 		var search = $("#busca").val(); 
 		if (search && search != "") {
 			filter = campanhaparceiros.list.filter(function(item) {
-				return item["nome"].toLowerCase().indexOf(search) != -1 || item["codigo"].toLowerCase() == search || item["equipe"].toLowerCase().indexOf(search) != -1;
+				return item["codigo"].toLowerCase().indexOf(search) != -1;
 			})
 		}
 		
 		filter.sort(function compare(a, b) {
-			
-			var c1 = a[$("#ordenar").val()];
-			var c2 = b[$("#ordenar").val()];
-			var type = $("#ordenar :selected").data("type");
-			if (type == "date") {
-				 if (c1.isAfter(c2)) return 1;
-				 if (c1.isBefore(c2)) return -1;
-			     return 0;				
-			} else if (type == "integer") {
-				return +(c1) - +(c2);
-			} else {
-				if (c1 > c2) return 1;
-				if (c1 < c2) return -1;
-				return 0;
-			}
+			var c1 = a["ordem"];
+			var c2 = b["ordem"];
+			return +(c1) - +(c2);
 		});
 		
 		var mylist = [];
@@ -402,6 +398,7 @@ var campanhaparceiros = SuperWidget.extend({
 		}
 		
 		console.log(items);
+		$(".tab-detalhamento").html("");
 		
 		for (var key in items) {
 			var o = items[key];
@@ -414,7 +411,7 @@ var campanhaparceiros = SuperWidget.extend({
 				classbadge = "badge-danger";
 			}
 			
-			var data = { "items": o["items"], "quesito": o["quesito"], "id": o["id"], "hashid": o["hashid"], "total": o["pontos"], "classbadge": classbadge };
+			var data = { "items": o["items"], "quesito": o["quesito"], "id": o["id"], "hashid": o["hashid"], "total": campanhaparceiros.mask(o["pontos"].toFixed(2)), "classbadge": classbadge };
 			var html = Mustache.render(tpl, data);
 			$('.tab-detalhamento').append(html);
 		}
@@ -431,4 +428,16 @@ var campanhaparceiros = SuperWidget.extend({
 	    return valor                    
 	},
 	
+	myPosition: function(el, ev) {
+		$("#table-ranking tr").each(function(index) {
+			if (index !== 0) {
+				var row = $(this);
+				var id = row.find("td:nth-child(1)").text();
+				if (id == campanhaparceiros.representante) {
+					var rowpos = row.position();
+					$(document).scrollTop(rowpos.top);					
+	            }
+	        }
+	    });		
+	},
 });

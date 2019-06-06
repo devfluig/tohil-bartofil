@@ -11,6 +11,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 	trimestre: null,
 	equipesuperior: null,
 	codcampanha: null,
+	isLoaded: false,
 	init : function() {
 		$(".pageTitle").parent().remove();
 		
@@ -37,8 +38,6 @@ var campanhaparceirosanual = SuperWidget.extend({
 		campanhaparceirosanual.loading.show();
 		campanhaparceirosanual.representante = perfilrepresentante.representante;
 		
-		this.getranking();
-		
 	},
 
 	bindings : {
@@ -49,18 +48,33 @@ var campanhaparceirosanual = SuperWidget.extend({
 			"change-representante": ['change_changerepresentante'],
 			'change-ordenar-parceiro-anual': ['change_changeordenacao'],
 			'click-tab-parceiro-anual': ['click_showtab'],
+			'change-periodo': ['change_changePeriodo'],
 		}
 	},
 	
+	onShowWidget: function() {
+		if (!campanhaparceirosanual.isLoaded) {
+			campanhaparceirosanual.loading.show();
+			campanhaparceirosanual.isLoaded = true;
+			campanhaparceirosanual.getranking();
+			
+		}
+	},
+	
+	changePeriodo: function(el ,ev) {
+		campanhaparceirosanual.isLoaded = false;
+		eval(perfilrepresentante.currentWidget)();
+	},
 	changerepresentante: function () {
-		campanhaparceirosanual.loading.show();
 		campanhaparceirosanual.representante = perfilrepresentante.representante;
 		campanhaparceirosanual.list = [];
 		campanhaparceirosanual.offset = 0;
 		$(".tab-detalhamento-anual").html("");
 		campanhaparceirosanual.current = null;
 		campanhaparceirosanual.limit = parseInt($("#paginacao-anual").val());
-		campanhaparceirosanual.getranking();
+		
+		campanhaparceirosanual.isLoaded = false;
+		eval(perfilrepresentante.currentWidget)();
 		
 	},
 	
@@ -130,13 +144,15 @@ var campanhaparceirosanual = SuperWidget.extend({
 		}
 		
 		var row = values[0];
-		var m = moment(row["dtaprocessamento"])
+		var m = moment(row["dataprocessamento"])
 		
 		$("#ordem-premio-anual").val(row["ordem"]);
-		$("#situacao-anual").val(row["vlrpremio"]);
+		$("#premiacao-anual").val(row["vlrpremio"]);
 		$("#data-processamento-anual").val(m.format("DD/MM/YYYY"));
 		$("#status-anual").val(campanhaparceirosanual.mask((+(row["pontos"])).toFixed(2)));
 		$("#grupo-anual").val(row["descgrupo"]);
+		$("#situacao-anual").val(row["situacao"]);
+		$("#pontos-anual").val(campanhaparceiros.mask((+row["pontos"]).toFixed(2)));
 		
 		campanhaparceirosanual.current = row;
 		campanhaparceirosanual.mygroup = row["grupo"];
@@ -202,7 +218,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 				if (v == "") v = "Sem premia&ccedil;&atilde;o";
 				var o = {
 					"codigo": codigo,
-					"pontos": row["pontos"],
+					"pontos": campanhaparceirosanual.mask((+row["pontos"]).toFixed(2)),
 					"ordem": row["ordem"],
 					"premio": v,
 					"equipe": row["descequipe"],
@@ -233,7 +249,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 		var search = $("#busca-anual").val(); 
 		if (search && search != "") {
 			filter = campanhaparceirosanual.list.filter(function(item) {
-				return item["codigo"].toLowerCase().indexOf(search) != -1 || item["equipe"].toLowerCase().indexOf(search.toLowerCase()) != -1;
+				return item["codigo"].toLowerCase().indexOf(search) != -1;
 			})
 		}
 		
@@ -337,6 +353,8 @@ var campanhaparceirosanual = SuperWidget.extend({
 		}
 		
 		console.log(items);
+		
+		$('.tab-detalhamento-anual').html("");
 		
 		for (var key in items) {
 			var o = items[key];

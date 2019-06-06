@@ -1,6 +1,6 @@
 var campanhavendas = SuperWidget.extend({
 	
-	loading: FLUIGC.loading(window),
+	loading: FLUIGC.loading('.widget-campanha'),
 	offset: 0,
 	limit: 8,
 	list: [],
@@ -10,15 +10,14 @@ var campanhavendas = SuperWidget.extend({
 	current: null,
 	grouprca: null,
 	representante: null,
+	isLoaded: false,
 	
 	init : function() {
 		$(".pageTitle").parent().remove();
 		
 		campanhavendas.foldercampanha = this.foldercampanha;
 		campanhavendas.grouprca = perfilrepresentante.grouprca;
-		campanhavendas.current = perfilrepresentante.representante;
-		
-		campanhavendas.getcampanha();
+		campanhavendas.representante = perfilrepresentante.representante;
 		
 		$(window).on("scroll", function() {
 			if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
@@ -33,7 +32,7 @@ var campanhavendas = SuperWidget.extend({
 			}
 		});
 		
-		$("#busca").keyup(function() {
+		$("#busca-concurso").keyup(function() {
 			campanhavendas.showcampanhas(true);
 		});
 	},
@@ -46,21 +45,39 @@ var campanhavendas = SuperWidget.extend({
 			"click-fechar": ['click_clickfechar'],
 			"image-prev": ['click_clickprevimage'],
 			"image-next": ['click_clicknextimage'],
-			'change-paginacao': ['change_changepaginacao'],
 			"change-representante": ['change_listcampanha'],
 			'change-ordenar': ['change_changeordenacao'],
 			'click-detail': ['click_showdetail'],
+			'change-periodo': ['change_changePeriodo'],
 		}
+	},
+	onShowWidget: function() {
+		if (!campanhavendas.isLoaded) {
+			campanhavendas.loading.show();
+			campanhavendas.isLoaded = true;
+			campanhavendas.getcampanha();
+		}
+	},
+	changePeriodo: function(el ,ev) {
+		campanhavendas.isLoaded = false;
+		campanhavendas.list = [];
+		campanhavendas.offset = 0;
+		campanhavendas.current = null;
+		campanhavendas.limit = 99999;
+		eval(perfilrepresentante.currentWidget)();
 	},
 	
 	listcampanha: function(el, ev) {
-		campanhavendas.loading.show();
+		$(".premiados").addClass("fs-display-none");
+		$(".itens-campanha").removeClass("fs-display-none");
+		$(".header-itens-campanha").removeClass("fs-display-none");
 		campanhavendas.representante = $('#listrepresentatives').val();
 		campanhavendas.list = [];
 		campanhavendas.offset = 0;
 		campanhavendas.current = null;
-		campanhavendas.limit = parseInt($("#paginacao").val());
-		campanhavendas.getcampanha();
+		campanhavendas.limit = 99999;
+		campanhavendas.isLoaded = false;
+		eval(perfilrepresentante.currentWidget)();
 	},
 
 	showdetail: function (el, ev) {
@@ -82,9 +99,20 @@ var campanhavendas = SuperWidget.extend({
 			return;
 		}
 		
-		console.log("onreadyshowdetail")
+		console.log("onreadyshowdetail");
 		
-		var params = { "values": rows.values }
+		var list = rows.values;
+		for (var i=0; i< list.length; i++) {
+			var row = list[i];
+			for (var o in row) {
+				if (row[o] == null) {
+					row[o] = "";
+				}
+			}
+			list[i] = row;
+		}
+		
+		var params = { "values": list }
 
 		$(".modal").remove();
 		WCMAPI.convertFtlAsync(campanhavendas.code, 'detalhe.ftl', { "params": params },
@@ -108,13 +136,6 @@ var campanhavendas = SuperWidget.extend({
 		
 				
 		
-	},
-	
-	changepaginacao: function(el, ev) {
-		campanhavendas.loading.show();
-		campanhavendas.offset = 0;
-		campanhavendas.limit = parseInt($(el).val());
-		campanhavendas.showcampanhas(true);		
 	},
 	
 	changeordenacao: function(el, ev) {
@@ -225,7 +246,7 @@ var campanhavendas = SuperWidget.extend({
 			$(".image-detail").attr("src", "/" + campanhavendas.code + "/resources/images/loading.gif");	
 		}
 		
-		$(".title-detail").html("<b>" + campanhavendas.current["id"] + " " + campanhavendas.current["descricao"] + "</b> - DETALHES DA CAMPANHA");
+		$(".title-detail").html("<b>" + campanhavendas.current["id"] + " " + campanhavendas.current["descricao"] + "</b> - DETALHES");
 		
 		var c1 = DatasetFactory.createConstraint("campanha", campanhavendas.current["id"], campanhavendas.current["id"], ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
@@ -284,7 +305,7 @@ var campanhavendas = SuperWidget.extend({
 			var premiado = "";
 			if (row["situacao"] && row["situacao"].toLowerCase() == "premiado") {
 				premiado = 'success';
-				codigo += "&nbsp;<span class='fluigicon fluigicon-certificate fluigicon-sm'></span>";
+				//codigo += "&nbsp;<span class='fluigicon fluigicon-certificate fluigicon-sm'></span>";
 			} 
 			if (campanhavendas.representante == row["codparticipante"]) {
 				premiado = "info";
@@ -381,22 +402,24 @@ var campanhavendas = SuperWidget.extend({
 	
 	
 	clickfechar: function(el, ev) {
-		console.log("campanha");
 		$(".premiados").addClass("fs-display-none");
 		$(".itens-campanha").removeClass("fs-display-none");
 		$(".header-itens-campanha").removeClass("fs-display-none");
 	},
 	
 	getcampanha: function() {
-		var limit = $("#paginacao").val();
+		var limit = 99999;
+		
+		var mes = $("#periodo :selected").data("month");
+		var ano = $("#periodo :selected").data("year");
 		
 		var c1 = DatasetFactory.createConstraint("representante", campanhavendas.representante, campanhavendas.representante, ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("offset", "0", "0", ConstraintType.MUST, false);
 		var c3 = DatasetFactory.createConstraint("limit", "999", "999", ConstraintType.MUST, false);
-
-		console.log(WCMAPI.userLogin, campanhavendas.offset, limit)
+		var c4 = DatasetFactory.createConstraint("tipcampanha", "O", "O", ConstraintType.MUST, false);
+		var c5 = DatasetFactory.createConstraint("anomes", ano + "" + mes, ano + "" + mes, ConstraintType.MUST, false);
 		
-		DatasetFactory.getDataset("ds_campanha_vendas", null, [c1, c2, c3], null, {"success": campanhavendas.onreadygetcampanha} );
+		DatasetFactory.getDataset("ds_campanha_vendas", null, [c1, c2, c3, c4, c5], null, {"success": campanhavendas.onreadygetcampanha} );
 		
 	},
 	
@@ -514,17 +537,15 @@ var campanhavendas = SuperWidget.extend({
 		
 		console.log("showcampanhas", campanhavendas.offset, campanhavendas.limit);
 		
-		if (clean) {
-			$(".itens-campanha").remove();
-			campanhavendas.offset = 0;
-			campanhavendas.limit = parseInt($("#paginacao").val());
-		}
+		$(".itens-campanha").remove();
+		campanhavendas.offset = 0;
+		campanhavendas.limit = 99999;
 		
 		var filter = campanhavendas.list;
-		var search = $("#busca").val(); 
+		var search = $("#busca-concurso").val(); 
 		if (search && search != "") {
 			filter = campanhavendas.list.filter(function(item) {
-				return item["descricao"].toLowerCase().indexOf(search) != -1 || item["id"].toLowerCase() == search;
+				return item["descricao"].toLowerCase().indexOf(search) != -1 || item["id"].toLowerCase().indexOf(search) != -1;
 			})
 		}
 		

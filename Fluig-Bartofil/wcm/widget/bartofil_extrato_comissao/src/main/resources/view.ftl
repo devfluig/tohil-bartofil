@@ -5,20 +5,64 @@
 		<h2>${i18n.getTranslation('extrato.comissao')}</h2>
 	</div>
 
-	<form class="form-inline" role="form">
-    	<div class="radio fs-md-space">
-	    	<label>
-	    		<input type="radio" name="visualizacao" id="visualizacaodetalhado" value="detalhado" data-click-detalhado checked>Detalhado
-	    	</label>
-	    	<label>
-	    		<input type="radio" name="visualizacao" id="visualizacaoresumido" value="resumido" data-click-resumido>Resumido
-	    	</label>
-		</div>
-		<button type="button" class="btn btn-default fs-float-right" data-click-print><span class="fluigicon fluigicon-print fluigicon-sm"></span>&nbsp;Imprimir</button>
-	</form>
-	
 	<div class="panel-group" id="accordionextrato">
-	    <div class="panel panel-info detalhado">
+	    <div class="panel panel-info">
+	        <div class="panel-heading">
+	            <h4 class="panel-title fs-txt-center">
+	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordionextrato">Extrato de comiss&atilde;o de RCA do m&ecirc;s&nbsp;<span class="title-periodo"></span></a>
+	            </h4>
+	        </div>
+	        <div id="collapseOne" class="panel-collapse collapse in">
+	            <div class="panel-body">
+	            	<div class="table-responsive">
+		            	<table id="table-meses" class="table table-striped table-hover table-condensed">
+		            		<thead>
+		            			<tr>
+		            				<th class="fs-txt-left">M&Ecirc;S DO PEDIDO</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('valor')}</th>
+		            			</tr>
+		            		</thead>
+		            		<tbody></tbody>
+		            		<tfoot>
+		            		</tfoot>
+		            	</table>
+		            </div>
+				</div>
+	        </div>
+	    </div>
+	    <div class="panel panel-info">
+	        <div class="panel-heading">
+	            <h4 class="panel-title fs-txt-center">
+	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordionextrato">Extrato de comiss&atilde;o de RCA por evento</a>
+	            </h4>
+	        </div>
+	        <div id="collapseOne" class="panel-collapse collapse in">
+	            <div class="panel-body">
+	            	<div class="table-responsive">
+		            	<table id="table-eventos" class="table table-striped table-hover table-condensed">
+		            		<thead>
+		            			<tr>
+		            				<th class="fs-txt-left">${i18n.getTranslation('codigo')}</th>
+		            				<th class="fs-txt-left">${i18n.getTranslation('descricao')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('valor.debito')}</th>
+		            				<th class="fs-txt-right">${i18n.getTranslation('valor.credito')}</th>
+		            			</tr>
+		            		</thead>
+		            		<tbody>
+		            		</tbody>
+		            		<tfoot>
+		            			<tr>
+		            				<td colspan=4>
+										<a href="#" class="btn btn-primary btn-scroll fs-float-right" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
+		            				</td>
+		            			</tr>
+		            		</tfoot>
+		            	</table>
+		            </div>
+				</div>
+	        </div>
+	    </div>
+	    <div class="panel panel-info">
 	        <div class="panel-heading">
 	            <h4 class="panel-title fs-txt-center">
 	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordionextrato">${i18n.getTranslation('extrato.comissao.representante.detalhado')}</a>
@@ -28,7 +72,7 @@
 	            <div class="panel-body">
 	            	<div class="table-responsive">
 		            	<table id="table-lancamentos" class="table table-striped table-hover table-condensed">
-		            		<thead class="detalhado">
+		            		<thead>
 		            			<tr>
 		            				<th>${i18n.getTranslation('data.lancto')}</th>
 		            				<th class="fs-txt-right">${i18n.getTranslation('evt')}</th>
@@ -45,54 +89,6 @@
 		            		</tbody>
 		            		<tfoot>
 		            		</tfoot>
-		            	</table>
-		            </div>
-				</div>
-	        </div>
-	    </div>
-	    <div class="panel panel-info">
-	        <div class="panel-heading">
-	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordionextrato">${i18n.getTranslation('extrato.comissao.representante.mes')}&nbsp;<span class="title-periodo"></span></a>
-	            </h4>
-	        </div>
-	        <div id="collapseOne" class="panel-collapse collapse in">
-	            <div class="panel-body">
-	            	<div class="table-responsive">
-		            	<table id="table-meses" class="table table-striped table-hover table-condensed">
-		            		<thead>
-		            			<tr>
-		            				<th class="fs-txt-left">${i18n.getTranslation('data.entrada.pedido')}</th>
-		            				<th class="fs-txt-right">${i18n.getTranslation('valor')}</th>
-		            			</tr>
-		            		</thead>
-		            		<tbody></tbody>
-		            		<tfoot></tfoot>
-		            	</table>
-		            </div>
-				</div>
-	        </div>
-	    </div>
-	    <div class="panel panel-info">
-	        <div class="panel-heading">
-	            <h4 class="panel-title fs-txt-center">
-	                <a class="collapse-icon up" data-toggle="collapse" data-parent="#accordionextrato">${i18n.getTranslation('extrato.comissao.representante.resumo')}</a>
-	            </h4>
-	        </div>
-	        <div id="collapseOne" class="panel-collapse collapse in">
-	            <div class="panel-body">
-	            	<div class="table-responsive">
-		            	<table id="table-eventos" class="table table-striped table-hover table-condensed">
-		            		<thead>
-		            			<tr>
-		            				<th class="fs-txt-left">${i18n.getTranslation('codigo')}</th>
-		            				<th class="fs-txt-left no-mobile">${i18n.getTranslation('descricao')}</th>
-		            				<th class="fs-txt-right">${i18n.getTranslation('valor.debito')}</th>
-		            				<th class="fs-txt-right">${i18n.getTranslation('valor.credito')}</th>
-		            			</tr>
-		            		</thead>
-		            		<tbody>
-		            		</tbody>
 		            	</table>
 		            </div>
 				</div>

@@ -15,12 +15,13 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("nroequipesuperior");
 	dataset.addColumn("seqcampanha");
 	dataset.addColumn("descgrupo");
+	dataset.addColumn("situacao");
 	
 	var representante = null;
 	var limit = 999;
 	var offset = 0;
 	var grupo = null;
-	var periodo = null;
+	var periodo = "201901";
 	var equipesuperior = null;
 	if (constraints != null) {
 		for (var c in constraints){
@@ -48,7 +49,7 @@ function createDataset(fields, constraints, sortFields) {
 			where += "&grupo=" + grupo;
 		}
 		if (equipesuperior != null) {
-			where += "&nroequipesuperior=" + equipesuperior;
+			//where += "&nroequipesuperior=" + equipesuperior;
 		}
 		if (representante != null) {
 			where += "&nrorepresentante=" + representante;
@@ -84,7 +85,7 @@ function createDataset(fields, constraints, sortFields) {
 							    		 dados["grupo"],
 							    		 dados["gerencia"],
 							    		 dados["pontos"],
-							    		 dados["dataprocessamento"],
+							    		 dados["dtaprocessamento"],
 							    		 dados["nroequipe"],
 							    		 dados["vlrpremio"],
 							    		 dados["trimestre"],
@@ -93,7 +94,8 @@ function createDataset(fields, constraints, sortFields) {
 							    		 dados["nrorepresentante"],
 							    		 dados["nroequipesuperior"],
 							    		 dados["seqcampanha"],
-							    		 dados["descgrupo"]));
+							    		 dados["descgrupo"],
+							    		 dados["situacao"]));
         	    log.info("offset:" + offset + ":" + i + ":" + limit);
             }
 

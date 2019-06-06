@@ -2,14 +2,12 @@ function createDataset(fields, constraints, sortFields) {
 	
 	var dataset = DatasetBuilder.newDataset();
 	dataset.addColumn("decendio");
-	dataset.addColumn("quantidadepedidos");
-	dataset.addColumn("valortotalcomissaogeral");
-	dataset.addColumn("quantidadeclientes");
+	dataset.addColumn("nomeclientes");
 	dataset.addColumn("valortotalgeral");
 
-	var representante = "12252";
-	var datainicio = "01-10-2018";
-	var datafim = "31-10-2018";
+	var representante = "30275";
+	var datainicio = "01-01-2019";
+	var datafim = "31-01-2019";
 	if (constraints != null) {
 		for (var c in constraints){
 			if (constraints[c].getFieldName() == "representante"){
@@ -27,33 +25,35 @@ function createDataset(fields, constraints, sortFields) {
 		log.info("ds_comissoes")
 		
         var clientService = fluigAPI.getAuthorizeClientService();
-        var data = {
-            companyId : getValue("WKCompany") + '',
-            serviceCode : 'RCA',
-            endpoint : "/v1/representante/" + representante + "/pedidos?sessionid=123abc&datainclusaoinicio=" + datainicio + "&datainclusaofim=" + datafim + "&fields=decendio&resume=S&situacao=A,F,L,R,S,W",
-            method : 'get',     
-            timeoutService: '1000',
-	        options : {
-	            mediaType: 'application/json'
-	        }
-        }
-        var vo = clientService.invoke(JSON.stringify(data));
-        if (vo.getResult()== null || vo.getResult().isEmpty()) {
-        	dataset.addRow(new Array("erro", "Sem comissão para o periodo solicitado " + datainicio + " " + datafim, "", "", "", "", "", "", "", "", "", "", "", "", "", "")); 
-        } else {
-//            var result = JSON.parse(json);
-            var result = JSON.parse(vo.getResult());
-            var list = result["dados"];
-            for (var i=0; i<list.length; i++) {
-            	var dados = list[i];
-        	    dataset.addRow(new Array(dados["decendio"],
-			    		 dados["quantidadepedidos"],
-			    		 dados["valortotalcomissaogeral"],
-			    		 dados["quantidadeclientes"],
-			    		 dados["valortotalgeral"]));
+		
+		for (var x=1; x<4; x++) {
+	        var data = {
+                companyId : getValue("WKCompany") + '',
+                serviceCode : 'RCA',
+                endpoint : "/v1/representante/" + representante + "/pedidos?sessionid=123abc&datainclusaoinicio=" + datainicio + "&datainclusaofim=" + datafim + "&resume=S&fields=nomecliente,valortotalatendido&decendio=" + x + "&offset=0&limit=9999",
+                method : 'get',     
+                timeoutService: '1000',
+    	        options : {
+    	            mediaType: 'application/json'
+    	        }
             }
-            
-        }
+            var vo = clientService.invoke(JSON.stringify(data));
+            if (vo.getResult()== null || vo.getResult().isEmpty()) {
+            	dataset.addRow(new Array("erro", "Sem comissão para o periodo solicitado " + datainicio + " " + datafim, "", "", "", "", "", "", "", "", "", "", "", "", "", "")); 
+            } else {
+//	                var result = JSON.parse(json);
+                var result = JSON.parse(vo.getResult());
+                var list = result["dados"];
+                for (var i=0; i<list.length; i++) {
+                	var dados = list[i];
+            	    dataset.addRow(new Array('' + x,
+    			    		 dados["nomecliente"],
+    			    		 dados["valortotalatendido"]));
+                }
+                
+            }
+		}
+		
     } catch(err) {
     	log.info(err.message)
     	dataset.addRow(new Array("erro", "Representante não encontrato " + representante, "", "", "", "", "", "", "", "", "", "", "")); 

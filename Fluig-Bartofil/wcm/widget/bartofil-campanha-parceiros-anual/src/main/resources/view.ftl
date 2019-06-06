@@ -2,47 +2,55 @@
 	data-params="campanhaparceirosanual.instance({instanceId: ${instanceId}, grouprca: '${grouprca!''}'})">
 
 	<div class="page-header">
-		<h2>CAMPANHA PARCEIROS ANUAL 100%</h2>
+		<h2>CAMPANHA ANUAL</h2>
 	</div>
 	
 	<div class="list-group">
 	    <div class="list-group-item active">
 	        <h4 class="list-group-item-heading">SUA PONTUA&Ccedil;&Atilde;O</h4>
 	        <div>
-				<form class="form-horizontal" role="form">
+		        <form class="form-horizontal" role="form">
 					<div class="form-group">
-						<label class="col-sm-2 control-label">Ordem pr&ecirc;mio:</label>
-						<div class="col-sm-1">
-				            <input type="text" class="form-control fs-txt-right" id="ordem-premio-anual" readonly >
+						<label class="col-sm-2 control-label">Sua classifica&ccedil;&atilde;o atual:</label>
+						<div class="col-sm-2">
+				            <input type="text" class="form-control fs-txt-right" id="ordem-premio-anual" readonly>
 			    		</div>
-			    		<label class="col-sm-1 control-label">Situa&ccedil;&atilde;o:</label>
+						<label class="col-sm-2 control-label">Sua premia&ccedil;&atilde;o atual:</label>
 			    		<div class="col-sm-2">
-			            	<input type="text" class="form-control fs-txt-right" id="situacao-anual" readonly >
+			            	<input type="text" class="form-control" id="premiacao-anual" readonly >
 			    		</div>
-						<label class="col-sm-1 control-label">Pontos:</label>
+						<label class="col-sm-2 control-label">Sua pontua&ccedil;&atilde;o atual:</label>
 			    		<div class="col-sm-2">
-			            	<input type="text" class="form-control fs-txt-right" id="status-anual" readonly >
+			            	<input type="text" class="form-control fs-txt-right" id="pontos-anual" readonly >
 			    		</div>
 			    	</div>
 			    	<div class="form-group">
-			    		<label class="col-sm-2 control-label">Data processamento:</label>
+			    		<label class="col-sm-2 control-label">Situa&ccedil;&atilde;o atual da campanha:</label>
+			    		<div class="col-sm-2">
+			            	<input type="text" class="form-control fs-txt-right" id="situacao-anual" readonly >
+			    		</div>
+			    		<label class="col-sm-2 control-label">Informa&ccedil;&otilde;es atualizadas em:</label>
 			    		<div class="col-sm-2">
 			            	<input type="text" class="form-control" id="data-processamento-anual" readonly >
 			    		</div>
-						<label class="col-sm-2 control-label">Grupo:</label>
-			    		<div class="col-sm-5">
+						<label class="col-sm-2 control-label">Seu grupo na Campanha:</label>
+			    		<div class="col-sm-2">
 			            	<input type="text" class="form-control" id="grupo-anual" readonly >
 			    		</div>
 			    	</div>
-	        	</form>
-	        </div>
+			    </form>
+			</div>	        
 	    </div>
 	</div>
 	
-	<ul class="nav nav-pills clearfix" role="tablist">
-	    <li class="active" data-click-tab-parceiro-anual data-tab="tab-colocacao-anual"><a href="#">ANUAL</a></li>
-	    <li data-click-tab-parceiro-anual data-tab="tab-detalhamento-anual"><a href="#">DETALHAMENTO</a></li>
-	</ul>
+	<div class="row">
+		<label class="radio-inline">
+	    	<input type="radio" name="radio-classificacao-anual" id="tab-colocacao-anual" data-click-tab-parceiro-anual checked data-tab="tab-colocacao-anual" value="tab-colocacao-anual">Classifica&ccedil;&atilde;o
+		</label>
+		<label class="radio-inline">
+	    	<input type="radio" name="radio-classificacao-anual" id="tab-detalhamento-anual" data-click-tab-parceiro-anual data-tab="tab-detalhamento-anual" value="tab-detalhamento-anual">Apuração detalhada
+		</label>
+	</div>	
 	<br>
 	
 	<form class="form-inline tab-colocacao-anual" role="form">
@@ -63,9 +71,9 @@
     			<option value="100">100</option>
     		</select>
     	</div>
-		<label>${i18n.getTranslation('busca')}:</label>
-        <div class="form-group">
-            <input type="text" class="form-control" id="busca-anual" placeholder="Digite o texto">
+		<label class='nav-representative fs-display-none'>PESQUISA POR CÓDIGO:</label>
+        <div class="form-group nav-representative fs-display-none">
+            <input type="text" class="form-control" id="busca-anual" placeholder="Digite o código de RCA">
         </div>
 	</form>
 	<br>

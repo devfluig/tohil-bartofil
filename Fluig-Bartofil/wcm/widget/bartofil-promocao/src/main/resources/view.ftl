@@ -2,7 +2,7 @@
 	data-params="promocoes.instance({instanceId: ${instanceId}, folderpromocao: '${folderpromocao!''}'})">
 
 	<div class="page-header">
-		<h1>PROMO&Ccedil;&Otilde;ES</h1>
+		<h1>PROMO&Ccedil;&Otilde;ES EM VIGOR</h1>
 	</div>
 
 	<form class="form-inline header-itens-promocao" role="form">
