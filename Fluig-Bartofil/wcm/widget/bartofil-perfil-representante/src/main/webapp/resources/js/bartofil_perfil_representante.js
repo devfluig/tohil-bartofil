@@ -237,16 +237,10 @@ var perfilrepresentante = SuperWidget.extend({
 
 		var ano = $("#periodo :selected").data("year");
 		var mes = +($("#periodo :selected").data("month"));
-		var trimestre = "01";
-		if (mes == 4 | mes == 5 || mes == 6) {
-			trimestre = "02";
-		} else if (mes == 7 | mes == 8 || mes == 9) {
-			trimestre = "03";
-		} else if (mes == 10 | mes == 11 || mes == 12) {
-			trimestre = "04";
-		}
 		
-		var periodo = ano + "" + trimestre;
+		if (mes < 10) { mes = '0' + mes; }
+
+		var periodo = ano + "" + mes;
 		
 		var c1 = DatasetFactory.createConstraint("periodo", periodo, periodo, ConstraintType.MUST, false);
 		var c2 = DatasetFactory.createConstraint("representante", perfilrepresentante.representante, perfilrepresentante.representante, ConstraintType.MUST, false);
@@ -439,14 +433,34 @@ var perfilrepresentante = SuperWidget.extend({
 			perfilrepresentante.getEvolucao();
 			return;
 		}
-		
+				
 		var values = rows["values"];
+		var listdecendio = {
+			"1": {},
+			"2": {},
+			"3": {}
+		};
 		var itens = 0;
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
-			$(".decendio-" + row["decendio"]).html(row["quantidadeclientes"])
-			itens += parseInt(row)
-		}		
+			var valortotalgeral = parseFloat(row["valortotalgeral"]);
+			var id = row["decendio"];
+			console.log('id', id)
+			var o = listdecendio[id];
+			console.log('o', o)
+			if (o[row["nomeclientes"]]) {
+				o[row["nomeclientes"]] += valortotalgeral;
+			} else {
+				o[row["nomeclientes"]] = valortotalgeral;
+			}
+			
+		}
+
+		$(".decendio-1").html(Object.keys(listdecendio["1"]).length);
+		$(".decendio-2").html(Object.keys(listdecendio["2"]).length);
+		$(".decendio-3").html(Object.keys(listdecendio["3"]).length);
+
+		perfilrepresentante.listDecendio = listdecendio;
 		perfilrepresentante.getEvolucao();
 		
 	},

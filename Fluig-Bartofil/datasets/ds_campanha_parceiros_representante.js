@@ -17,7 +17,7 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("descgrupo");
 	dataset.addColumn("situacao");
 	
-	var representante = "12252";
+	var representante = null;
 	var limit = 999;
 	var offset = 0;
 	var grupo = null;
@@ -85,7 +85,7 @@ function createDataset(fields, constraints, sortFields) {
 							    		 dados["grupo"],
 							    		 dados["gerencia"],
 							    		 dados["pontos"],
-							    		 dados["dataprocessamento"],
+							    		 dados["dtaprocessamento"],
 							    		 dados["nroequipe"],
 							    		 dados["vlrpremio"],
 							    		 dados["trimestre"],

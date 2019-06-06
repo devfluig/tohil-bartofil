@@ -34,12 +34,6 @@ var campanhaparceiros = SuperWidget.extend({
 		campanhaparceiros.representante = perfilrepresentante.representante;
 		campanhaparceiros.grouprca = perfilrepresentante.grouprca;
 		
-		var list = []; 
-		var today = moment(new Date());
-		trimestre = "0" + today.quarter();
-		$('#trimestre').append(trimestre);
-		campanhaparceiros.trimestre = trimestre;
-		
 	},
 
 	bindings : {
@@ -57,6 +51,13 @@ var campanhaparceiros = SuperWidget.extend({
 	
 	onShowWidget: function() {
 		if (!campanhaparceiros.isLoaded) {
+			
+			var list = []; 
+			var today = moment(new Date());
+			trimestre = "0" + today.quarter();
+			$('#trimestre').val(trimestre);
+			campanhaparceiros.trimestre = trimestre;
+			
 			campanhaparceiros.loading.show();
 			campanhaparceiros.isLoaded = true;
 			campanhaparceiros.getranking();
@@ -126,8 +127,7 @@ var campanhaparceiros = SuperWidget.extend({
 		campanhaparceiros.list = [];
 		campanhaparceiros.offset = 0;
 		campanhaparceiros.limit = 99999;
-		campanhaparceiros.getfullranking();		
-		campanhaparceiros.getdetalhamentos();		
+		campanhaparceiros.getranking();		
 	},
 	showtab: function(el, ev) {
 		$(el).parent().find("li").removeClass("active")
@@ -177,11 +177,12 @@ var campanhaparceiros = SuperWidget.extend({
 		}
 		
 		var row = values[0];
+		var m = moment(row["dataprocessamento"])
 		
 		var data = {
 			"ordem": row["ordem"],
 			"premiacao": row["vlrpremio"],
-			"data": row["dataprocessamento"],
+			"data": m.format("DD/MM/YYYY"),
 			"pontos": campanhaparceiros.mask((+row["pontos"]).toFixed(2)),
 			"grupo": row["descgrupo"],
 			"situacao": row["situacao"]

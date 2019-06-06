@@ -144,7 +144,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 		}
 		
 		var row = values[0];
-		var m = moment(row["dtaprocessamento"])
+		var m = moment(row["dataprocessamento"])
 		
 		$("#ordem-premio-anual").val(row["ordem"]);
 		$("#premiacao-anual").val(row["vlrpremio"]);
@@ -152,6 +152,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 		$("#status-anual").val(campanhaparceirosanual.mask((+(row["pontos"])).toFixed(2)));
 		$("#grupo-anual").val(row["descgrupo"]);
 		$("#situacao-anual").val(row["situacao"]);
+		$("#pontos-anual").val(campanhaparceiros.mask((+row["pontos"]).toFixed(2)));
 		
 		campanhaparceirosanual.current = row;
 		campanhaparceirosanual.mygroup = row["grupo"];
