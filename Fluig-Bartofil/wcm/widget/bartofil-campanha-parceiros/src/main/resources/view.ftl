@@ -75,6 +75,7 @@
     	</div>
 	</form>
 	<br>
+	<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
 	<div class="table-responsive">
 	   	<table id="table-ranking" class="table table-striped with-border table-hover table-condensed tab-colocacao">
 	   		<thead>
@@ -90,6 +91,7 @@
 	   		</tbody>
 	   	</table>
 	</div>
+	<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
    	<script type="text/template" class="tpl-item-ranking">
     	{{#items}}
  			<tr class="{{premiado}}">

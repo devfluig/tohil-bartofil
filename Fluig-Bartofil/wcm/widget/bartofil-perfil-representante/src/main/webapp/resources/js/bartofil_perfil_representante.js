@@ -380,11 +380,12 @@ var perfilrepresentante = SuperWidget.extend({
 		        
 		        if (meta < 0) { faltante = 0; }
 
-		        var valorBruto = perfilrepresentante.valortotalpedidos + perfilrepresentante.devolucoes;
+		        var valorBruto = perfilrepresentante.valortotalpedidos;
+				var valorLiquido = perfilrepresentante.valortotalpedidos - perfilrepresentante.devolucoes;
 		        $(".valor-potencial").html("R$ " + perfilrepresentante.mask(meta.toFixed(2)));
 		        $(".venda-bruta").html("R$ " + perfilrepresentante.mask(valorBruto.toFixed(2)));
 		        $(".devolucao").html("R$ " + perfilrepresentante.mask(perfilrepresentante.devolucoes.toFixed(2)));
-		        $(".venda-liquida").html("R$ " + perfilrepresentante.mask(perfilrepresentante.valortotalpedidos.toFixed(2)));
+		        $(".venda-liquida").html("R$ " + perfilrepresentante.mask(valorLiquido.toFixed(2)));
 		        $(".percentual-potencial").html(perfilrepresentante.mask(percentual.toFixed(2)) + "%");
 		        $(".valor-faltante").html("R$ " + perfilrepresentante.mask(faltante.toFixed(2)));
 		        $(".valor-dia").html("R$ " + perfilrepresentante.mask(valordia.toFixed(2)));

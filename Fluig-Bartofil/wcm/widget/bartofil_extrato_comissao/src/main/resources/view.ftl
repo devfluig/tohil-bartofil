@@ -14,6 +14,7 @@
 	        </div>
 	        <div id="collapseOne" class="panel-collapse collapse in">
 	            <div class="panel-body">
+					<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
 	            	<div class="table-responsive">
 		            	<table id="table-meses" class="table table-striped table-hover table-condensed">
 		            		<thead>
@@ -27,6 +28,7 @@
 		            		</tfoot>
 		            	</table>
 		            </div>
+					<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
 				</div>
 	        </div>
 	    </div>
@@ -38,6 +40,7 @@
 	        </div>
 	        <div id="collapseOne" class="panel-collapse collapse in">
 	            <div class="panel-body">
+					<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
 	            	<div class="table-responsive">
 		            	<table id="table-eventos" class="table table-striped table-hover table-condensed">
 		            		<thead>
@@ -59,6 +62,7 @@
 		            		</tfoot>
 		            	</table>
 		            </div>
+					<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
 				</div>
 	        </div>
 	    </div>
@@ -70,6 +74,7 @@
 	        </div>
 	        <div id="collapseThree" class="panel-collapse collapse in">
 	            <div class="panel-body">
+					<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
 	            	<div class="table-responsive">
 		            	<table id="table-lancamentos" class="table table-striped table-hover table-condensed">
 		            		<thead>
@@ -91,6 +96,7 @@
 		            		</tfoot>
 		            	</table>
 		            </div>
+					<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
 				</div>
 	        </div>
 	    </div>

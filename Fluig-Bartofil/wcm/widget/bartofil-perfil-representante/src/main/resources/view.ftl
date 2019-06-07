@@ -18,7 +18,7 @@
 			    		</select>
 			    	</div>
 		    		<label class="col-sm-3 control-label nav-representative fs-display-none">Representante:</label>
-			    	<div class="form-group col-sm-2 nav-representative fs-display-none">
+			    	<div class="form-group col-sm-2 nav-representative fs-display-none" style="margin-left: 0px !important;">
 			    		<select class="form-control" id="listrepresentatives" data-change-representante>
 						    <script type="text/template" class="tpl-representante">
 						        {{#items}}
