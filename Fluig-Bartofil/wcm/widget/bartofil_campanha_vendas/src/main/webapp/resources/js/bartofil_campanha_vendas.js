@@ -109,6 +109,14 @@ var campanhavendas = SuperWidget.extend({
 					row[o] = "";
 				}
 			}
+			var v = parseFloat(row["pontos"]);
+			if (v > 0) {
+				v = campanhavendas.mask(v.toFixed(2));
+				row["pontos"] = v;
+			} else {
+				v = "0,00";
+			}
+
 			list[i] = row;
 		}
 		
@@ -279,12 +287,19 @@ var campanhavendas = SuperWidget.extend({
 			var v = "";
 			var codigo = row["codparticipante"];
 			try {
-				v = parseFloat(row["vlrpremio"]);
+				var premio = row["vlrpremio"];
+				if (row["vlrpremio"].indexOf("-") != -1) {
+					premio = row["vlrpremio"].substr(0, row["vlrpremio"].indexOf("-") - 1)
+				}
+				v = parseFloat(premio);
 				if (v > 0) {
 					v = campanhavendas.mask(v.toFixed(2));
 					v = "R$ " + v;
 				} else {
-					v = "";
+					v = row["vlrpremio"];
+				}
+				if (row["vlrpremio"].indexOf("-") != -1) {
+					v += " - " + row["vlrpremio"].substr(row["vlrpremio"].indexOf("-") + 1);
 				}
 			} catch (e) {
 				v = row["vlrpremio"];
@@ -355,12 +370,19 @@ var campanhavendas = SuperWidget.extend({
 		var row = values[0];
 		var v = "";
 		try {
-			v = parseFloat(row["vlrpremio"]);
+			var premio = row["vlrpremio"];
+			if (row["vlrpremio"].indexOf("-") != -1) {
+				premio = row["vlrpremio"].substr(0, row["vlrpremio"].indexOf("-") - 1)
+			}
+			v = parseFloat(premio);
 			if (v > 0) {
 				v = campanhavendas.mask(v.toFixed(2));
 				v = "R$ " + v;
 			} else {
-				v = "";
+				v = row["vlrpremio"];
+			}
+			if (row["vlrpremio"].indexOf("-") != -1) {
+				v += " - " + row["vlrpremio"].substr(row["vlrpremio"].indexOf("-") + 1);
 			}
 		} catch (e) {
 			v = row["vlrpremio"];
@@ -430,12 +452,11 @@ var campanhavendas = SuperWidget.extend({
 			return;
 		}
 		var values = rows["values"];
+		var today = moment();
 		console.log(values.length)
 		for (var i=0; i<values.length; i++) {
 			var row = values[i];
-			var dtainicio = moment(row["dtainicio"]);
 			var dtaprorrogado = moment(row["dtaprorrogada"]);
-			var dtaencerrado = moment(row["dtaencerramento"]);
 			var ordem = row["ordempremio"].split("/");
 			console.log("ordem", ordem, row["ordempremio"]);
 			if (ordem.length == 2) {
@@ -448,28 +469,32 @@ var campanhavendas = SuperWidget.extend({
 				classbutton = "btn-success";
 			}
 			var classlabel = "label-info";
-			var labelfim = "Encerra em " + dtaencerrado.format("DD/MM/YYYY");
-			if (row["status"] == "E") {
+			var labelfim = row["dtaencerramento"];
+			if (dtaprorrogado.isBefore(today)) {
 				classlabel = "label-danger";
-				labelfim = "Encerrada em " + dtaencerrado.format("DD/MM/YYYY");
+				labelfim = row["dtaencerramento"];
+			}
+			var status = "";
+			if (row["status"] == "C") {
+				status = '<span class="concurso-cancelado">CANCELADO</span>';
 			} else if (row["status"] == "P") {
-				classlabel = "label-warning";
-				labelfim = "Prorrogada até " + dtaprorrogado.format("DD/MM/YYYY");
+				status = '<span class="concurso-pago">PAGO</span>';
 			}
 			
 			var o = {
 				"id": row["codcampanha"],
 				"descricao": row["desccampanha"],
-				"dainiciado": dtainicio.format("DD/MM/YYYY"),
+				"dainiciado": row["dtainicio"],
 				"dtaprorrogado": moment(row["dtaprorrogada"]),
-				"dtaencerrado": moment(row["dtaencerramento"]),
+				"dtaencerrado": row["dtaencerramento"],
 				"dtainicio": moment(row["dtainicio"]),
 				"posicao": ordem,
 				"image": null,
 				"classbutton": classbutton,
 				"classlabel": classlabel,
 				"labelfim": labelfim, 
-				"listaimagens": {}				
+				"listaimagens": {},
+				"status": status
 			}
 			campanhavendas.list.push(o);
 		}

@@ -27,12 +27,13 @@
 		<div class="row clearfix itens-campanha">
 	        {{#items}}
 				<div class="col-sm-4 col-md-3">
+					{{{status}}}
 				    <div class="thumbnail" data-click-campanha data-id="{{id}}">
 				        <img id="img{{id}}" src="{{image}}" style="height: 300px;">
 				        <div class="caption">
 				            <h4>{{id}} - {{descricao}}</h4>
 				            <p>{{{posicao}}}<button type="button" class="btn {{classbutton}} fs-float-right"><span class="fluigicon fluigicon-query-ordered"></span>&nbsp;Prêmios</button></p>
-				            <p style="padding-top: 5px;"><span class="label label-default">Iniciada {{dainiciado}}</span><span class="label {{classlabel}}">{{labelfim}}</span></p>
+				            <p style="padding-top: 5px;"><span class="label label-default">{{dainiciado}}</span><span class="label {{classlabel}}">{{labelfim}}</span></p>
 				        </div>
 				    </div>
 				</div>

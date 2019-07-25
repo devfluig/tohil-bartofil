@@ -23,11 +23,11 @@ function createDataset(fields, constraints, sortFields) {
     
     
 	//Código do representante 
-	var codRepresentante = "12252";
+	var codRepresentante = "23458";
 	//Data De Inicio da consulta
-	var dataInclusaoInicio = '2018-10-1';
+	var dataInclusaoInicio = '2019-04-01';
 	//Data Fim Da Consulta
-	var datainclusaofim = '2018-10-31';
+	var datainclusaofim = '2019-04-30';
 	// Senha de acesso a api Externa
 	var sessionid = '123abc';
 	// Limite de retorno na consulta

@@ -67,14 +67,14 @@ function createDataset(fields, constraints, sortFields) {
 							    		 dados["nroempresa"],
 							    		 dados["desccampanha"],
 							    		 dados["dtaprorrogada"],
-							    		 dados["dtaencerramento"],
+							    		 dados["descdtaencerramento"],
 							    		 dados["codcampanha"],
 							    		 dados["ordempremio"],
 							    		 dados["dtaprocessamento"],
 							    		 dados["descgrupo"],
 							    		 dados["codparticipante"],
 							    		 dados["sitpremiado"],
-							    		 dados["dtainicio"],
+							    		 dados["descdtainicio"],
 							    		 dados["codgrupo"],
 							    		 dados["status"]));
         	    log.info("offset:" + offset + ":" + i + ":" + limit);

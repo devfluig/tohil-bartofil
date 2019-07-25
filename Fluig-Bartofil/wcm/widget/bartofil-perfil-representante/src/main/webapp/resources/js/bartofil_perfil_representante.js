@@ -352,7 +352,7 @@ var perfilrepresentante = SuperWidget.extend({
 				}
 			}
 			if (meta > 0) {
-				var percentual = (perfilrepresentante.valortotalpedidos / meta) * 100;
+				var percentual = ((perfilrepresentante.valortotalpedidos - perfilrepresentante.devolucoes) / meta) * 100;
 				var faltante = meta - perfilrepresentante.valortotalpedidos;
 				if (faltante < 0) faltante = 0;
 				var valordia = faltante / dias 

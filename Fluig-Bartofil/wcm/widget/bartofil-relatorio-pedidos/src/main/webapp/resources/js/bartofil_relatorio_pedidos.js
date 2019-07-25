@@ -390,7 +390,7 @@ var relatorioPedidos = SuperWidget.extend({
 			} else if (row["naturezaoperacao"] == "D") {
 				if (despesas) {
 					despesas["quantidade"] = despesas["quantidade"] + 1;
-					despesas["total"] = despesas["total"] + valortotalpedido;
+					despesas["total"] = despesas["total"] + valorcobrar;
 					despesas["comissao"] = despesas["comissao"] +valortotalcomissao;
 				} else {
 					despesas = {

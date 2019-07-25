@@ -34,3 +34,33 @@
 	}
 }
 
+.concurso-pago {
+    position: absolute;
+    right: -5px;
+    top: -10px;
+    background: #ff4444;
+    border-radius: 50%;
+    text-align: center;
+    color: #fff;
+    font-size: 14px;
+    width: 50px;
+    height: 50px;
+    padding: 15px 0 0 0;
+    z-index: 1;
+}
+
+.concurso-cancelado {
+    position: absolute;
+    right: -5px;
+    top: -10px;
+    background: #777;
+    border-radius: 50%;
+    text-align: center;
+    color: #fff;
+    font-size: 14px;
+    width: 100px;
+    height: 50px;
+    padding: 15px 0 0 0;
+    z-index: 1;
+}
+    
