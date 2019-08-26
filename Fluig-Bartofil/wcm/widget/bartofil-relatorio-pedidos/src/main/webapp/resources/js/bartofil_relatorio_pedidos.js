@@ -19,6 +19,11 @@ var relatorioPedidos = SuperWidget.extend({
 		$(".pageTitle").parent().remove();
 		relatorioPedidos.grouprca = perfilrepresentante.grouprca;
 		relatorioPedidos.representante = perfilrepresentante.representante;
+		$('.btn-scroll').css('margin-left', $('.table-responsive').scrollLeft() + 260);
+		
+		$('.table-responsive').scroll(function() { 
+			$('.btn-scroll').css('margin-left', $('.table-responsive').scrollLeft() + 260); 
+		}); 
 		
 	},
 	bindings : {
@@ -111,17 +116,17 @@ var relatorioPedidos = SuperWidget.extend({
 				dataRequest.push(item);
 				
 				porsituacao.quantidade = porsituacao.quantidade + 1;
-				porsituacao.total = porsituacao.total + (item["situacao"] == "C" ? valortotalpedido : valorcobrar);
+				porsituacao.total = porsituacao.total + (item["situacao"] == "" || item["situacao"] == "C" ? valortotalpedido : valorcobrar);
 				porsituacao.comissao = porsituacao.comissao + valortotalcomissao;
 				
 				if (pororigem[item["descorigempedido"]]) {
 					pororigem[item["descorigempedido"]].quantidade = pororigem[item["descorigempedido"]].quantidade + 1;
-					pororigem[item["descorigempedido"]].total = pororigem[item["descorigempedido"]].total + (item["situacao"] == "C" ? valortotalpedido : valorcobrar);
+					pororigem[item["descorigempedido"]].total = pororigem[item["descorigempedido"]].total + (item["situacao"] == "" || item["situacao"] == "C" ? valortotalpedido : valorcobrar);
 					pororigem[item["descorigempedido"]].comissao = pororigem[item["descorigempedido"]].comissao + valortotalcomissao;
 				} else {
 					pororigem[item["descorigempedido"]] = {
 						"quantidade": 1,
-						"total": (item["situacao"] == "C" ? valortotalpedido : valorcobrar),
+						"total": (item["situacao"] == "" || item["situacao"] == "C" ? valortotalpedido : valorcobrar),
 						"comissao": valortotalcomissao,
 						"descorigempedido": item["descorigempedido"]
 					}
@@ -138,7 +143,7 @@ var relatorioPedidos = SuperWidget.extend({
 			var pedidototal = 0;
 			var comissaototal = 0;
 			
-			html = '<table class="table table-condesed table-striped">' + 
+			html = '<div class="table-responsive"><table class="table table-condesed table-striped">' + 
 				'<thead>' + 
 				'<tr>' + 
 				'<th><input id="switch-all-origem" type="checkbox" checked data-type="origem" data-change-all data-size="mini"></th>' + 
@@ -168,7 +173,7 @@ var relatorioPedidos = SuperWidget.extend({
 				'<td class="fs-txt-right total-qtde">' + qtdetotal + '</td>' + 
 				'<td class="fs-txt-right total-valor">R$ ' + relatorioPedidos.mask(pedidototal.toFixed(2)) + '</td>' + 
 				'<td class="fs-txt-right total-comissao">R$ ' + relatorioPedidos.mask(comissaototal.toFixed(2)) + '</td></tr>';
-			html += '</tbody></table>';
+			html += '</tbody></table></div>';
 			$(".switch-origem").html(html);
 		}
 
@@ -390,7 +395,7 @@ var relatorioPedidos = SuperWidget.extend({
 				} else {
 					despesas = {
 						"quantidade": 1,
-						"total": valortotalpedido,
+						"total": valorcobrar,
 						"comissao": valortotalcomissao
 					}
 				}
@@ -398,7 +403,7 @@ var relatorioPedidos = SuperWidget.extend({
 		}
 		
 		$(".switch-situacao").html('');
-		var html = '<table class="table table-condesed table-striped">' + 
+		var html = '<div class="table-responsive"><table class="table table-condesed table-striped">' + 
 			'<thead>' + 
 			'<tr>' + 
 			'<th><input id="switch-all" type="checkbox" checked data-type="situacao" data-change-all data-size="mini"></th>' + 
@@ -445,7 +450,7 @@ var relatorioPedidos = SuperWidget.extend({
 			'<td class="fs-txt-right total-qtde">' + qtdetotal + '</td>' + 
 			'<td class="fs-txt-right total-valor">R$ ' + relatorioPedidos.mask(pedidototal.toFixed(2)) + '</td>' + 
 			'<td class="fs-txt-right total-comissao">R$ ' + relatorioPedidos.mask(comissaototal.toFixed(2)) + '</td></tr>';
-			html += '</tbody></table>';
+			html += '</tbody></table></div>';
 		$(".switch-situacao").html(html);
 		
 		relatorioPedidos.current = {

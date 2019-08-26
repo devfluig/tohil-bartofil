@@ -18,20 +18,27 @@
 	
 	<div class="panel panel-info">
     	<div class="panel-heading">RESUMO POR SITUA&Ccedil;&Atilde;O</div>
-    	<div class="panel-body switch-situacao">
+    	<div class="panel-body">
+			<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
+			<div class="switch-situacao"></div>
+			<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
 		</div>
 	</div>
 	<div class="panel panel-info">
     	<div class="panel-heading">RESUMO POR ORIGEM</div>
-    	<div class="panel-body switch-origem">
+    	<div class="panel-body">
+			<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
+			<div class="switch-origem"></div>
+			<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
 		</div>
 	</div>
 	<div class="panel panel-info">
     	<div class="panel-heading">LISTA DE PEDIDOS</div>
     	<div class="panel-body">
 			<p class="help-block widget-pedidos" style="display: block;">Clique no pedido para ver detalhes</p>
+			<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
     		<div id="datatablePedidos" class="table-responsive"></div>
-			<a href="#" class="btn btn-primary btn-scroll fs-float-right" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
+			<a href="#" class="btn btn-primary btn-scroll" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a>
     	</div>
     </div>
 </div>

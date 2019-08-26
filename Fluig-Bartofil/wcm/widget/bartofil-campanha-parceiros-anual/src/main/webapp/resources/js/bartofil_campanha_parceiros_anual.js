@@ -34,6 +34,12 @@ var campanhaparceirosanual = SuperWidget.extend({
 		$("#busca-anual").keyup(function() {
 			campanhaparceirosanual.showranking(true);
 		});
+
+		$('.btn-scroll').css('margin-left', $('.table-responsive').scrollLeft() + 260);
+		
+		$('.table-responsive').scroll(function() { 
+			$('.btn-scroll').css('margin-left', $('.table-responsive').scrollLeft() + 260); 
+		});
 		
 		campanhaparceirosanual.loading.show();
 		campanhaparceirosanual.representante = perfilrepresentante.representante;
@@ -49,6 +55,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 			'change-ordenar-parceiro-anual': ['change_changeordenacao'],
 			'click-tab-parceiro-anual': ['click_showtab'],
 			'change-periodo': ['change_changePeriodo'],
+			'scroll-to-left': ['click_scrollLeft'],
 		}
 	},
 	
@@ -384,4 +391,7 @@ var campanhaparceirosanual = SuperWidget.extend({
 	    return valor                    
 	},
 	
+	scrollLeft: function(el, ev) {
+		$(".table-responsive").scrollLeft(0)
+	},
 });

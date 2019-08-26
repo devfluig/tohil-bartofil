@@ -12,6 +12,12 @@ var extratocampanha = SuperWidget.extend({
 		extratocampanha.grouprca = perfilrepresentante.grouprca;
 		extratocampanha.current = perfilrepresentante.representante; 
 		
+		$('.btn-scroll').css('margin-left', $('.table-responsive').scrollLeft() + 260);
+		
+		$('.table-responsive').scroll(function() { 
+			$('.btn-scroll').css('margin-left', $('.table-responsive').scrollLeft() + 260); 
+		}); 
+		
 		if (extratocampanha.mobile) {
 			$('#visualizacaoresumido').prop('checked', true);
 			extratocampanha.showresumido();
@@ -165,8 +171,7 @@ var extratocampanha = SuperWidget.extend({
 		html = '<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("totais")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("valor")}</strong></td><td class="fs-txt-center"><strong>${i18n.getTranslation("qtd")}</strong></td></tr>' +
 			'<tr class="danger"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("debitos")}</strong></td><td class="fs-txt-right">R$ ' + (totais["D"] ? extratocampanha.mask(totais["D"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["D"] ? totais["D"].qtde : "0") + '</td></tr>' +
 			'<tr class="success"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("creditos")}</strong></td><td class="fs-txt-right">R$ ' + (totais["C"] ? extratocampanha.mask(totais["C"].valor.toFixed(2)) : "0,00") + '</td><td class="fs-txt-center">' + (totais["C"] ? totais["C"].qtde : "0") + '</td></tr>' + 
-			'<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("total.geral")}</strong></td><td class="fs-txt-right">R$ ' + extratocampanha.mask(total.toFixed(2)) + '</td><td class="fs-txt-center">' + qtde + '</td></tr>' + 
-			'<tr><td colspan=9><a href="#" class="btn btn-primary btn-scroll fs-float-right" data-scroll-to-left role="button"><i class="fluigicon fluigicon-arrow-left icon-xs"></i></a></td></tr>';
+			'<tr class="warning"><td class="fs-txt-right" colspan="7"><strong>${i18n.getTranslation("total.geral")}</strong></td><td class="fs-txt-right">R$ ' + (total < 0 ? "-" : "") + extratocampanha.mask(total.toFixed(2)) + '</td><td class="fs-txt-center">' + qtde + '</td></tr>';
 		 
 		$('#table-lancamentos > tfoot').html(html);
 

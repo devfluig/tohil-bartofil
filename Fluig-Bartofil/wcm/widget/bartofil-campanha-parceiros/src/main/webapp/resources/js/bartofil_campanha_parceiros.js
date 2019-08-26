@@ -30,6 +30,12 @@ var campanhaparceiros = SuperWidget.extend({
 			campanhaparceiros.showranking(true);
 		});
 		
+		$('.btn-scroll').css('margin-left', $('.table-responsive').scrollLeft() + 260);
+		
+		$('.table-responsive').scroll(function() { 
+			$('.btn-scroll').css('margin-left', $('.table-responsive').scrollLeft() + 260); 
+		});
+		
 		campanhaparceiros.loading.show();
 		campanhaparceiros.representante = perfilrepresentante.representante;
 		campanhaparceiros.grouprca = perfilrepresentante.grouprca;
@@ -46,6 +52,7 @@ var campanhaparceiros = SuperWidget.extend({
 			'click-tab-parceiro': ['click_showtab'],
 			'change-trimestre-parceiro': ['change_changetrimestre'],
 			'click-minha-colocacao': ['click_myPosition'],
+			'scroll-to-left': ['click_scrollLeft'],
 		}
 	},
 	
@@ -439,5 +446,8 @@ var campanhaparceiros = SuperWidget.extend({
 	            }
 	        }
 	    });		
+	},
+	scrollLeft: function(el, ev) {
+		$(".table-responsive").scrollLeft(0)
 	},
 });

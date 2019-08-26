@@ -59,6 +59,7 @@ var campanhaparceirosmensal = SuperWidget.extend({
 		}
 	},
 	changePeriodo: function(el ,ev) {
+		campanhaparceirosmensal.list = [];
 		campanhaparceirosmensal.isLoaded = false;
 		eval(perfilrepresentante.currentWidget)();
 	},

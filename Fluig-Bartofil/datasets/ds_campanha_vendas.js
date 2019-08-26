@@ -15,6 +15,7 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("dtainicio");
 	dataset.addColumn("codgrupo");
 	dataset.addColumn("status");
+	dataset.addColumn("descpercautorizado");	
 	
 	var representante = "12252";
 	var limit = 999;
@@ -67,16 +68,17 @@ function createDataset(fields, constraints, sortFields) {
 							    		 dados["nroempresa"],
 							    		 dados["desccampanha"],
 							    		 dados["dtaprorrogada"],
-							    		 dados["dtaencerramento"],
+							    		 dados["descdtaencerramento"],
 							    		 dados["codcampanha"],
 							    		 dados["ordempremio"],
 							    		 dados["dtaprocessamento"],
 							    		 dados["descgrupo"],
 							    		 dados["codparticipante"],
 							    		 dados["sitpremiado"],
-							    		 dados["dtainicio"],
+							    		 dados["descdtainicio"],
 							    		 dados["codgrupo"],
-							    		 dados["status"]));
+							    		 dados["status"],
+							    		 dados["descpercautorizado"]));
         	    log.info("offset:" + offset + ":" + i + ":" + limit);
         	    if (i >= limit) { 
         	    	break; 
