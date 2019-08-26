@@ -6,10 +6,11 @@ function createDataset(fields, constraints, sortFields) {
 	dataset.addColumn("valortotal");
 	dataset.addColumn("valortotalcomissao");
 	dataset.addColumn("cfa");
+	dataset.addColumn("perccomissao");
 
 	var representante = "12252";
-	var datainicio = "01-10-2018";
-	var datafim = "31-10-2018";
+	var datainicio = "01-08-2019";
+	var datafim = "31-08-2019";
 	var cfa = "";
 	if (constraints != null) {
 		for (var c in constraints){
@@ -60,7 +61,8 @@ function createDataset(fields, constraints, sortFields) {
 			    		 dados["descproduto"],
 			    		 dados["valortotal"],
 			    		 dados["valortotalcomissao"],
-			    		 dados["cfa"]));
+			    		 dados["cfa"],
+			    		 dados["perccomissao"]));
             }
             
         }

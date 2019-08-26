@@ -49,7 +49,22 @@
     z-index: 1;
 }
 
-.concurso-cancelado {
+.concurso-pago-parcial {
+    position: absolute;
+    right: -5px;
+    top: -10px;
+    background: #dfaa1e;
+    border-radius: 50%;
+    text-align: center;
+    color: #fff;
+    font-size: 14px;
+    width: 100px;
+    height: 50px;
+    padding: 15px 0 0 0;
+    z-index: 1;
+}
+    
+.concurso-nao-atingida {
     position: absolute;
     right: -5px;
     top: -10px;
@@ -58,7 +73,7 @@
     text-align: center;
     color: #fff;
     font-size: 14px;
-    width: 100px;
+    width: 164px;
     height: 50px;
     padding: 15px 0 0 0;
     z-index: 1;

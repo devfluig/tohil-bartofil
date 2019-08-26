@@ -475,10 +475,14 @@ var campanhavendas = SuperWidget.extend({
 				labelfim = row["dtaencerramento"];
 			}
 			var status = "";
-			if (row["status"] == "C") {
-				status = '<span class="concurso-cancelado">CANCELADO</span>';
-			} else if (row["status"] == "P") {
-				status = '<span class="concurso-pago">PAGO</span>';
+			if (row["descpercautorizado"]) {
+				if (row["descpercautorizado"].toLowerCase() === "pago") {
+					status = '<span class="concurso-pago">PAGO</span>';
+				} else if (row["descpercautorizado"].toLowerCase() === "pago parcial") {
+					status = '<span class="concurso-pago-parcial">PAGO PARCIAL</span>';
+				} else {
+					status = '<span class="concurso-nao-atingida">META NÃO ATINGIDA</span>';
+				}
 			}
 			
 			var o = {

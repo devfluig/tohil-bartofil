@@ -116,17 +116,17 @@ var relatorioPedidos = SuperWidget.extend({
 				dataRequest.push(item);
 				
 				porsituacao.quantidade = porsituacao.quantidade + 1;
-				porsituacao.total = porsituacao.total + (item["situacao"] == "C" ? valortotalpedido : valorcobrar);
+				porsituacao.total = porsituacao.total + (item["situacao"] == "" || item["situacao"] == "C" ? valortotalpedido : valorcobrar);
 				porsituacao.comissao = porsituacao.comissao + valortotalcomissao;
 				
 				if (pororigem[item["descorigempedido"]]) {
 					pororigem[item["descorigempedido"]].quantidade = pororigem[item["descorigempedido"]].quantidade + 1;
-					pororigem[item["descorigempedido"]].total = pororigem[item["descorigempedido"]].total + (item["situacao"] == "C" ? valortotalpedido : valorcobrar);
+					pororigem[item["descorigempedido"]].total = pororigem[item["descorigempedido"]].total + (item["situacao"] == "" || item["situacao"] == "C" ? valortotalpedido : valorcobrar);
 					pororigem[item["descorigempedido"]].comissao = pororigem[item["descorigempedido"]].comissao + valortotalcomissao;
 				} else {
 					pororigem[item["descorigempedido"]] = {
 						"quantidade": 1,
-						"total": (item["situacao"] == "C" ? valortotalpedido : valorcobrar),
+						"total": (item["situacao"] == "" || item["situacao"] == "C" ? valortotalpedido : valorcobrar),
 						"comissao": valortotalcomissao,
 						"descorigempedido": item["descorigempedido"]
 					}
@@ -395,7 +395,7 @@ var relatorioPedidos = SuperWidget.extend({
 				} else {
 					despesas = {
 						"quantidade": 1,
-						"total": valortotalpedido,
+						"total": valorcobrar,
 						"comissao": valortotalcomissao
 					}
 				}

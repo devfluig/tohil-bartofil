@@ -353,7 +353,7 @@ var perfilrepresentante = SuperWidget.extend({
 			}
 			if (meta > 0) {
 				var percentual = ((perfilrepresentante.valortotalpedidos - perfilrepresentante.devolucoes) / meta) * 100;
-				var faltante = meta - perfilrepresentante.valortotalpedidos;
+				var faltante = meta - (perfilrepresentante.valortotalpedidos - perfilrepresentante.devolucoes);
 				if (faltante < 0) faltante = 0;
 				var valordia = faltante / dias 
 				
@@ -597,16 +597,21 @@ var perfilrepresentante = SuperWidget.extend({
 			var row = values[i];
 			var valortotalcomissao = parseFloat(row["valortotalcomissao"]);
 			var valortotal = parseFloat(row["valortotal"]);
+			var perccomissao = parseFloat(row["perccomissao"]);
 			
 			if (cfa[row["cfa"]] == undefined) {
 				cfa[row["cfa"]] = {};
 				cfa[row["cfa"]].valortotal = 0;
 				cfa[row["cfa"]].valortotalcomissao = 0;
+				cfa[row["cfa"]].percentual = 0;
+				cfa[row["cfa"]].index = 0;
 			}
 			
 			cfa[row["cfa"]] = {
 				"valortotal": cfa[row["cfa"]].valortotal + valortotal,
-				"valortotalcomissao": cfa[row["cfa"]].valortotalcomissao + valortotalcomissao
+				"valortotalcomissao": cfa[row["cfa"]].valortotalcomissao + valortotalcomissao,
+				"percentual": cfa[row["cfa"]].percentual + perccomissao,
+				"index": cfa[row["cfa"]].index + 1,
 			}
 			
 		}
@@ -618,8 +623,8 @@ var perfilrepresentante = SuperWidget.extend({
 				"cfa": key,
 				"valorFaturado": perfilrepresentante.mask(row["valortotal"].toFixed(2)),
 				"comissaoRecebida": perfilrepresentante.mask(row["valortotalcomissao"].toFixed(2)),
-				"valorpercentual": (row["valortotalcomissao"] / row["valortotal"]) * 100,
-				"percentual": perfilrepresentante.mask(((row["valortotalcomissao"] / row["valortotal"]) * 100).toFixed(2)),
+				"valorpercentual": row["percentual"] / row["index"],
+				"percentual": perfilrepresentante.mask((row["percentual"] / row["index"]).toFixed(2)),
 			}
 			list.push(o);
 			
@@ -739,11 +744,13 @@ var perfilrepresentante = SuperWidget.extend({
 			
 			var valortotalcomissao = parseFloat(row["valortotalcomissao"]);
 			var valortotal = parseFloat(row["valortotal"]);
+			var perccomissao = parseFloat(row["perccomissao"]);
+			
 			var o = {
 				"produto": row["codproduto"] + " - " + row["descproduto"],
 				"valorFaturado": perfilrepresentante.mask(valortotal.toFixed(2)),
 				"comissaoRecebida": perfilrepresentante.mask(valortotalcomissao.toFixed(2)),
-				"comissaoMedia": perfilrepresentante.mask(((valortotalcomissao / valortotal) * 100).toFixed(2))
+				"comissaoMedia": perfilrepresentante.mask(perccomissao.toFixed(2))
 			}
 			list.push(o);
 			
